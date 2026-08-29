@@ -93,6 +93,8 @@ jq --slurpfile keys "$keybindings_path" '
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "omacos capture webcam smaller/larger"; "The original chords resize the native camera preview overlay while recording."; $item.source)
       elif $isBound and in_list($title; ["Scroll active workspace forward", "Scroll active workspace backward", "Move window", "Resize window"]) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "native pointer gesture controller"; "Karabiner shares the Right Option layer with the native Accessibility event tap. Dragging moves or resizes the focused window, and wheel events switch workspaces; tiling managers may immediately retile managed windows."; $item.source)
+      elif $isBound and ($title | test("group"; "i")) then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos group"; "The native Accessibility grouping layer overlaps member windows into one frame and provides join, out, cycle, and indexed focus. WindowServer does not permit a third party to draw compositor-owned group tabs."; $item.source)
       elif $isBound and ($title | test("^Monitor scaling")) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "native display panel"; "The original chord opens display resolution controls because macOS does not expose a supported global scale-step API."; $item.source)
       elif $isBound and $title == "Pop window out (float & pin)" then
@@ -116,6 +118,8 @@ jq --slurpfile keys "$keybindings_path" '
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "unavailable"; "impossible"; "docs/quattro-parity.md"; "Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design."; $item.source)
       elif $item.source | endswith("/voxtype.lua") then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "close-substitute"; "F9 native dictation binding"; "The press and release declarations are represented by one Karabiner key-down/key-up manipulator backed by Speech.framework."; $item.source)
+      elif $title == "Switch to group window " then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos group index 1..5"; "The generated family focuses indexed members in the native Accessibility window group."; $item.source)
       elif ($item.declaration | test("Pseudo|group|transparency|gaps|square aspect|webcam|Monitor scaling|Tiled full screen|Full width|Pop window|Zoom"; "i")) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "unavailable"; "impossible"; "docs/quattro-parity.md"; "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent."; $item.source)
       elif ($item.declaration | test("Lid Switch|touchpad|laptop display|mirroring"; "i")) then
@@ -130,6 +134,8 @@ jq --slurpfile keys "$keybindings_path" '
         parity("dynamic-binding-family"; $item.id; $item.expansion; "implemented"; "close-substitute"; "config/keybindings.json"; "All ten focus, move-and-follow, and silent-move chords are generated."; $item.source)
       elif $item.id == "bar-panels" then
         parity("dynamic-binding-family"; $item.id; $item.expansion; "implemented"; "close-substitute"; "native bar"; "The bar exposes the corresponding panels as clickable native widgets and named shortcut routes."; $item.source)
+      elif $item.id == "group-windows" then
+        parity("dynamic-binding-family"; $item.id; $item.expansion; "limited"; "close-substitute"; "omacos group index 1..5"; "All five original indexed chords focus members of the current native Accessibility window group; compositor tab decoration is unavailable."; $item.source)
       else
         parity("dynamic-binding-family"; $item.id; $item.expansion; "unavailable"; "impossible"; "docs/quattro-parity.md"; "Hyprland window groups do not have a common AeroSpace, Rift, and SIP-on yabai abstraction."; $item.source)
       end;

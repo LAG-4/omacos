@@ -26,6 +26,7 @@ Commands:
   dictation ACTION          Start, stop, or toggle native dictation
   zoom ACTION               Control or configure native macOS screen zoom
   pointer ACTION            Internal Super pointer-gesture bridge
+  group ACTION              Manage cross-application window groups
   update ACTION             Check, apply, or roll back OMacOS updates
   backup ACTION             Snapshot or restore files managed by OMacOS
   migrate ACTION            Run or inspect versioned migrations
@@ -335,6 +336,20 @@ case ${1:-help} in
     case ${2:-} in
       super-down|super-up|begin-move|begin-resize|end) "$shell_binary" --pointer-gesture "$2" ;;
       *) print -u2 'Usage: omacos pointer <super-down|super-up|begin-move|begin-resize|end>'; exit 1 ;;
+    esac
+    ;;
+  group)
+    case ${2:-} in
+      toggle|out|next|previous) "$shell_binary" --window-group "$2" ;;
+      join)
+        [[ ${3:-} == "left" || ${3:-} == "right" || ${3:-} == "up" || ${3:-} == "down" ]] || { print -u2 'Usage: omacos group join <left|right|up|down>'; exit 1; }
+        "$shell_binary" --window-group join "$3"
+        ;;
+      index)
+        [[ ${3:-} == <1-5> ]] || { print -u2 'Usage: omacos group index <1..5>'; exit 1; }
+        "$shell_binary" --window-group index "$3"
+        ;;
+      *) print -u2 'Usage: omacos group <toggle|out|join DIRECTION|next|previous|index 1..5>'; exit 1 ;;
     esac
     ;;
   update)

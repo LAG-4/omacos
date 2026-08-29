@@ -281,6 +281,33 @@ enum OMacOSWindowActions {
         return unsafeDowncast(windowValue, to: AXUIElement.self)
     }
 
+    static func visibleWindowElements() throws -> [AXUIElement] {
+        try requireAccessibilityPermission()
+        return NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular && $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }
+            .flatMap { application -> [AXUIElement] in
+                let applicationElement = AXUIElementCreateApplication(application.processIdentifier)
+                var windowsValue: CFTypeRef?
+                guard AXUIElementCopyAttributeValue(
+                    applicationElement,
+                    kAXWindowsAttribute as CFString,
+                    &windowsValue
+                ) == .success else {
+                    return []
+                }
+                return windowsValue as? [AXUIElement] ?? []
+            }
+            .filter { (try? windowFrame($0).width) ?? 0 > 1 }
+    }
+
+    static func raiseWindow(_ window: AXUIElement) {
+        var processIdentifier: pid_t = 0
+        if AXUIElementGetPid(window, &processIdentifier) == .success {
+            NSRunningApplication(processIdentifier: processIdentifier)?.activate(options: [])
+        }
+        AXUIElementPerformAction(window, kAXRaiseAction as CFString)
+    }
+
     private static func requireAccessibilityPermission() throws {
         guard AXIsProcessTrusted() else {
             throw OMacOSWindowActionError.accessibilityPermissionRequired

@@ -55,6 +55,9 @@ Hold Right Option and press:
 | `Super + Scroll` | Switch workspaces forward or backward |
 | `Super + Left drag` | Move the focused window |
 | `Super + Right drag` | Resize the focused window |
+| `Super + G` | Create or dissolve a native window group |
+| `Super + Option + Arrow` | Join the nearest directional window to the group |
+| `Super + Option + Tab` | Cycle the active group |
 | `Super + Space` | Toggle the OMacOS command menu |
 | `Super + W` or `Super + Q` | Close the focused window |
 | `Super + Arrow` | Focus in a direction |
@@ -171,6 +174,8 @@ Screen zoom delegates to Apple's accessibility zoom rather than capturing and re
 Webcam recording uses a native always-on-top camera preview rather than a heavyweight recording dependency. `omacos capture recording --webcam` shows the overlay, starts the Apple region recorder with desktop and microphone audio, and removes the overlay when recording ends. The original bracket chords resize it live. Camera, Screen Recording, and Microphone approval remain explicit macOS prompts.
 
 Pointer gestures stay inside the same Right Option ownership model as keyboard shortcuts. Karabiner consumes only Super+left/right button presses and tells the native shell when a drag starts; the shell event tap performs the Accessibility move or resize and handles Super+wheel workspace navigation. Accessibility and Input Monitoring must be approved. A tiled window may be retiled by the active manager, so floating windows provide the closest Hyprland drag behavior.
+
+Window grouping is manager-independent. OMacOS records live Accessibility window references, aligns group members to one frame, and exposes the original toggle, directional join, remove, cycle, scroll, and index 1–5 shortcuts. Raising another member behaves like selecting a tab. Apple does not permit OMacOS to replace WindowServer decorations, so groups have no compositor-drawn tab strip and are reset when the shell restarts.
 
 Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub release; `rc` installs the newest signed prerelease. `edge` tracks current public `main`, while `dev` tracks the explicitly experimental public `dev` branch. Switching channels does not require reinstalling. Source-channel builds are ad-hoc signed. The tag workflow marks `-rc.` tags as prereleases, produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 

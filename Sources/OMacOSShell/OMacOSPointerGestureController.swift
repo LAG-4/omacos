@@ -100,7 +100,11 @@ final class OMacOSPointerGestureController {
             let delta = event.getDoubleValueField(.scrollWheelEventPointDeltaAxis1)
             if abs(delta) >= 1, Date().timeIntervalSince(lastWorkspaceScroll) >= 0.18 {
                 lastWorkspaceScroll = Date()
-                runWorkspaceAction(delta < 0 ? "workspace-next" : "workspace-previous")
+                if event.flags.contains(.maskAlternate) {
+                    runOMacOSCommand(["group", delta < 0 ? "next" : "previous"])
+                } else {
+                    runOMacOSCommand(["wm", delta < 0 ? "workspace-next" : "workspace-previous"])
+                }
             }
             return nil
         }
@@ -124,7 +128,7 @@ final class OMacOSPointerGestureController {
         return Unmanaged.passUnretained(event)
     }
 
-    private func runWorkspaceAction(_ action: String) {
+    private func runOMacOSCommand(_ arguments: [String]) {
         let environment = ProcessInfo.processInfo.environment
         let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
         let commandPath = environment["OMACOS_CLI_BINARY"]
@@ -133,7 +137,7 @@ final class OMacOSPointerGestureController {
         DispatchQueue.global(qos: .userInitiated).async {
             let process = Process()
             process.executableURL = URL(fileURLWithPath: commandPath)
-            process.arguments = ["wm", action]
+            process.arguments = arguments
             try? process.run()
         }
     }

@@ -293,6 +293,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var panelCoordinator: OMacOSPanelCoordinator?
     private var webcamOverlayController: OMacOSWebcamOverlayController?
     private var pointerGestureController: OMacOSPointerGestureController?
+    private var windowGroupController: OMacOSWindowGroupController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -308,6 +309,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         let plugins = OMacOSPluginCatalogStore()
         let webcamOverlay = OMacOSWebcamOverlayController()
         let pointerGestures = OMacOSPointerGestureController()
+        let windowGroups = OMacOSWindowGroupController()
         let panels = OMacOSPanelCoordinator(
             theme: state.theme,
             systemPanelState: panelState,
@@ -341,6 +343,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         panelCoordinator = panels
         webcamOverlayController = webcamOverlay
         pointerGestureController = pointerGestures
+        windowGroupController = windowGroups
 
         state.startStatusUpdates()
         panelState.startStatusUpdates()
@@ -399,6 +402,13 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         case OMacOSShellMessage.pointerGestureAction:
             if let action = notification.userInfo?[OMacOSShellMessage.valueKey] as? String {
                 pointerGestureController?.perform(action)
+            }
+        case OMacOSShellMessage.windowGroupAction:
+            if let action = notification.userInfo?[OMacOSShellMessage.panelKey] as? String {
+                windowGroupController?.perform(
+                    action,
+                    value: notification.userInfo?[OMacOSShellMessage.valueKey] as? String
+                )
             }
         default:
             break
@@ -634,6 +644,19 @@ enum OMacOSShellMain {
             }
             OMacOSShellMessage.postPointerGestureAction(action)
             RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.08))
+            return
+        }
+
+        if let groupIndex = arguments.firstIndex(of: "--window-group"),
+           arguments.indices.contains(groupIndex + 1) {
+            let action = arguments[groupIndex + 1]
+            guard ["toggle", "out", "join", "next", "previous", "index"].contains(action) else {
+                FileHandle.standardError.write(Data("Unknown window group action.\n".utf8))
+                Foundation.exit(2)
+            }
+            let value = arguments.indices.contains(groupIndex + 2) ? arguments[groupIndex + 2] : nil
+            OMacOSShellMessage.postWindowGroupAction(action, value: value)
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
             return
         }
 
