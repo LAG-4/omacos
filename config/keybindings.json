@@ -91,6 +91,7 @@
     { "key": "print_screen", "modifiers": ["control"], "description": "Extract text (OCR) from screenshot", "command": "$HOME/.local/bin/omacos capture text" },
     { "key": "spacebar", "modifiers": ["shift"], "description": "Toggle top bar", "command": "$HOME/.local/bin/omacos toggle toggle bar" },
     { "key": "delete_or_backspace", "modifiers": ["shift"], "description": "Toggle window gaps", "command": "$HOME/.local/bin/omacos wm gaps toggle" },
+    { "key": "delete_or_backspace", "modifiers": [], "description": "Toggle window transparency", "command": "$HOME/.local/bin/omacos wm transparency toggle" },
     { "key": "delete_or_backspace", "modifiers": ["control"], "description": "Toggle single-window square aspect", "command": "$HOME/.local/bin/omacos wm square-aspect-toggle" },
     { "key": "slash", "modifiers": [], "description": "Monitor scaling up", "command": "$HOME/.local/bin/omacos shell toggle-panel display" },
     { "key": "slash", "modifiers": ["option"], "description": "Monitor scaling down", "command": "$HOME/.local/bin/omacos shell toggle-panel display" },

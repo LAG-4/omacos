@@ -101,6 +101,33 @@ configured_window_gaps() {
   fi
 }
 
+configured_window_transparency() {
+  if [[ -f $state_directory/window-transparency-enabled ]]; then
+    print true
+  else
+    print false
+  fi
+}
+
+toggle_window_transparency() {
+  if [[ $(current_profile) != "yabai" ]]; then
+    print -u2 "Window transparency requires the optional yabai power mode."
+    print -u2 "Select yabai with 'omacos wm profile yabai', then read 'omacos wm power-mode guide'."
+    return 1
+  fi
+
+  mkdir -p "$state_directory"
+  if [[ $(configured_window_transparency) == "true" ]]; then
+    "$yabai_command" -m window --opacity 1.0
+    rm -f "$state_directory/window-transparency-enabled"
+    print "window-transparency=false"
+  else
+    "$yabai_command" -m window --opacity 0.78
+    touch "$state_directory/window-transparency-enabled"
+    print "window-transparency=true"
+  fi
+}
+
 set_rift_layout_gaps() {
   local target=$1
   local top_gap=$2
@@ -496,6 +523,7 @@ run_action() {
     square-aspect-toggle) "$shell_binary" --window-square-aspect; return ;;
     tiled-fullscreen) action=toggle-fullscreen ;;
     pop-window) action=toggle-floating ;;
+    transparency-toggle) toggle_window_transparency; return ;;
   esac
   case $action in
     workspace-focus|workspace-move|workspace-move-silent|workspace-move-monitor|monitor-focus|focus-cycle|move|join)
@@ -582,15 +610,22 @@ case ${1:-status} in
       *) print -u2 'Usage: omacos wm gaps <status|enable|disable|toggle>'; exit 1 ;;
     esac
     ;;
+  transparency)
+    case ${2:-status} in
+      status) print "window-transparency=$(configured_window_transparency)" ;;
+      toggle) toggle_window_transparency ;;
+      *) print -u2 'Usage: omacos wm transparency <status|toggle>'; exit 1 ;;
+    esac
+    ;;
   restore)
     stop_profile "$(current_profile)"
     restore_optional_configs
     ;;
-  close|close-all|window-width-save|window-width-restore|full-width-toggle|square-aspect-toggle|tiled-fullscreen|pop-window|toggle-floating|toggle-fullscreen|toggle-split|toggle-workspace-layout|scratchpad-toggle|scratchpad-move|workspace-current|workspace-focus|workspace-move|workspace-move-silent|workspace-next|workspace-previous|workspace-back|workspace-next-monitor|workspace-move-monitor|monitor-focus|focus-cycle|resize-grow|resize-shrink|focus|move|join)
+  close|close-all|window-width-save|window-width-restore|full-width-toggle|square-aspect-toggle|tiled-fullscreen|pop-window|transparency-toggle|toggle-floating|toggle-fullscreen|toggle-split|toggle-workspace-layout|scratchpad-toggle|scratchpad-move|workspace-current|workspace-focus|workspace-move|workspace-move-silent|workspace-next|workspace-previous|workspace-back|workspace-next-monitor|workspace-move-monitor|monitor-focus|focus-cycle|resize-grow|resize-shrink|focus|move|join)
     run_action "$@"
     ;;
   *)
-    print -u2 "Usage: omacos wm <profile|status|install|power-mode|bar-position|gaps|ACTION>"
+    print -u2 "Usage: omacos wm <profile|status|install|power-mode|bar-position|gaps|transparency|ACTION>"
     exit 1
     ;;
 esac

@@ -83,6 +83,10 @@ rg -q '^gaps.outer.bottom = 42$' "$temporary_home/.config/aerospace/aerospace.to
 "$wm" square-aspect-toggle
 "$wm" tiled-fullscreen
 "$wm" pop-window
+if "$wm" transparency-toggle >/dev/null 2>&1; then
+  print -u2 "Transparency unexpectedly succeeded outside yabai power mode"
+  exit 1
+fi
 rg -Fq 'aerospace focus left' "$command_log"
 rg -Fq 'aerospace move-node-to-workspace --focus-follows-window 7' "$command_log"
 rg -Fq 'aerospace move-node-to-workspace 8' "$command_log"
@@ -127,10 +131,17 @@ rg -q '^yabai -m config bottom_padding 42$' "$temporary_home/.config/yabai/yabai
 "$wm" move down
 "$wm" toggle-workspace-layout
 "$wm" scratchpad-move
+[[ $("$wm" transparency status) == 'window-transparency=false' ]]
+"$wm" transparency toggle >/dev/null
+[[ $("$wm" transparency status) == 'window-transparency=true' ]]
+"$wm" transparency toggle >/dev/null
+[[ $("$wm" transparency status) == 'window-transparency=false' ]]
 rg -Fq 'yabai -m window --focus west' "$command_log"
 rg -Fq 'yabai -m window --warp south' "$command_log"
 rg -Fq 'yabai -m space --layout stack' "$command_log"
 rg -Fq 'yabai -m window --scratchpad omacos-scratchpad' "$command_log"
+rg -Fq 'yabai -m window --opacity 0.78' "$command_log"
+rg -Fq 'yabai -m window --opacity 1.0' "$command_log"
 
 "$wm" bar-position top
 rg -q '^gaps.outer.top = 42$' "$temporary_home/.config/aerospace/aerospace.toml"

@@ -81,6 +81,8 @@ jq --slurpfile keys "$keybindings_path" '
     | ([ $keys[0].bindings[].description, ($keys[0].globalBindings // [])[].description ] | index($title) != null) as $isBound
     | if $isBound and $title == "Invoke last notification" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos notification invoke-one"; "The shortcut invokes an action URL attached to the newest OMacOS notification; Apple does not expose actions owned by third-party Notification Center entries."; $item.source)
+      elif $isBound and $title == "Toggle window transparency" then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "optional-unsafe"; "omacos wm transparency toggle"; "The original shortcut controls focused-window opacity in manually enabled yabai power mode; AeroSpace and Rift have no equivalent compositor-opacity API."; $item.source)
       elif $isBound and $title == "Toggle single-window square aspect" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "omacos wm square-aspect-toggle"; "Accessibility resizes the focused window to a centered square and restores its saved frame on the next invocation."; $item.source)
       elif $isBound and ($title | test("^Monitor scaling")) then

@@ -3003,10 +3003,10 @@
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:19",
         "title": "Toggle window transparency",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "limited",
+        "grade": "optional-unsafe",
+        "route": "omacos wm transparency toggle",
+        "notes": "The original shortcut controls focused-window opacity in manually enabled yabai power mode; AeroSpace and Rift have no equivalent compositor-opacity API.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
@@ -8830,9 +8830,9 @@
   "summary": {
     "total": 879,
     "implemented": 634,
-    "limited": 134,
+    "limited": 135,
     "pending": 0,
-    "unavailable": 27,
+    "unavailable": 26,
     "notApplicable": 84
   }
 }

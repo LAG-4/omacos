@@ -66,6 +66,7 @@ Hold Right Option and press:
 | `Super + /` | Open native display scaling controls |
 | `Super + J` | Toggle split orientation |
 | `Super + Shift + Backspace` | Toggle window gaps |
+| `Super + Backspace` | Toggle focused-window opacity in optional yabai power mode |
 | `Super + Control + Backspace` | Toggle a centered square aspect for the focused window |
 | `Super + Option + ,` | Invoke the action attached to the newest OMacOS notification |
 | `Super + S` | Summon the scratchpad workspace |
@@ -132,6 +133,8 @@ omacos wm profile aerospace
 ```
 
 OMacOS does not weaken SIP, edit sudoers, or load yabai's scripting addition. `omacos wm power-mode guide` explains the separate upstream process and its security tradeoff. Uninstall restores Rift and yabai configuration files that existed before OMacOS first managed them.
+
+Focused-window transparency is available only after selecting yabai and manually enabling its scripting addition. The original `Super + Backspace` chord toggles between 78% and 100% opacity through `omacos wm transparency toggle`. AeroSpace and Rift return a direct limitation instead of changing unrelated shell transparency.
 
 The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, application defaults, agent usage, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
 
