@@ -76,6 +76,38 @@ struct OMacOSMediaStatus: Codable {
     var hasTrack: Bool { !title.isEmpty }
 }
 
+struct OMacOSWiFiCredentials: Codable {
+    let schemaVersion: Int
+    let ssid: String
+    let password: String
+    let security: String
+    let payload: String
+}
+
+struct OMacOSTailscaleMachine: Codable, Identifiable {
+    let id: String
+    let name: String
+    let dnsName: String
+    let ip: String
+    let online: Bool
+}
+
+struct OMacOSTailscaleStatus: Codable {
+    let schemaVersion: Int
+    let installed: Bool
+    let online: Bool
+    let tailnet: String
+    let machines: [OMacOSTailscaleMachine]
+}
+
+struct OMacOSDropboxStatus: Codable {
+    let schemaVersion: Int
+    let installed: Bool
+    let running: Bool
+    let path: String
+    let storageKB: Int
+}
+
 @MainActor
 final class OMacOSSystemPanelState: NSObject, ObservableObject {
     @Published private(set) var batteryPercentage = "—"
@@ -101,6 +133,13 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
     @Published private(set) var stayAwakeEnabled = false
     @Published private(set) var notificationSilencingEnabled = false
     @Published private(set) var nightLightEnabled = false
+    @Published private(set) var speedTestRunning = false
+    @Published private(set) var networkSpeedSummary = "Run a test to measure this connection."
+    @Published private(set) var diskSpeedSummary = "Run a test against the macOS temporary directory."
+    @Published private(set) var wifiCredentials: OMacOSWiFiCredentials?
+    @Published private(set) var wifiCredentialMessage = "Reading the current network from your login keychain…"
+    @Published private(set) var tailscaleStatus: OMacOSTailscaleStatus?
+    @Published private(set) var dropboxStatus: OMacOSDropboxStatus?
 
     private var refreshTimer: Timer?
 
@@ -170,6 +209,82 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
             executable: "/usr/bin/env",
             arguments: [projectScript(named: "toggles.zsh"), action]
         )
+    }
+
+    func runSpeedTest(_ kind: String) {
+        guard !speedTestRunning else { return }
+        speedTestRunning = true
+        Task {
+            let result = await OMacOSCommandRunner.runAsync(
+                executable: "/usr/bin/env",
+                arguments: [projectScript(named: "speedtest.zsh"), kind]
+            )
+            speedTestRunning = false
+            guard result.exitCode == 0,
+                  let data = result.output.data(using: .utf8),
+                  let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                if kind == "network" {
+                    networkSpeedSummary = "The network test failed. Check the connection and try again."
+                } else {
+                    diskSpeedSummary = "The disk test failed. Check free space and try again."
+                }
+                return
+            }
+            if kind == "network" {
+                let down = object["downloadMbps"] as? Double ?? 0
+                let up = object["uploadMbps"] as? Double ?? 0
+                let response = object["responsivenessRPM"] as? Double ?? 0
+                networkSpeedSummary = String(format: "%.1f Mbps down  •  %.1f Mbps up  •  %.0f RPM", down, up, response)
+            } else {
+                let read = object["readMBps"] as? Double ?? 0
+                let write = object["writeMBps"] as? Double ?? 0
+                diskSpeedSummary = String(format: "%.1f MB/s read  •  %.1f MB/s write", read, write)
+            }
+        }
+    }
+
+    func refreshWiFiCredentials() {
+        wifiCredentialMessage = "Reading the current network from your login keychain…"
+        Task {
+            let result = await OMacOSCommandRunner.runAsync(
+                executable: "/usr/bin/env",
+                arguments: [projectScript(named: "network.zsh"), "credentials"]
+            )
+            guard result.exitCode == 0,
+                  let data = result.output.data(using: .utf8),
+                  let decoded = try? JSONDecoder().decode(OMacOSWiFiCredentials.self, from: data) else {
+                wifiCredentials = nil
+                wifiCredentialMessage = "The connected Wi-Fi password was not available in the login keychain."
+                return
+            }
+            wifiCredentials = decoded
+            wifiCredentialMessage = "Scan to join \(decoded.ssid)."
+        }
+    }
+
+    func refreshService(_ service: String) {
+        Task {
+            let result = await OMacOSCommandRunner.runAsync(
+                executable: "/usr/bin/env",
+                arguments: [projectScript(named: "services.zsh"), service, "status"]
+            )
+            guard result.exitCode == 0, let data = result.output.data(using: .utf8) else { return }
+            if service == "tailscale" {
+                tailscaleStatus = try? JSONDecoder().decode(OMacOSTailscaleStatus.self, from: data)
+            } else if service == "dropbox" {
+                dropboxStatus = try? JSONDecoder().decode(OMacOSDropboxStatus.self, from: data)
+            }
+        }
+    }
+
+    func controlService(_ service: String, action: String) {
+        Task {
+            _ = await OMacOSCommandRunner.runAsync(
+                executable: "/usr/bin/env",
+                arguments: [projectScript(named: "services.zsh"), service, action]
+            )
+            refreshService(service)
+        }
     }
 
     func resetPanelSearch() {

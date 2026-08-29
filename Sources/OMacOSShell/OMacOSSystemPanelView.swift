@@ -1,3 +1,4 @@
+import CoreImage.CIFilterBuiltins
 import SwiftUI
 
 struct OMacOSSystemPanelView: View {
@@ -8,6 +9,9 @@ struct OMacOSSystemPanelView: View {
     @ObservedObject var reminderStore: OMacOSReminderStore
     @ObservedObject var agentStore: OMacOSAgentUsageStore
     @ObservedObject var dictationController: OMacOSDictationController
+    @ObservedObject var notificationStore: OMacOSNotificationStore
+    @ObservedObject var packageStore: OMacOSPackageStore
+    @ObservedObject var pluginStore: OMacOSPluginCatalogStore
     let dismissPanel: () -> Void
 
     private var colors: OMacOSThemeColors { theme.colors }
@@ -35,6 +39,14 @@ struct OMacOSSystemPanelView: View {
                 if state.weatherStatus == nil {
                     state.refreshWeather()
                 }
+            } else if panelID == .wifiQR {
+                state.refreshWiFiCredentials()
+            } else if panelID == .tailscale {
+                state.refreshService("tailscale")
+            } else if panelID == .dropbox {
+                state.refreshService("dropbox")
+            } else if panelID == .packages {
+                packageStore.refreshInstalledPackages()
             }
         }
     }
@@ -87,6 +99,22 @@ struct OMacOSSystemPanelView: View {
             mediaPanel
         case .dictation:
             dictationPanel
+        case .notifications:
+            notificationsPanel
+        case .speedtest:
+            speedtestPanel(kind: "network")
+        case .diskSpeedtest:
+            speedtestPanel(kind: "disk")
+        case .wifiQR:
+            wifiQRPanel
+        case .tailscale:
+            tailscalePanel
+        case .dropbox:
+            dropboxPanel
+        case .packages:
+            packagesPanel
+        case .plugins:
+            pluginsPanel
         case .noticeDateTime:
             dateTimeNotice
         case .noticeBattery:
@@ -662,6 +690,305 @@ struct OMacOSSystemPanelView: View {
         .frame(maxWidth: .infinity)
     }
 
+    private var notificationsPanel: some View {
+        VStack(spacing: 10) {
+            HStack {
+                Text("OMacOS reminders and service notices")
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                Spacer()
+                Button("Clear") { notificationStore.clear() }
+                    .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+            }
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(notificationStore.records) { record in
+                        HStack(alignment: .top, spacing: 11) {
+                            Image(systemName: record.source == "reminder" ? "bell" : "info.circle")
+                                .foregroundStyle(Color(omacosHex: colors.accent))
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(record.title).fontWeight(.semibold)
+                                Text(record.body).lineLimit(4)
+                                Text(record.createdAt, style: .relative)
+                                    .font(.caption2)
+                                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                            }
+                            Spacer()
+                        }
+                        .padding(11)
+                        .background(Color(omacosHex: colors.lighterBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+            }
+            .overlay {
+                if notificationStore.records.isEmpty {
+                    ContentUnavailableView("No OMacOS notifications", systemImage: "bell")
+                }
+            }
+            Text("macOS does not expose other applications’ Notification Center history to third-party apps.")
+                .font(.caption2)
+                .foregroundStyle(Color(omacosHex: colors.darkForeground))
+        }
+    }
+
+    private func speedtestPanel(kind: String) -> some View {
+        let isNetwork = kind == "network"
+        let summary = isNetwork ? state.networkSpeedSummary : state.diskSpeedSummary
+        return VStack(spacing: 18) {
+            Image(systemName: isNetwork ? "gauge.with.dots.needle.67percent" : "internaldrive")
+                .font(.system(size: 54))
+                .foregroundStyle(Color(omacosHex: colors.accent))
+            Text(summary)
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .multilineTextAlignment(.center)
+            if state.speedTestRunning {
+                ProgressView().controlSize(.small)
+                Text(isNetwork ? "Measuring network quality…" : "Writing and reading a temporary 64 MB file…")
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            } else {
+                Button("Run \(isNetwork ? "Network" : "Disk") Test") { state.runSpeedTest(kind) }
+                    .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var wifiQRPanel: some View {
+        VStack(spacing: 12) {
+            if let credentials = state.wifiCredentials,
+               let qrImage = qrCodeImage(for: credentials.payload) {
+                qrImage
+                    .interpolation(.none)
+                    .resizable()
+                    .frame(width: 210, height: 210)
+                    .padding(12)
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                Text(credentials.ssid).font(.title3.bold())
+                Text(state.wifiCredentialMessage)
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                Button("Copy Password") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(credentials.password, forType: .string)
+                }
+                .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+            } else {
+                ProgressView().controlSize(.small)
+                Text(state.wifiCredentialMessage)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                Button("Try Again") { state.refreshWiFiCredentials() }
+                    .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func qrCodeImage(for payload: String) -> Image? {
+        let filter = CIFilter.qrCodeGenerator()
+        filter.message = Data(payload.utf8)
+        filter.correctionLevel = "M"
+        guard let outputImage = filter.outputImage?.transformed(by: CGAffineTransform(scaleX: 8, y: 8)) else {
+            return nil
+        }
+        let context = CIContext(options: [.useSoftwareRenderer: false])
+        guard let cgImage = context.createCGImage(outputImage, from: outputImage.extent) else {
+            return nil
+        }
+        return Image(decorative: cgImage, scale: 1)
+    }
+
+    private var tailscalePanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if let service = state.tailscaleStatus, service.installed {
+                HStack {
+                    statusCard(
+                        service.online ? "Connected" : "Disconnected",
+                        detail: service.tailnet.isEmpty ? "Tailscale" : service.tailnet,
+                        systemImage: "network.badge.shield.half.filled"
+                    )
+                    Button(service.online ? "Disconnect" : "Connect") {
+                        state.controlService("tailscale", action: service.online ? "down" : "up")
+                    }
+                    .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                }
+                ScrollView {
+                    LazyVStack(spacing: 7) {
+                        ForEach(service.machines) { machine in
+                            HStack {
+                                Circle()
+                                    .fill(Color(omacosHex: machine.online ? colors.green : colors.darkForeground))
+                                    .frame(width: 7, height: 7)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(machine.name).fontWeight(.semibold)
+                                    Text(machine.ip).font(.caption2).foregroundStyle(Color(omacosHex: colors.darkForeground))
+                                }
+                                Spacer()
+                                Button("Copy IP") {
+                                    NSPasteboard.general.clearContents()
+                                    NSPasteboard.general.setString(machine.ip, forType: .string)
+                                }
+                                .buttonStyle(.plain)
+                                .foregroundStyle(Color(omacosHex: colors.accent))
+                            }
+                            .padding(9)
+                            .background(Color(omacosHex: colors.lighterBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                }
+            } else {
+                ContentUnavailableView("Tailscale is not installed", systemImage: "network.badge.shield.half.filled")
+                Button("Open Tailscale Download") {
+                    NSWorkspace.shared.open(URL(string: "https://tailscale.com/download/mac")!)
+                }
+                .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private var dropboxPanel: some View {
+        VStack(spacing: 12) {
+            if let service = state.dropboxStatus, service.installed {
+                statusCard(
+                    service.running ? "Dropbox is running" : "Dropbox is not running",
+                    detail: String(format: "%.1f GB in the local sync folder", Double(service.storageKB) / 1_048_576),
+                    systemImage: "shippingbox"
+                )
+                panelAction("Open Dropbox Folder", subtitle: service.path, systemImage: "folder") {
+                    state.controlService("dropbox", action: "folder")
+                }
+                panelAction("Open Dropbox", subtitle: "Launch the desktop client", systemImage: "shippingbox") {
+                    state.controlService("dropbox", action: "open")
+                }
+            } else {
+                ContentUnavailableView("Dropbox is not installed", systemImage: "shippingbox")
+                Button("Open Dropbox Download") {
+                    NSWorkspace.shared.open(URL(string: "https://www.dropbox.com/install")!)
+                }
+                .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+            }
+        }
+    }
+
+    private var packagesPanel: some View {
+        VStack(spacing: 10) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 7) {
+                    ForEach(packageStore.categories, id: \.self) { category in
+                        Button {
+                            packageStore.selectedCategory = category
+                        } label: {
+                            Text(category.replacingOccurrences(of: "-", with: " ").capitalized)
+                                .font(.system(size: 11, weight: .semibold))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(Color(omacosHex: packageStore.selectedCategory == category ? colors.background : colors.foreground))
+                        .background(Color(omacosHex: packageStore.selectedCategory == category ? colors.accent : colors.lighterBackground))
+                        .clipShape(Capsule())
+                    }
+                }
+            }
+            ScrollView {
+                LazyVStack(spacing: 7) {
+                    ForEach(filteredOptionalPackages) { package in
+                        HStack(spacing: 11) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(package.name).fontWeight(.semibold)
+                                Text(package.description)
+                                    .font(.caption)
+                                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                            }
+                            Spacer()
+                            if packageStore.workingPackageID == package.id {
+                                ProgressView().controlSize(.small)
+                            } else {
+                                Button(packageStore.installedPackageIDs.contains(package.id) ? "Remove" : "Install") {
+                                    packageStore.toggleInstallation(package)
+                                }
+                                .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                            }
+                        }
+                        .padding(10)
+                        .background(Color(omacosHex: colors.lighterBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+            }
+            if !packageStore.statusMessage.isEmpty {
+                Text(packageStore.statusMessage)
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            }
+            Text("Each app is installed directly by Homebrew only after you select Install. Third-party licenses and permissions remain separate.")
+                .font(.caption2)
+                .foregroundStyle(Color(omacosHex: colors.darkForeground))
+        }
+    }
+
+    private var pluginsPanel: some View {
+        VStack(spacing: 10) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 7) {
+                    ForEach(pluginStore.grades, id: \.self) { grade in
+                        Button {
+                            pluginStore.selectedGrade = grade
+                        } label: {
+                            Text(grade.replacingOccurrences(of: "-", with: " ").capitalized)
+                                .font(.system(size: 11, weight: .semibold))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(Color(omacosHex: pluginStore.selectedGrade == grade ? colors.background : colors.foreground))
+                        .background(Color(omacosHex: pluginStore.selectedGrade == grade ? colors.accent : colors.lighterBackground))
+                        .clipShape(Capsule())
+                    }
+                }
+            }
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(filteredPluginRecords) { plugin in
+                        VStack(alignment: .leading, spacing: 5) {
+                            HStack {
+                                Text(plugin.name).fontWeight(.semibold)
+                                Spacer()
+                                Text(plugin.grade.replacingOccurrences(of: "-", with: " ").uppercased())
+                                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                    .foregroundStyle(Color(omacosHex: pluginGradeColor(plugin.grade)))
+                            }
+                            Text(plugin.implementation)
+                            Text(plugin.limitation)
+                                .font(.caption)
+                                .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                        }
+                        .padding(11)
+                        .background(Color(omacosHex: colors.lighterBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+            }
+            Text("Third-party providers run out of process. See docs/plugin-provider.md for the versioned JSON contract.")
+                .font(.caption2)
+                .foregroundStyle(Color(omacosHex: colors.darkForeground))
+        }
+    }
+
+    private func pluginGradeColor(_ grade: String) -> String {
+        switch grade {
+        case "exact": colors.green
+        case "close", "native-replacement": colors.accent
+        case "partial": colors.yellow
+        default: colors.darkForeground
+        }
+    }
+
     private var dateTimeNotice: some View {
         VStack(spacing: 8) {
             Text(Date(), format: .dateTime.weekday(.wide).month(.wide).day().year())
@@ -827,17 +1154,18 @@ struct OMacOSSystemPanelView: View {
 
     private var panelWidth: CGFloat {
         switch panelID {
-        case .keybindings, .clipboard, .emojis, .themes, .agents: 620
+        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins: 620
         default: 430
         }
     }
 
     private var panelHeight: CGFloat {
         switch panelID {
-        case .keybindings, .clipboard, .emojis, .themes, .agents: 620
+        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins: 620
         case .clock: 520
         case .system: 430
         case .weather: 440
+        case .wifiQR: 440
         case .noticeDateTime, .noticeBattery, .noticeWeather: 280
         default: 360
         }
@@ -894,6 +1222,16 @@ struct OMacOSSystemPanelView: View {
             $0.name.localizedCaseInsensitiveContains(state.panelSearchText)
                 || $0.mode.localizedCaseInsensitiveContains(state.panelSearchText)
         }
+    }
+
+    private var filteredOptionalPackages: [OMacOSOptionalPackage] {
+        guard packageStore.selectedCategory != "all" else { return packageStore.packages }
+        return packageStore.packages.filter { $0.category == packageStore.selectedCategory }
+    }
+
+    private var filteredPluginRecords: [OMacOSPluginParityRecord] {
+        guard pluginStore.selectedGrade != "all" else { return pluginStore.plugins }
+        return pluginStore.plugins.filter { $0.grade == pluginStore.selectedGrade }
     }
 }
 

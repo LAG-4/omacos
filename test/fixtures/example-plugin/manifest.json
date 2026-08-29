@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "example.status",
+  "name": "Example Status",
+  "version": "1.0.0",
+  "provider": { "command": "provider.zsh" }
+}

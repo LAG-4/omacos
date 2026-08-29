@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://omacos.dev/schemas/plugin-provider-v1.json",
+  "title": "OMacOS out-of-process plugin manifest",
+  "type": "object",
+  "required": ["schemaVersion", "id", "name", "version", "provider"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]+$" },
+    "name": { "type": "string", "minLength": 1 },
+    "version": { "type": "string", "minLength": 1 },
+    "provider": {
+      "type": "object",
+      "required": ["command"],
+      "properties": {
+        "command": { "type": "string", "pattern": "^[^/][^\\n]*$" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

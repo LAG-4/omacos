@@ -15,3 +15,5 @@ OMacOS installs third-party applications through Homebrew. Those applications ar
 The optional OMacOS Neovim profile fetches lazy.nvim, Tokyo Night, Telescope, plenary.nvim, nvim-tree, gitsigns.nvim, lualine.nvim, and toggleterm.nvim from their upstream repositories on first launch. Those plugins are not bundled or relicensed by OMacOS.
 
 The Claude, Codex, and Fireworks usage collectors are adapted from Omarchy's agent-usage collectors under the MIT License. The complete Omarchy license text is included in `licenses/OMARCHY-MIT.txt`.
+
+Applications listed in `config/optional-packages.json` are downloaded and installed by Homebrew only after an explicit user action. They are not bundled with OMacOS and retain their own licenses, update mechanisms, privacy prompts, and terms.

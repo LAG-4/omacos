@@ -42,6 +42,7 @@
     { "key": "i", "modifiers": ["control"], "description": "Toggle stay awake", "command": "$HOME/.local/bin/omacos toggle toggle idle" },
     { "key": "l", "modifiers": ["control"], "description": "Lock Mac", "command": "$HOME/.local/bin/omacos toggle lock" },
     { "key": "comma", "modifiers": ["control"], "description": "Toggle notification silencing indicator", "command": "$HOME/.local/bin/omacos toggle toggle notification-silencing" },
+    { "key": "comma", "modifiers": ["shift", "option"], "description": "Notification history", "command": "$HOME/.local/bin/omacos notification show" },
     { "key": "n", "modifiers": ["control"], "description": "Toggle night light indicator", "command": "$HOME/.local/bin/omacos toggle toggle night-light" },
     { "key": "x", "modifiers": ["control"], "description": "Toggle dictation", "command": "$HOME/.local/bin/omacos dictation toggle" },
     { "key": "spacebar", "modifiers": ["shift"], "description": "Toggle menu bar", "command": "$HOME/.local/bin/omacos toggle toggle bar" },

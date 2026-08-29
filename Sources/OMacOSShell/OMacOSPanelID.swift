@@ -15,6 +15,14 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
     case weather
     case media
     case dictation
+    case notifications
+    case speedtest
+    case diskSpeedtest = "disk-speedtest"
+    case wifiQR = "wifi-qr"
+    case tailscale
+    case dropbox
+    case packages
+    case plugins
     case noticeDateTime = "notice-datetime"
     case noticeBattery = "notice-battery"
     case noticeWeather = "notice-weather"
@@ -44,6 +52,14 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .weather: "Weather"
         case .media: "Now Playing"
         case .dictation: "Dictation"
+        case .notifications: "Notifications"
+        case .speedtest: "Network Speed Test"
+        case .diskSpeedtest: "Disk Speed Test"
+        case .wifiQR: "Share Wi-Fi"
+        case .tailscale: "Tailscale"
+        case .dropbox: "Dropbox"
+        case .packages: "Optional Apps"
+        case .plugins: "Quattro Plugins"
         case .noticeDateTime: "Date & Time"
         case .noticeBattery: "Battery"
         case .noticeWeather: "Weather"
@@ -73,6 +89,14 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .weather, .noticeWeather: "cloud.sun"
         case .media: "play.circle"
         case .dictation: "waveform.and.mic"
+        case .notifications: "bell.badge"
+        case .speedtest: "gauge.with.dots.needle.67percent"
+        case .diskSpeedtest: "internaldrive"
+        case .wifiQR: "qrcode"
+        case .tailscale: "network.badge.shield.half.filled"
+        case .dropbox: "shippingbox"
+        case .packages: "shippingbox.and.arrow.backward"
+        case .plugins: "puzzlepiece.extension"
         case .noticeDateTime: "clock"
         case .noticeBattery: "battery.75percent"
         case .system: "power"

@@ -26,6 +26,12 @@ Commands:
   update ACTION             Check, apply, or roll back OMacOS updates
   backup ACTION             Snapshot or restore files managed by OMacOS
   migrate ACTION            Run or inspect versioned migrations
+  notification ACTION       Add, list, clear, or open OMacOS notification history
+  speedtest KIND            Measure network or disk performance
+  network ACTION            Inspect Wi-Fi or reveal the sharing QR panel
+  service NAME ACTION       Control optional Tailscale and Dropbox services
+  package ACTION            Browse, install, or remove optional applications
+  plugin ACTION             Inspect built-ins or manage out-of-process providers
   reminder ACTION           Add, list, or clear local reminders
   webapp ACTION             Install, list, or remove URL app bundles
   theme apply [name]        Generate configs from a semantic theme
@@ -118,7 +124,7 @@ run_shell_command() {
     toggle-panel)
       local panel_name=${2:-}
       case $panel_name in
-        menu|keybindings|clipboard|emojis|capture|reminders|themes|wallpapers|defaults|agents|weather|media|notice-datetime|notice-battery|notice-weather|system|audio|bluetooth|network|display|clock|power|activity)
+        menu|keybindings|clipboard|emojis|capture|reminders|notifications|themes|wallpapers|defaults|agents|weather|media|dictation|wifi-qr|speedtest|disk-speedtest|tailscale|dropbox|packages|plugins|notice-datetime|notice-battery|notice-weather|system|audio|bluetooth|network|display|clock|power|activity)
           "$shell_binary" --toggle-panel "$panel_name"
           ;;
         *)
@@ -272,6 +278,41 @@ case ${1:-help} in
     ;;
   migrate)
     "$installed_root/scripts/migrations.zsh" "${@:2}"
+    ;;
+  notification)
+    case ${2:-} in
+      add)
+        [[ -n ${3:-} && -n ${4:-} ]] || { print -u2 'Usage: omacos notification add TITLE BODY'; exit 1; }
+        "$shell_binary" --notification-add "$3" "$4"
+        ;;
+      list) "$shell_binary" --notification-list ;;
+      clear) "$shell_binary" --notification-clear ;;
+      show) run_shell_command toggle-panel notifications ;;
+      *) print -u2 'Usage: omacos notification <add TITLE BODY|list|clear|show>'; exit 1 ;;
+    esac
+    ;;
+  speedtest)
+    "$installed_root/scripts/speedtest.zsh" "${2:-}" "${3:-}"
+    ;;
+  network)
+    if [[ ${2:-} == "wifi-qr" ]]; then
+      run_shell_command toggle-panel wifi-qr
+    else
+      "$installed_root/scripts/network.zsh" "${2:-status}"
+    fi
+    ;;
+  service)
+    "$installed_root/scripts/services.zsh" "${@:2}"
+    ;;
+  package)
+    "$installed_root/scripts/packages.zsh" "${@:2}"
+    ;;
+  plugin)
+    if [[ ${2:-} == "show" ]]; then
+      run_shell_command toggle-panel plugins
+    else
+      "$installed_root/scripts/plugins.zsh" "${@:2}"
+    fi
     ;;
   weather)
     "$installed_root/scripts/weather.zsh" "${@:2}"

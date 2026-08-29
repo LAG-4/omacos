@@ -17,6 +17,8 @@ OMacOS is at its first prototype milestone. The current build includes:
 - local web-app bundles and a native agent-usage panel backed by Claude, Codex, and Fireworks collectors
 - weather and media panels, Quattro-style date/battery/weather notices, reversible stay-awake and bar toggles, and native on-device dictation
 - managed snapshots, versioned migrations, tested updates, and one-command rollback
+- locally generated Wi-Fi sharing QR codes, network and disk benchmarks, optional Tailscale and Dropbox panels, and an explicit optional-app catalog
+- a complete 29-plugin Quattro parity catalog plus an isolated out-of-process provider contract
 - a readable installer with dry-run, doctor, backup, and uninstall commands
 - macOS 26 compatibility checks and macOS 27 beta test coverage
 
@@ -81,6 +83,9 @@ omacos dictation toggle
 omacos toggle toggle idle
 omacos backup create before-experiment
 omacos update apply
+omacos package list gaming
+omacos package install utm
+omacos plugin show
 omacos uninstall
 ```
 
@@ -93,6 +98,10 @@ The installer adds one clearly marked source block to `~/.zshrc`. That block loa
 Dictation uses Apple's Speech framework. Hold F9, or press `Super + Control + X` to toggle it; stopping inserts the recognized text into the focused application. The first use prompts for Microphone and Speech Recognition, and insertion needs Accessibility. When supported by the current language, recognition is required to run on-device.
 
 Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. Development builds are ad-hoc signed; stable releases still require a consistent Developer ID signature and notarization so privacy permissions survive upgrades reliably.
+
+The base install remains deliberately focused. Browsers, GUI development tools, communication apps, media tools, utilities, gaming clients, and virtual-machine apps live in the Optional Apps panel and `omacos package`; choosing Install is the authorization for that one Homebrew cask. OMacOS does not remove those third-party apps during its own uninstall.
+
+The Quattro Plugins panel reports the actual macOS implementation and limitation for every frozen plugin. External plugins are never loaded into the shell process; the versioned contract in [docs/plugin-provider.md](docs/plugin-provider.md) executes providers separately and validates their JSON response.
 
 For local visual development, run a panel directly without installing the project:
 

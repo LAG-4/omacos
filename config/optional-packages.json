@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "packages": [
+    { "id": "brave", "name": "Brave", "category": "browsers", "type": "cask", "package": "brave-browser", "description": "Privacy-focused Chromium browser" },
+    { "id": "firefox", "name": "Firefox", "category": "browsers", "type": "cask", "package": "firefox", "description": "Independent open-source browser" },
+    { "id": "chrome", "name": "Google Chrome", "category": "browsers", "type": "cask", "package": "google-chrome", "description": "Google's Chromium browser" },
+    { "id": "zen", "name": "Zen Browser", "category": "browsers", "type": "cask", "package": "zen", "description": "Firefox-based productivity browser" },
+
+    { "id": "vscode", "name": "Visual Studio Code", "category": "development", "type": "cask", "package": "visual-studio-code", "description": "Extensible code editor" },
+    { "id": "cursor", "name": "Cursor", "category": "development", "type": "cask", "package": "cursor", "description": "AI code editor" },
+    { "id": "zed", "name": "Zed", "category": "development", "type": "cask", "package": "zed", "description": "Fast native code editor" },
+    { "id": "sublime", "name": "Sublime Text", "category": "development", "type": "cask", "package": "sublime-text", "description": "Lightweight text editor" },
+    { "id": "docker", "name": "Docker Desktop", "category": "development", "type": "cask", "package": "docker", "description": "Container desktop runtime" },
+    { "id": "orbstack", "name": "OrbStack", "category": "development", "type": "cask", "package": "orbstack", "description": "Fast containers and Linux machines" },
+    { "id": "postman", "name": "Postman", "category": "development", "type": "cask", "package": "postman", "description": "API development client" },
+    { "id": "tableplus", "name": "TablePlus", "category": "development", "type": "cask", "package": "tableplus", "description": "Native database client" },
+    { "id": "dbeaver", "name": "DBeaver Community", "category": "development", "type": "cask", "package": "dbeaver-community", "description": "Open-source database client" },
+
+    { "id": "slack", "name": "Slack", "category": "communication", "type": "cask", "package": "slack", "description": "Team messaging" },
+    { "id": "discord", "name": "Discord", "category": "communication", "type": "cask", "package": "discord", "description": "Community voice and chat" },
+    { "id": "zoom", "name": "Zoom", "category": "communication", "type": "cask", "package": "zoom", "description": "Video meetings" },
+    { "id": "whatsapp", "name": "WhatsApp", "category": "communication", "type": "cask", "package": "whatsapp", "description": "Private messaging" },
+    { "id": "signal", "name": "Signal", "category": "communication", "type": "cask", "package": "signal", "description": "Encrypted messaging" },
+    { "id": "telegram", "name": "Telegram", "category": "communication", "type": "cask", "package": "telegram", "description": "Cloud messaging" },
+
+    { "id": "spotify", "name": "Spotify", "category": "media", "type": "cask", "package": "spotify", "description": "Music streaming" },
+    { "id": "vlc", "name": "VLC", "category": "media", "type": "cask", "package": "vlc", "description": "Open-source media player" },
+    { "id": "obs", "name": "OBS Studio", "category": "media", "type": "cask", "package": "obs", "description": "Recording and live streaming" },
+    { "id": "handbrake", "name": "HandBrake", "category": "media", "type": "cask", "package": "handbrake", "description": "Video transcoder" },
+
+    { "id": "localsend", "name": "LocalSend", "category": "utilities", "type": "cask", "package": "localsend", "description": "Local cross-platform file transfer" },
+    { "id": "onepassword", "name": "1Password", "category": "utilities", "type": "cask", "package": "1password", "description": "Password manager" },
+    { "id": "tailscale", "name": "Tailscale", "category": "utilities", "type": "cask", "package": "tailscale", "description": "Mesh VPN" },
+    { "id": "dropbox", "name": "Dropbox", "category": "utilities", "type": "cask", "package": "dropbox", "description": "Cloud file synchronization" },
+    { "id": "monitorcontrol", "name": "MonitorControl", "category": "utilities", "type": "cask", "package": "monitorcontrol", "description": "External display brightness and volume" },
+    { "id": "background-music", "name": "Background Music", "category": "utilities", "type": "cask", "package": "background-music", "description": "Per-application audio controls" },
+
+    { "id": "steam", "name": "Steam", "category": "gaming", "type": "cask", "package": "steam", "description": "PC game library and launcher" },
+    { "id": "heroic", "name": "Heroic", "category": "gaming", "type": "cask", "package": "heroic", "description": "Epic and GOG game launcher" },
+    { "id": "whisky", "name": "Whisky", "category": "gaming", "type": "cask", "package": "whisky", "description": "Wine-based Windows game runner" },
+    { "id": "utm", "name": "UTM", "category": "virtualization", "type": "cask", "package": "utm", "description": "Open-source virtual machines" }
+  ]
+}

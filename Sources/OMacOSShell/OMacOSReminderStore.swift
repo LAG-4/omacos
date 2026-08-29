@@ -15,12 +15,20 @@ final class OMacOSReminderStore: NSObject, ObservableObject {
     @Published var draftDate = Date(timeIntervalSinceNow: 600)
 
     private let remindersURL: URL
+    private let notificationSilencingURL: URL
+    private let notificationStore: OMacOSNotificationStore?
     private var deliveryTimer: Timer?
 
-    init(environment: [String: String] = ProcessInfo.processInfo.environment) {
+    init(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        notificationStore: OMacOSNotificationStore? = nil
+    ) {
         let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
         remindersURL = URL(fileURLWithPath: homeDirectory)
             .appendingPathComponent(".local/state/omacos/reminders.json")
+        notificationSilencingURL = URL(fileURLWithPath: homeDirectory)
+            .appendingPathComponent(".local/state/omacos/toggles/notification-silencing.enabled")
+        self.notificationStore = notificationStore
         super.init()
         loadReminders()
     }
@@ -64,11 +72,14 @@ final class OMacOSReminderStore: NSObject, ObservableObject {
         persistReminders()
     }
 
-    @objc private func deliverDueReminders() {
+    @objc func deliverDueReminders() {
         let now = Date()
         var changed = false
         for index in reminders.indices where !reminders[index].delivered && reminders[index].dueAt <= now {
-            Self.deliverNotification(text: reminders[index].text)
+            notificationStore?.add(title: "OMacOS Reminder", body: reminders[index].text, source: "reminder")
+            if !FileManager.default.fileExists(atPath: notificationSilencingURL.path) {
+                Self.deliverNotification(text: reminders[index].text)
+            }
             reminders[index].delivered = true
             changed = true
         }

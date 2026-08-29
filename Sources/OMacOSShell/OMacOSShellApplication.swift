@@ -91,6 +91,9 @@ final class OMacOSPanelCoordinator: NSObject {
     private let reminderStore: OMacOSReminderStore
     private let agentStore: OMacOSAgentUsageStore
     private let dictationController: OMacOSDictationController
+    private let notificationStore: OMacOSNotificationStore
+    private let packageStore: OMacOSPackageStore
+    private let pluginStore: OMacOSPluginCatalogStore
     private var activePanel: NSPanel?
     private var activePanelID: OMacOSPanelID?
 
@@ -100,7 +103,10 @@ final class OMacOSPanelCoordinator: NSObject {
         clipboardStore: OMacOSClipboardStore,
         reminderStore: OMacOSReminderStore,
         agentStore: OMacOSAgentUsageStore,
-        dictationController: OMacOSDictationController
+        dictationController: OMacOSDictationController,
+        notificationStore: OMacOSNotificationStore,
+        packageStore: OMacOSPackageStore,
+        pluginStore: OMacOSPluginCatalogStore
     ) {
         self.theme = theme
         self.systemPanelState = systemPanelState
@@ -108,6 +114,9 @@ final class OMacOSPanelCoordinator: NSObject {
         self.reminderStore = reminderStore
         self.agentStore = agentStore
         self.dictationController = dictationController
+        self.notificationStore = notificationStore
+        self.packageStore = packageStore
+        self.pluginStore = pluginStore
         super.init()
         DistributedNotificationCenter.default().addObserver(
             self,
@@ -191,7 +200,10 @@ final class OMacOSPanelCoordinator: NSObject {
                     clipboardStore: clipboardStore,
                     reminderStore: reminderStore,
                     agentStore: agentStore,
-                    dictationController: dictationController
+                    dictationController: dictationController,
+                    notificationStore: notificationStore,
+                    packageStore: packageStore,
+                    pluginStore: pluginStore
                 ) { [weak self] in
                     self?.dismissPanel()
                 }
@@ -208,11 +220,12 @@ final class OMacOSPanelCoordinator: NSObject {
     private func size(for panelID: OMacOSPanelID) -> NSSize {
         switch panelID {
         case .menu: NSSize(width: 540, height: 620)
-        case .keybindings, .clipboard, .emojis, .themes, .agents: NSSize(width: 620, height: 620)
+        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins: NSSize(width: 620, height: 620)
         case .defaults: NSSize(width: 540, height: 540)
         case .clock: NSSize(width: 430, height: 520)
         case .system: NSSize(width: 430, height: 430)
         case .weather: NSSize(width: 430, height: 440)
+        case .wifiQR: NSSize(width: 430, height: 440)
         case .noticeDateTime, .noticeBattery, .noticeWeather: NSSize(width: 430, height: 280)
         default: NSSize(width: 430, height: 360)
         }
@@ -227,6 +240,9 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var reminderStore: OMacOSReminderStore?
     private var agentStore: OMacOSAgentUsageStore?
     private var dictationController: OMacOSDictationController?
+    private var notificationStore: OMacOSNotificationStore?
+    private var packageStore: OMacOSPackageStore?
+    private var pluginStore: OMacOSPluginCatalogStore?
     private var barCoordinator: OMacOSBarWindowCoordinator?
     private var panelCoordinator: OMacOSPanelCoordinator?
 
@@ -236,16 +252,22 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         let state = OMacOSBarState()
         let panelState = OMacOSSystemPanelState()
         let clipboard = OMacOSClipboardStore()
-        let reminders = OMacOSReminderStore()
+        let notifications = OMacOSNotificationStore()
+        let reminders = OMacOSReminderStore(notificationStore: notifications)
         let agents = OMacOSAgentUsageStore()
         let dictation = OMacOSDictationController()
+        let packages = OMacOSPackageStore()
+        let plugins = OMacOSPluginCatalogStore()
         let panels = OMacOSPanelCoordinator(
             theme: state.theme,
             systemPanelState: panelState,
             clipboardStore: clipboard,
             reminderStore: reminders,
             agentStore: agents,
-            dictationController: dictation
+            dictationController: dictation,
+            notificationStore: notifications,
+            packageStore: packages,
+            pluginStore: plugins
         )
         let bars = OMacOSBarWindowCoordinator(
             barState: state,
@@ -262,6 +284,9 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         reminderStore = reminders
         agentStore = agents
         dictationController = dictation
+        notificationStore = notifications
+        packageStore = packages
+        pluginStore = plugins
         barCoordinator = bars
         panelCoordinator = panels
 
@@ -383,8 +408,40 @@ enum OMacOSShellMain {
             return
         }
 
+        if let notificationAddIndex = arguments.firstIndex(of: "--notification-add"),
+           arguments.indices.contains(notificationAddIndex + 2) {
+            let store = OMacOSNotificationStore()
+            guard let record = store.add(
+                title: arguments[notificationAddIndex + 1],
+                body: arguments[notificationAddIndex + 2],
+                source: "cli"
+            ) else {
+                Foundation.exit(1)
+            }
+            print("\(record.id.uuidString)\t\(record.createdAt.ISO8601Format())\t\(record.title)\t\(record.body)")
+            return
+        }
+
+        if arguments.contains("--notification-list") {
+            for record in OMacOSNotificationStore().records {
+                print("\(record.id.uuidString)\t\(record.createdAt.ISO8601Format())\t\(record.title)\t\(record.body)")
+            }
+            return
+        }
+
+        if arguments.contains("--notification-clear") {
+            OMacOSNotificationStore().clear()
+            return
+        }
+
         if arguments.contains("--reminder-clear") {
             OMacOSReminderStore().clear()
+            return
+        }
+
+        if arguments.contains("--reminder-deliver") {
+            let notifications = OMacOSNotificationStore()
+            OMacOSReminderStore(notificationStore: notifications).deliverDueReminders()
             return
         }
 

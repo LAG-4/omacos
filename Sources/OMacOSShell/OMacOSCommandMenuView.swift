@@ -29,7 +29,8 @@ struct OMacOSCommandMenuView: View {
 
     private let panelCommands: [OMacOSPanelID] = [
         .keybindings, .clipboard, .emojis, .capture,
-        .reminders, .themes, .wallpapers, .defaults, .agents, .weather, .media, .dictation, .system
+        .reminders, .notifications, .themes, .wallpapers, .defaults, .agents, .weather, .media,
+        .dictation, .wifiQR, .speedtest, .diskSpeedtest, .tailscale, .dropbox, .packages, .plugins, .system
     ]
 
     var body: some View {

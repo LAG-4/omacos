@@ -1,6 +1,6 @@
 import Foundation
 
-struct OMacOSCommandResult: Equatable {
+struct OMacOSCommandResult: Equatable, Sendable {
     let output: String
     let exitCode: Int32
 }
@@ -28,5 +28,12 @@ enum OMacOSCommandRunner {
             return OMacOSCommandResult(output: "", exitCode: 127)
         }
     }
-}
 
+    static func runAsync(executable: String, arguments: [String]) async -> OMacOSCommandResult {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(returning: run(executable: executable, arguments: arguments))
+            }
+        }
+    }
+}

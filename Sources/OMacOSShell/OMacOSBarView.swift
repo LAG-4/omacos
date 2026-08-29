@@ -51,6 +51,9 @@ struct OMacOSBarView: View {
             }
 
             panelButton(.network)
+            if systemState.tailscaleStatus?.installed == true {
+                panelButton(.tailscale)
+            }
             panelButton(.audio)
             if !agentStore.records.isEmpty {
                 panelButton(.agents)
