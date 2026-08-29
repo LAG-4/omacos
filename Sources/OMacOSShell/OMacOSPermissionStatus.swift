@@ -11,6 +11,7 @@ struct OMacOSPermissionStatus: Codable {
     let screenRecording: String
     let inputMonitoring: String
     let microphone: String
+    let camera: String
     let speechRecognition: String
 
     static func current() -> OMacOSPermissionStatus {
@@ -20,6 +21,7 @@ struct OMacOSPermissionStatus: Codable {
             screenRecording: CGPreflightScreenCaptureAccess() ? "granted" : "not-granted",
             inputMonitoring: inputMonitoringStatus(),
             microphone: captureAuthorizationStatus(AVCaptureDevice.authorizationStatus(for: .audio)),
+            camera: captureAuthorizationStatus(AVCaptureDevice.authorizationStatus(for: .video)),
             speechRecognition: speechAuthorizationStatus(SFSpeechRecognizer.authorizationStatus())
         )
     }

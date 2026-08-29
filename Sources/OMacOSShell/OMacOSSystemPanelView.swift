@@ -1055,6 +1055,7 @@ struct OMacOSSystemPanelView: View {
                 permissionRow("Screen Recording", status: permissionStatus.screenRecording, settingsName: "screen-recording")
                 permissionRow("Input Monitoring", status: permissionStatus.inputMonitoring, settingsName: "input-monitoring")
                 permissionRow("Microphone", status: permissionStatus.microphone, settingsName: "microphone")
+                permissionRow("Camera", status: permissionStatus.camera, settingsName: "camera")
                 permissionRow("Speech Recognition", status: permissionStatus.speechRecognition, settingsName: "speech-recognition")
                 Text("Karabiner-Elements has a separate Input Monitoring identity. OMacOS never grants permissions on your behalf.")
                     .font(.caption)

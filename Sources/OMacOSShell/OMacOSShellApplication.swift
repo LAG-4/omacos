@@ -284,6 +284,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var pluginStore: OMacOSPluginCatalogStore?
     private var barCoordinator: OMacOSBarWindowCoordinator?
     private var panelCoordinator: OMacOSPanelCoordinator?
+    private var webcamOverlayController: OMacOSWebcamOverlayController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -297,6 +298,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         let dictation = OMacOSDictationController()
         let packages = OMacOSPackageStore()
         let plugins = OMacOSPluginCatalogStore()
+        let webcamOverlay = OMacOSWebcamOverlayController()
         let panels = OMacOSPanelCoordinator(
             theme: state.theme,
             systemPanelState: panelState,
@@ -328,6 +330,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         pluginStore = plugins
         barCoordinator = bars
         panelCoordinator = panels
+        webcamOverlayController = webcamOverlay
 
         state.startStatusUpdates()
         panelState.startStatusUpdates()
@@ -377,6 +380,10 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
             case "start": dictationController?.start()
             case "stop": dictationController?.stopAndInsert()
             default: dictationController?.toggle()
+            }
+        case OMacOSShellMessage.webcamOverlayAction:
+            if let action = notification.userInfo?[OMacOSShellMessage.valueKey] as? String {
+                webcamOverlayController?.perform(action)
             }
         default:
             break
@@ -587,6 +594,18 @@ enum OMacOSShellMain {
 
         if arguments.contains("--toggle-dictation") {
             OMacOSShellMessage.postDictationAction("toggle")
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
+            return
+        }
+
+        if let webcamIndex = arguments.firstIndex(of: "--webcam-overlay"),
+           arguments.indices.contains(webcamIndex + 1) {
+            let action = arguments[webcamIndex + 1]
+            guard ["start", "stop", "smaller", "larger"].contains(action) else {
+                FileHandle.standardError.write(Data("Webcam overlay action must be start, stop, smaller, or larger.\n".utf8))
+                Foundation.exit(2)
+            }
+            OMacOSShellMessage.postWebcamOverlayAction(action)
             RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
             return
         }

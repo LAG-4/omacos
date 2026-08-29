@@ -21,6 +21,8 @@ codesign --verify --deep --strict "$temporary_directory/dist/OMacOSShell.app"
 release_entitlements="$temporary_directory/release-entitlements.plist"
 codesign -d --entitlements "$release_entitlements" --xml "$temporary_directory/dist/OMacOSShell.app" 2>/dev/null
 plutil -p "$release_entitlements" | rg -Fq '"com.apple.security.device.audio-input" => true'
+plutil -p "$release_entitlements" | rg -Fq '"com.apple.security.device.camera" => true'
+plutil -extract NSCameraUsageDescription raw "$temporary_directory/dist/OMacOSShell.app/Contents/Info.plist" | rg -Fq 'camera'
 
 notification_output=$(OMACOS_TEST_HOME="$temporary_directory/home" \
   "$temporary_directory/dist/OMacOSShell.app/Contents/MacOS/omacos-shell" --notification-list)

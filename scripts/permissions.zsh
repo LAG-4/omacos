@@ -20,9 +20,10 @@ case ${1:-status} in
       screen-recording) pane='Privacy_ScreenCapture' ;;
       input-monitoring) pane='Privacy_ListenEvent' ;;
       microphone) pane='Privacy_Microphone' ;;
+      camera) pane='Privacy_Camera' ;;
       speech-recognition) pane='Privacy_SpeechRecognition' ;;
       privacy) "$open_command" 'x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension'; exit ;;
-      *) print -u2 'Usage: omacos permissions open <accessibility|screen-recording|input-monitoring|microphone|speech-recognition|privacy>'; exit 1 ;;
+      *) print -u2 'Usage: omacos permissions open <accessibility|screen-recording|input-monitoring|microphone|camera|speech-recognition|privacy>'; exit 1 ;;
     esac
     "$open_command" "x-apple.systempreferences:com.apple.preference.security?$pane"
     ;;
@@ -34,6 +35,7 @@ Accessibility      AeroSpace focus/move, OMacOS paste, and native window actions
 Input Monitoring   Karabiner-Elements Right Option Super layer
 Screen Recording   screenshots, recording, OCR, and QR recognition
 Microphone         local dictation and microphone recording
+Camera             native webcam recording overlay
 Speech Recognition on-device dictation transcription
 
 Use `omacos permissions status` to inspect OMacOS itself and

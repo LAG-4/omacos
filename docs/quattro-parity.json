@@ -3163,20 +3163,20 @@
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:39",
         "title": "Make webcam overlay smaller",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "implemented",
+        "grade": "native-replacement",
+        "route": "omacos capture webcam smaller/larger",
+        "notes": "The original chords resize the native camera preview overlay while recording.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:40",
         "title": "Make webcam overlay larger",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "implemented",
+        "grade": "native-replacement",
+        "route": "omacos capture webcam smaller/larger",
+        "notes": "The original chords resize the native camera preview overlay while recording.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
@@ -3847,10 +3847,10 @@
         "kind": "menu-entry",
         "id": "trigger.capture.screenrecord.webcam",
         "title": "With desktop + microphone audio + webcam",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "implementationStatus": "implemented",
+        "grade": "native-replacement",
+        "route": "omacos capture recording --webcam",
+        "notes": "The native camera preview is captured visibly with the selected desktop region plus system and microphone audio.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -8829,10 +8829,10 @@
   },
   "summary": {
     "total": 879,
-    "implemented": 634,
+    "implemented": 637,
     "limited": 138,
     "pending": 0,
-    "unavailable": 23,
+    "unavailable": 20,
     "notApplicable": 84
   }
 }

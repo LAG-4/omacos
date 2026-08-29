@@ -24,6 +24,10 @@ require_shell_binary() {
   fi
 }
 
+stop_webcam_overlay() {
+  "$shell_binary" --webcam-overlay stop >/dev/null 2>&1 || true
+}
+
 mkdir -p "$capture_directory"
 
 case $action in
@@ -46,6 +50,15 @@ case $action in
       --microphone) "$screencapture_binary" -i -J video -g "$output_path" ;;
       --system-audio) "$screencapture_binary" -i -J video -A "$output_path" ;;
       --all-audio) "$screencapture_binary" -i -J video -A -g "$output_path" ;;
+      --webcam)
+        require_shell_binary
+        "$shell_binary" --webcam-overlay start
+        trap stop_webcam_overlay EXIT INT TERM
+        sleep "${OMACOS_WEBCAM_START_DELAY:-1}"
+        "$screencapture_binary" -i -J video -A -g "$output_path"
+        stop_webcam_overlay
+        trap - EXIT INT TERM
+        ;;
       *) "$screencapture_binary" -i -J video "$output_path" ;;
     esac
     if [[ -f $output_path ]]; then
@@ -56,7 +69,15 @@ case $action in
     ;;
   record-stop)
     "$pkill_binary" -INT -x screencapture 2>/dev/null || true
+    stop_webcam_overlay
     print "Requested screen recording stop."
+    ;;
+  webcam)
+    require_shell_binary
+    case ${2:-} in
+      start|stop|smaller|larger) "$shell_binary" --webcam-overlay "$2" ;;
+      *) print -u2 "Usage: omacos capture webcam <start|stop|smaller|larger>"; exit 1 ;;
+    esac
     ;;
   text)
     require_shell_binary
@@ -96,7 +117,7 @@ case $action in
     print "$qr_payload"
     ;;
   *)
-    print -u2 "Usage: omacos capture <screenshot|recording|record-stop|text|qr|color> [--screen|--microphone|--system-audio|--all-audio]"
+    print -u2 "Usage: omacos capture <screenshot|recording|record-stop|webcam|text|qr|color> [--screen|--microphone|--system-audio|--all-audio|--webcam]"
     exit 1
     ;;
 esac

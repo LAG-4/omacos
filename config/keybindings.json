@@ -92,6 +92,8 @@
     { "key": "z", "modifiers": ["control", "option"], "description": "Reset zoom", "command": "$HOME/.local/bin/omacos zoom reset" },
     { "key": "print_screen", "modifiers": ["option"], "description": "Color picker", "command": "$HOME/.local/bin/omacos capture color" },
     { "key": "print_screen", "modifiers": ["control"], "description": "Extract text (OCR) from screenshot", "command": "$HOME/.local/bin/omacos capture text" },
+    { "key": "open_bracket", "modifiers": ["option"], "description": "Make webcam overlay smaller", "command": "$HOME/.local/bin/omacos capture webcam smaller" },
+    { "key": "close_bracket", "modifiers": ["option"], "description": "Make webcam overlay larger", "command": "$HOME/.local/bin/omacos capture webcam larger" },
     { "key": "spacebar", "modifiers": ["shift"], "description": "Toggle top bar", "command": "$HOME/.local/bin/omacos toggle toggle bar" },
     { "key": "delete_or_backspace", "modifiers": ["shift"], "description": "Toggle window gaps", "command": "$HOME/.local/bin/omacos wm gaps toggle" },
     { "key": "delete_or_backspace", "modifiers": [], "description": "Toggle window transparency", "command": "$HOME/.local/bin/omacos wm transparency toggle" },

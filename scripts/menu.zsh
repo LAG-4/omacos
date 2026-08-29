@@ -77,7 +77,7 @@ run_menu_action() {
     trigger.capture.screenrecord.microphone) "$omacos_command" capture recording --all-audio ;;
     trigger.capture.screenrecord.stop) "$omacos_command" capture record-stop ;;
     trigger.capture.qr) "$omacos_command" capture qr ;;
-    trigger.capture.screenrecord.webcam) unsupported "the native recorder does not composite a webcam overlay" ;;
+    trigger.capture.screenrecord.webcam) "$omacos_command" capture recording --webcam ;;
     trigger.transcode) "$omacos_command" transcode choose ;;
     trigger.share|trigger.share.clipboard|trigger.share.file|trigger.share.folder|trigger.share.receive) "$omacos_command" share "${menu_id##*.}" ;;
     trigger.toggle.idle-lock) "$omacos_command" toggle toggle idle ;;

@@ -44,7 +44,11 @@ fake_shell="$temporary_directory/omacos-shell"
 fake_pbcopy="$temporary_directory/pbcopy"
 cat > "$fake_shell" <<'EOF'
 #!/bin/zsh
-[[ $1 == "--recognize-qr" ]] && print "https://example.test/qr"
+if [[ $1 == "--recognize-qr" ]]; then
+  print "https://example.test/qr"
+elif [[ -n ${OMACOS_FAKE_SHELL_LOG:-} ]]; then
+  print -r -- "$*" >> "$OMACOS_FAKE_SHELL_LOG"
+fi
 EOF
 cat > "$fake_pbcopy" <<'EOF'
 #!/bin/zsh
@@ -62,5 +66,20 @@ qr_output=$(
 )
 [[ $qr_output == "https://example.test/qr" ]]
 [[ $(<"$temporary_directory/qr-clipboard") == "https://example.test/qr" ]]
+
+webcam_output=$(
+  OMACOS_CAPTURE_DIRECTORY="$temporary_directory/Screenshots" \
+  OMACOS_SCREENCAPTURE_BINARY="$test_directory/fixtures/fake-screencapture.zsh" \
+  OMACOS_SHELL_BINARY="$fake_shell" \
+  OMACOS_FAKE_SHELL_LOG="$temporary_directory/webcam-shell.log" \
+  OMACOS_FAKE_CAPTURE_LOG="$temporary_directory/webcam-capture.log" \
+  OMACOS_WEBCAM_START_DELAY=0 \
+  "$project_root/scripts/capture.zsh" recording --webcam
+)
+[[ -f $webcam_output ]]
+rg -Fxq -- '-A' "$temporary_directory/webcam-capture.log"
+rg -Fxq -- '-g' "$temporary_directory/webcam-capture.log"
+rg -Fxq -- '--webcam-overlay start' "$temporary_directory/webcam-shell.log"
+rg -Fxq -- '--webcam-overlay stop' "$temporary_directory/webcam-shell.log"
 
 print "Capture, OCR, and QR command test passed"

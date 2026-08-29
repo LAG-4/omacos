@@ -22,8 +22,10 @@
   <string>26.0</string>
   <key>LSUIElement</key>
   <true/>
-  <key>NSMicrophoneUsageDescription</key>
-  <string>OMacOS uses the microphone only while you invoke dictation.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>OMacOS uses the microphone only while you invoke dictation or microphone screen recording.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>OMacOS uses the camera only while you show the webcam recording overlay.</string>
   <key>NSSpeechRecognitionUsageDescription</key>
   <string>OMacOS converts speech to text locally when on-device recognition is available.</string>
 </dict>

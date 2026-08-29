@@ -36,10 +36,18 @@ if [[ $(/usr/libexec/PlistBuddy -c 'Print :NSMicrophoneUsageDescription' "$shell
   print -u2 "Install lifecycle test failed: native app permission descriptions are missing"
   exit 1
 fi
+if [[ $(/usr/libexec/PlistBuddy -c 'Print :NSCameraUsageDescription' "$shell_app/Contents/Info.plist") != *camera* ]]; then
+  print -u2 "Install lifecycle test failed: native camera permission description is missing"
+  exit 1
+fi
 installed_entitlements="$temporary_home/installed-entitlements.plist"
 codesign -d --entitlements "$installed_entitlements" --xml "$shell_app" 2>/dev/null
 if ! plutil -p "$installed_entitlements" | rg -Fq '"com.apple.security.device.audio-input" => true'; then
   print -u2 "Install lifecycle test failed: audio input entitlement is missing"
+  exit 1
+fi
+if ! plutil -p "$installed_entitlements" | rg -Fq '"com.apple.security.device.camera" => true'; then
+  print -u2 "Install lifecycle test failed: camera entitlement is missing"
   exit 1
 fi
 
