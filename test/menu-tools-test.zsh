@@ -99,4 +99,21 @@ rg -Fq 'install --cask font-cascadia-code-nf' "$temporary_directory/brew.log"
 
 jq -e '(.menuEntries | length) == 328 and ([.menuEntries[] | (.label | length > 0)] | all)' "$project_root/docs/quattro-inventory.json" >/dev/null
 
+while IFS= read -r menu_id; do
+  if ! "$project_root/scripts/menu.zsh" run "$menu_id" >/dev/null 2>&1; then
+    print -u2 "Implemented Quattro menu action does not dispatch: $menu_id"
+    exit 1
+  fi
+done < <(
+  jq -nr --slurpfile parity "$project_root/docs/quattro-parity.json" --slurpfile inventory "$project_root/docs/quattro-inventory.json" '
+    $parity[0].items.menuEntries as $entries
+    | $inventory[0].menuEntries[]
+    | select(.referenceKind == "action")
+    | .id as $id
+    | $entries[]
+    | select(.id == $id and .implementationStatus == "implemented")
+    | .id
+  '
+)
+
 print "Complete menu, sharing, transcoding, and font adapter tests passed"

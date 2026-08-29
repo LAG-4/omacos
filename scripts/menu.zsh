@@ -118,7 +118,7 @@ run_menu_action() {
     setup.security|setup.security.*) open_settings "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension" ;;
     setup.config|setup.config.*) "$open_command" "$omacos_home/.config/omacos" ;;
     setup.direct-boot) open_settings "x-apple.systempreferences:com.apple.Startup-Disk-Settings.extension" ;;
-    setup.reset) print -u2 "Use 'omacos uninstall' for a reversible reset."; return 2 ;;
+    setup.reset) print "Use 'omacos uninstall' for a reversible reset. It shows the removal plan and asks for confirmation." ;;
 
     install|install.package|install.aur|install.ai|install.service|install.editor|install.style|install.gaming|install.browser|install.webapp|install.terminal|install.tui|install.windows|install.preinstalls|install.*) open_panel packages ;;
     remove|remove.package|remove.ai|remove.service|remove.development|remove.theme|remove.gaming|remove.browser|remove.webapp|remove.tui|remove.windows|remove.preinstalls|remove.security|remove.*) open_panel packages ;;
