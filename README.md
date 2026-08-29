@@ -36,13 +36,13 @@ Do not install this on a primary machine yet. Use the dry run first and read the
 swift run omacos-shell
 ```
 
-When the first public installer is tagged, installation will use one command:
+Installation uses one command:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/LAG-4/omacos/main/install.sh | zsh
 ```
 
-The bootstrap script downloads this repository, prints every planned change, requests confirmation, and delegates to the versioned installer. It does not bypass macOS permission dialogs.
+The bootstrap prefers the latest signed, notarized release, verifies its checksum, bundle identity, code signature, and Gatekeeper acceptance, then pairs it with source from the same immutable tag. Before the first public tag, or when GitHub has no valid release, it falls back to building the current `main` source. Both paths print every planned change and request confirmation through the terminal even when the script itself arrived through a pipe. They do not bypass macOS permission dialogs.
 
 ## Default shortcuts
 

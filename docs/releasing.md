@@ -2,6 +2,8 @@
 
 Tagged releases are built by `.github/workflows/release.yml`. The workflow reruns the complete suite, imports a temporary Developer ID certificate, enables Hardened Runtime, signs the native app with the minimum audio-input entitlement required by dictation, submits the ZIP with `notarytool`, staples the accepted ticket, and publishes the immutable archive, checksum, and metadata.
 
+The public curl installer discovers the latest tag through GitHub's release API, derives the versioned archive names, verifies the SHA-256 checksum and app signature, asks Gatekeeper to assess the app, and runs the installer source from the matching tag. `OMACOS_INSTALL_CHANNEL=release` makes a missing or invalid release fatal. `OMACOS_INSTALL_CHANNEL=source` deliberately skips release discovery; the default `auto` channel falls back to `main` source only before a valid release has been accepted.
+
 Configure these GitHub Actions secrets before pushing a tag:
 
 - `APPLE_CERTIFICATE_P12_BASE64`

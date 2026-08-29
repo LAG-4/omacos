@@ -3,14 +3,69 @@
 set -euo pipefail
 
 omacos_repository="https://github.com/LAG-4/omacos"
+curl_command=${OMACOS_CURL:-/usr/bin/curl}
+install_channel=${OMACOS_INSTALL_CHANNEL:-auto}
 script_path=${(%):-%N}
 script_directory=${script_path:A:h}
 
 if [[ ! -f $script_directory/Package.swift ]]; then
   bootstrap_directory=$(mktemp -d -t omacos-bootstrap.XXXXXX)
   trap 'rm -rf "$bootstrap_directory"' EXIT
+  if [[ $install_channel != "auto" && $install_channel != "release" && $install_channel != "source" ]]; then
+    print -u2 "Unknown OMacOS install channel: $install_channel"
+    exit 1
+  fi
+  release_valid=false
+
+  bootstrap_release() {
+    local release_json_path tag version archive_name archive_url checksum_url source_url source_root prebuilt_app
+    release_json_path="$bootstrap_directory/latest-release.json"
+    $curl_command -fsSL 'https://api.github.com/repos/LAG-4/omacos/releases/latest' -o "$release_json_path" || return 1
+    tag=$(plutil -extract tag_name raw "$release_json_path" 2>/dev/null) || return 1
+    [[ -n $tag ]] || return 1
+    version=${tag#v}
+    archive_name="OMacOS-$version-arm64.zip"
+    archive_url="$omacos_repository/releases/download/$tag/$archive_name"
+    checksum_url="$archive_url.sha256"
+
+    print "Downloading signed OMacOS release $tag..."
+    $curl_command -fsSL "$archive_url" -o "$bootstrap_directory/$archive_name" || return 1
+    $curl_command -fsSL "$checksum_url" -o "$bootstrap_directory/$archive_name.sha256" || return 1
+    (cd "$bootstrap_directory" && shasum -a 256 -c "$archive_name.sha256") || return 1
+    mkdir -p "$bootstrap_directory/release-app"
+    ditto -x -k "$bootstrap_directory/$archive_name" "$bootstrap_directory/release-app" || return 1
+    prebuilt_app="$bootstrap_directory/release-app/OMacOSShell.app"
+    [[ -x $prebuilt_app/Contents/MacOS/omacos-shell ]] || return 1
+    [[ $(plutil -extract CFBundleIdentifier raw "$prebuilt_app/Contents/Info.plist") == "dev.omacos.shell" ]] || return 1
+    codesign --verify --deep --strict "$prebuilt_app" || return 1
+    if [[ ${OMACOS_TEST_MODE:-false} != "true" ]]; then
+      spctl --assess --type execute --verbose "$prebuilt_app" || return 1
+    fi
+
+    source_url="$omacos_repository/archive/refs/tags/$tag.tar.gz"
+    $curl_command -fsSL "$source_url" | tar -xz -C "$bootstrap_directory" || return 1
+    source_root=$(find "$bootstrap_directory" -maxdepth 1 -type d -name 'omacos-*' ! -name 'omacos-bootstrap*' -print -quit)
+    [[ -n $source_root && -x $source_root/install.sh ]] || return 1
+    release_valid=true
+    OMACOS_SOURCE_ROOT="$source_root" OMACOS_PREBUILT_SHELL_APP="$prebuilt_app" "$source_root/install.sh" "$@"
+  }
+
+  if [[ $install_channel != "source" ]]; then
+    if bootstrap_release "$@"; then
+      exit 0
+    else
+      release_status=$?
+      if $release_valid; then
+        exit "$release_status"
+      elif [[ $install_channel == "release" ]]; then
+        print -u2 "No valid signed OMacOS release is available."
+        exit 1
+      fi
+    fi
+  fi
+
   print "Downloading the current OMacOS installer source..."
-  curl -fsSL "$omacos_repository/archive/refs/heads/main.tar.gz" | tar -xz -C "$bootstrap_directory"
+  $curl_command -fsSL "$omacos_repository/archive/refs/heads/main.tar.gz" | tar -xz -C "$bootstrap_directory"
   OMACOS_SOURCE_ROOT="$bootstrap_directory/omacos-main" "$bootstrap_directory/omacos-main/install.sh" "$@"
   exit $?
 fi
@@ -20,6 +75,7 @@ omacos_home=${OMACOS_TEST_HOME:-$HOME}
 dry_run=false
 assume_yes=false
 test_mode=${OMACOS_TEST_MODE:-false}
+prebuilt_shell_app=${OMACOS_PREBUILT_SHELL_APP:-}
 confirmation_device=${OMACOS_CONFIRMATION_DEVICE:-/dev/tty}
 
 read_installer_confirmation() {
@@ -158,8 +214,13 @@ if [[ ! -f $state_directory/backup-recorded ]]; then
   touch "$state_directory/backup-recorded"
 fi
 
-print "Building the native OMacOS shell..."
-swift build --package-path "$source_root" -c release
+if [[ -n $prebuilt_shell_app ]]; then
+  [[ -x $prebuilt_shell_app/Contents/MacOS/omacos-shell ]] || { print -u2 "Prebuilt OMacOS shell is invalid: $prebuilt_shell_app"; exit 1; }
+  print "Installing the signed native OMacOS shell..."
+else
+  print "Building the native OMacOS shell..."
+  swift build --package-path "$source_root" -c release
+fi
 
 staging_directory=$(mktemp -d -t omacos-install.XXXXXX)
 trap 'rm -rf "$staging_directory"' EXIT
@@ -172,16 +233,22 @@ fi
 mkdir -p "${install_directory:h}"
 mv "$staging_directory/current" "$install_directory"
 
-mkdir -p "$shell_app/Contents/MacOS" "$shell_app/Contents/Resources"
-cp "$source_root/.build/release/omacos-shell" "$shell_app/Contents/MacOS/omacos-shell"
-cp "$source_root/app/Info.plist" "$shell_app/Contents/Info.plist"
-resource_bundles=("$source_root"/.build/release/*.bundle(N) "$source_root"/.build/release/*.resources(N))
-if (( ${#resource_bundles[@]} > 0 )); then
-  cp -R "$resource_bundles[1]" "$shell_app/Contents/Resources/"
+rm -rf "$shell_app"
+if [[ -n $prebuilt_shell_app ]]; then
+  ditto "$prebuilt_shell_app" "$shell_app"
+  codesign --verify --deep --strict "$shell_app"
+else
+  mkdir -p "$shell_app/Contents/MacOS" "$shell_app/Contents/Resources"
+  cp "$source_root/.build/release/omacos-shell" "$shell_app/Contents/MacOS/omacos-shell"
+  cp "$source_root/app/Info.plist" "$shell_app/Contents/Info.plist"
+  resource_bundles=("$source_root"/.build/release/*.bundle(N) "$source_root"/.build/release/*.resources(N))
+  if (( ${#resource_bundles[@]} > 0 )); then
+    cp -R "$resource_bundles[1]" "$shell_app/Contents/Resources/"
+  fi
+  chmod +x "$shell_app/Contents/MacOS/omacos-shell"
+  codesign --force --deep --options runtime --timestamp=none \
+    --entitlements "$source_root/app/OMacOSShell.entitlements" --sign - "$shell_app" >/dev/null
 fi
-chmod +x "$shell_app/Contents/MacOS/omacos-shell"
-codesign --force --deep --options runtime --timestamp=none \
-  --entitlements "$source_root/app/OMacOSShell.entitlements" --sign - "$shell_app" >/dev/null
 cat > "$binary_directory/omacos-shell" <<EOF
 #!/bin/zsh
 exec "$shell_app/Contents/MacOS/omacos-shell" "\$@"
