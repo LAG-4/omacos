@@ -89,6 +89,8 @@ omacos dictation toggle
 omacos toggle toggle idle
 omacos backup create before-experiment
 omacos update apply
+omacos channel status
+omacos channel set edge
 omacos package list gaming
 omacos package install utm
 omacos plugin show
@@ -122,7 +124,7 @@ The installer adds one clearly marked source block to `~/.zshrc`. That block loa
 
 Dictation uses Apple's Speech framework. Hold F9, or press `Super + Control + X` to toggle it; stopping inserts the recognized text into the focused application. The first use prompts for Microphone and Speech Recognition, and insertion needs Accessibility. When supported by the current language, recognition is required to run on-device.
 
-Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. Development builds are ad-hoc signed. The tag workflow produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
+Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub tag. `omacos channel set edge` opts into builds from the current public `main` source; switching back with `omacos channel set stable` does not require reinstalling. Development builds are ad-hoc signed. The tag workflow produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 
 The base install remains deliberately focused. Browsers, GUI development tools, communication apps, media tools, utilities, gaming clients, and virtual-machine apps live in the Optional Apps panel and `omacos package`; choosing Install is the authorization for that one Homebrew cask. OMacOS does not remove those third-party apps during its own uninstall.
 

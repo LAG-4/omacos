@@ -29,4 +29,4 @@ Current progress: the shared panel command API, clickable bar affordances, keybi
 - Validate the experimental Rift profile across multiple displays and native Spaces on supported hardware.
 - Validate the isolated yabai profile with SIP enabled, then document the separately tested manual scripting-addition path.
 - Sign and notarize the native application.
-- Publish pinned releases, migrations, rollback, hardware test results, and update channels.
+- Publish the first production-signed tag and physical hardware test results. Pinned stable/edge update channels, migrations, and rollback are implemented.

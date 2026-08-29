@@ -27,6 +27,7 @@ mv "$temporary_directory/source/omacos-0.2.0-dev" "$temporary_directory/source/o
 tar -czf "$fixture_directory/main.tar.gz" -C "$temporary_directory/source" omacos-main
 
 print -r -- '{"tag_name":"v0.2.0-dev"}' > "$fixture_directory/release.json"
+cp "$project_root/install.sh" "$fixture_directory/install.sh"
 
 cat > "$fixture_directory/curl" <<'EOF'
 #!/bin/zsh
@@ -51,6 +52,7 @@ case $url in
   *OMacOS-0.2.0-dev-arm64.zip) source_path="$OMACOS_RELEASE_FIXTURES/OMacOS-0.2.0-dev-arm64.zip" ;;
   *refs/tags/v0.2.0-dev.tar.gz) source_path="$OMACOS_RELEASE_FIXTURES/source.tar.gz" ;;
   *refs/heads/main.tar.gz) source_path="$OMACOS_RELEASE_FIXTURES/main.tar.gz" ;;
+  *raw.githubusercontent.com/LAG-4/omacos/v0.2.0-dev/install.sh) source_path="$OMACOS_RELEASE_FIXTURES/install.sh" ;;
   *) print -u2 "Unexpected fixture URL: $url"; exit 1 ;;
 esac
 if [[ -n $output_path ]]; then
@@ -104,6 +106,29 @@ bootstrap_output=$(
 installed_app="$test_home/.local/share/omacos/OMacOSShell.app"
 codesign --verify --deep --strict "$installed_app"
 [[ $(plutil -extract CFBundleIdentifier raw "$installed_app/Contents/Info.plist") == 'dev.omacos.shell' ]]
+[[ $(<"$test_home/.config/omacos/update-channel") == 'stable' ]]
+
+installed_cli="$test_home/.local/bin/omacos"
+update_check=$(
+  OMACOS_CURL="$fixture_directory/curl" \
+    OMACOS_RELEASE_FIXTURES="$fixture_directory" \
+    OMACOS_TEST_MODE=true \
+    OMACOS_TEST_HOME="$test_home" \
+    OMACOS_ROOT="$test_home/.local/share/omacos/current" \
+    "$installed_cli" update check
+)
+[[ $update_check == *'Available OMacOS version: 0.2.0-dev (stable)'* ]]
+
+update_output=$(
+  OMACOS_CURL="$fixture_directory/curl" \
+    OMACOS_RELEASE_FIXTURES="$fixture_directory" \
+    OMACOS_TEST_MODE=true \
+    OMACOS_TEST_HOME="$test_home" \
+    OMACOS_ROOT="$test_home/.local/share/omacos/current" \
+    "$installed_cli" update apply
+)
+[[ $update_output == *'OMacOS updated to 0.2.0-dev on stable.'* ]]
+[[ $(<"$test_home/.config/omacos/update-channel") == 'stable' ]]
 
 OMACOS_TEST_HOME="$test_home" OMACOS_ROOT="$test_home/.local/share/omacos/current" \
   "$test_home/.local/bin/omacos" uninstall --yes >/dev/null

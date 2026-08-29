@@ -43,7 +43,7 @@ Commands:
   qa ACTION                 Produce a privacy-safe hardware validation report
   ascii [TEXT]              Draw text as terminal ASCII art
   branch ACTION             Inspect the installed source branch
-  channel ACTION            Inspect the OMacOS release channel
+  channel ACTION            Inspect or switch the OMacOS update channel
   file ACTION               Choose a file or folder with native macOS UI
   hook ACTION               List or run user-owned OMacOS hooks
   installed ID              Check an optional application

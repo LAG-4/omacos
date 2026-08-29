@@ -5,6 +5,7 @@ set -euo pipefail
 omacos_repository="https://github.com/LAG-4/omacos"
 curl_command=${OMACOS_CURL:-/usr/bin/curl}
 install_channel=${OMACOS_INSTALL_CHANNEL:-auto}
+requested_release_tag=${OMACOS_RELEASE_TAG:-}
 script_path=${(%):-%N}
 script_directory=${script_path:A:h}
 
@@ -19,9 +20,14 @@ if [[ ! -f $script_directory/Package.swift ]]; then
 
   bootstrap_release() {
     local release_json_path tag version archive_name archive_url checksum_url source_url source_root prebuilt_app
-    release_json_path="$bootstrap_directory/latest-release.json"
-    $curl_command -fsSL 'https://api.github.com/repos/LAG-4/omacos/releases/latest' -o "$release_json_path" || return 1
-    tag=$(plutil -extract tag_name raw "$release_json_path" 2>/dev/null) || return 1
+    if [[ -n $requested_release_tag ]]; then
+      tag=$requested_release_tag
+    else
+      release_json_path="$bootstrap_directory/latest-release.json"
+      $curl_command -fsSL 'https://api.github.com/repos/LAG-4/omacos/releases/latest' -o "$release_json_path" || return 1
+      tag=$(plutil -extract tag_name raw "$release_json_path" 2>/dev/null) || return 1
+    fi
+    [[ $tag == v[0-9]* ]] || return 1
     [[ -n $tag ]] || return 1
     version=${tag#v}
     archive_name="OMacOS-$version-arm64.zip"
@@ -47,7 +53,8 @@ if [[ ! -f $script_directory/Package.swift ]]; then
     source_root=$(find "$bootstrap_directory" -maxdepth 1 -type d -name 'omacos-*' ! -name 'omacos-bootstrap*' -print -quit)
     [[ -n $source_root && -x $source_root/install.sh ]] || return 1
     release_valid=true
-    OMACOS_SOURCE_ROOT="$source_root" OMACOS_PREBUILT_SHELL_APP="$prebuilt_app" "$source_root/install.sh" "$@"
+    OMACOS_SOURCE_ROOT="$source_root" OMACOS_PREBUILT_SHELL_APP="$prebuilt_app" \
+      OMACOS_SELECTED_CHANNEL=stable "$source_root/install.sh" "$@"
   }
 
   if [[ $install_channel != "source" ]]; then
@@ -66,7 +73,12 @@ if [[ ! -f $script_directory/Package.swift ]]; then
 
   print "Downloading the current OMacOS installer source..."
   $curl_command -fsSL "$omacos_repository/archive/refs/heads/main.tar.gz" | tar -xz -C "$bootstrap_directory"
-  OMACOS_SOURCE_ROOT="$bootstrap_directory/omacos-main" "$bootstrap_directory/omacos-main/install.sh" "$@"
+  selected_source_channel=stable
+  if [[ $install_channel == "source" ]]; then
+    selected_source_channel=edge
+  fi
+  OMACOS_SOURCE_ROOT="$bootstrap_directory/omacos-main" OMACOS_SELECTED_CHANNEL="$selected_source_channel" \
+    "$bootstrap_directory/omacos-main/install.sh" "$@"
   exit $?
 fi
 
@@ -76,7 +88,13 @@ dry_run=false
 assume_yes=false
 test_mode=${OMACOS_TEST_MODE:-false}
 prebuilt_shell_app=${OMACOS_PREBUILT_SHELL_APP:-}
+selected_channel=${OMACOS_SELECTED_CHANNEL:-stable}
 confirmation_device=${OMACOS_CONFIRMATION_DEVICE:-/dev/tty}
+
+if [[ $selected_channel != "stable" && $selected_channel != "edge" ]]; then
+  print -u2 "Unknown OMacOS update channel: $selected_channel"
+  exit 1
+fi
 
 read_installer_confirmation() {
   if [[ ! -r $confirmation_device ]]; then
@@ -263,6 +281,8 @@ cp "$install_directory/config/aerospace/aerospace.toml" "$aerospace_directory/ae
   "$karabiner_rule_directory/omacos-super-key.json"
 
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/render-theme.zsh" tokyo-night
+mkdir -p "$omacos_home/.config/omacos"
+print -r -- "$selected_channel" > "$omacos_home/.config/omacos/update-channel"
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/defaults.zsh" init >/dev/null
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/window-manager.zsh" init
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/shell-integration.zsh" install

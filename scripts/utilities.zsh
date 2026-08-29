@@ -7,8 +7,21 @@ project_root=${OMACOS_ROOT:-${script_directory:h}}
 omacos_home=${OMACOS_TEST_HOME:-$HOME}
 osascript_command=${OMACOS_OSASCRIPT:-/usr/bin/osascript}
 mise_command=${OMACOS_MISE:-mise}
+update_channel_file="$omacos_home/.config/omacos/update-channel"
 utility=${1:-}
 shift || true
+
+current_update_channel() {
+  if [[ -f $update_channel_file ]]; then
+    local channel
+    channel=$(<"$update_channel_file")
+    if [[ $channel == "stable" || $channel == "edge" ]]; then
+      print -r -- "$channel"
+      return
+    fi
+  fi
+  print stable
+}
 
 case $utility in
   ascii)
@@ -23,8 +36,22 @@ case $utility in
     ;;
   channel)
     case ${1:-status} in
-      status|list) print 'main (single tested open-source channel)' ;;
-      *) print -u2 'OMacOS currently supports only the main channel.'; exit 2 ;;
+      status) print "$(current_update_channel)" ;;
+      list)
+        print 'stable  Signed and notarized GitHub releases'
+        print 'edge    Current main-branch source builds'
+        ;;
+      set|switch)
+        selected_channel=${2:-}
+        if [[ $selected_channel != "stable" && $selected_channel != "edge" ]]; then
+          print -u2 'Usage: omacos channel set <stable|edge>'
+          exit 2
+        fi
+        mkdir -p "${update_channel_file:h}"
+        print -r -- "$selected_channel" > "$update_channel_file"
+        print "OMacOS update channel set to $selected_channel."
+        ;;
+      *) print -u2 'Usage: omacos channel <status|list|set stable|edge>'; exit 2 ;;
     esac
     ;;
   file)

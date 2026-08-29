@@ -35,7 +35,11 @@ export OMACOS_UTILITY_TEST_LOG="$command_log"
 
 utilities="$project_root/scripts/utilities.zsh"
 [[ $("$utilities" file choose) == '/tmp/chosen item' ]]
-[[ $("$utilities" channel status) == 'main (single tested open-source channel)' ]]
+[[ $("$utilities" channel status) == 'stable' ]]
+[[ $("$utilities" channel list) == *'Signed and notarized GitHub releases'* ]]
+"$utilities" channel set edge >/dev/null
+[[ $("$utilities" channel status) == 'edge' ]]
+"$utilities" channel set stable >/dev/null
 [[ $("$utilities" version) == OMacOS* ]]
 "$utilities" hook run hello one two
 "$utilities" mise install node@lts
