@@ -1,0 +1,27 @@
+name: Test OMacOS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-26, xcode-27]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install test tools
+        run: command -v jq >/dev/null || brew install jq
+      - name: Build and test
+        run: ./test/all
+

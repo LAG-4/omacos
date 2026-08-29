@@ -1,0 +1,1040 @@
+{
+  "title": "OMacOS Super key",
+  "rules": [
+    {
+      "description": "Use Right Option as the OMacOS Super layer",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "right_option",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "set_variable": {
+                "name": "omacos_super_key",
+                "value": 1
+              }
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": {
+                "name": "omacos_super_key",
+                "value": 0
+              }
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "right_option"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Close window",
+          "from": {
+            "key_code": "w"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace close'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Close window",
+          "from": {
+            "key_code": "q"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace close'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Terminal",
+          "from": {
+            "key_code": "return_or_enter"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/usr/bin/open -na Ghostty'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Browser",
+          "from": {
+            "key_code": "return_or_enter",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/usr/bin/open -a Safari'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "OMacOS menu",
+          "from": {
+            "key_code": "spacebar"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '$HOME/.local/bin/omacos shell toggle-menu'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Toggle floating and tiling",
+          "from": {
+            "key_code": "t"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace layout floating tiling'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Fullscreen",
+          "from": {
+            "key_code": "f"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace fullscreen'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Toggle window split",
+          "from": {
+            "key_code": "j"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace layout tiles horizontal vertical'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Toggle workspace layout",
+          "from": {
+            "key_code": "l"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace layout tiles accordion'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Toggle scratchpad",
+          "from": {
+            "key_code": "s"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace summon-workspace scratchpad'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to scratchpad",
+          "from": {
+            "key_code": "s",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace scratchpad'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Former workspace",
+          "from": {
+            "key_code": "tab"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace-back-and-forth'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move workspace to next monitor",
+          "from": {
+            "key_code": "tab",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-workspace-to-monitor --wrap-around next'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Shrink window",
+          "from": {
+            "key_code": "hyphen"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace resize smart -50'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Expand window",
+          "from": {
+            "key_code": "equal_sign"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace resize smart +50'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Focus left",
+          "from": {
+            "key_code": "left_arrow"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace focus left'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Focus right",
+          "from": {
+            "key_code": "right_arrow"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace focus right'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Focus up",
+          "from": {
+            "key_code": "up_arrow"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace focus up'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Focus down",
+          "from": {
+            "key_code": "down_arrow"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace focus down'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window left",
+          "from": {
+            "key_code": "left_arrow",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move left'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window right",
+          "from": {
+            "key_code": "right_arrow",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move right'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window up",
+          "from": {
+            "key_code": "up_arrow",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move up'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window down",
+          "from": {
+            "key_code": "down_arrow",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move down'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Join window left",
+          "from": {
+            "key_code": "left_arrow",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace join-with left'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Join window right",
+          "from": {
+            "key_code": "right_arrow",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace join-with right'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Join window up",
+          "from": {
+            "key_code": "up_arrow",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace join-with up'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Join window down",
+          "from": {
+            "key_code": "down_arrow",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace join-with down'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 1",
+          "from": {
+            "key_code": "1"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 1'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 2",
+          "from": {
+            "key_code": "2"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 2'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 3",
+          "from": {
+            "key_code": "3"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 3'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 4",
+          "from": {
+            "key_code": "4"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 4'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 5",
+          "from": {
+            "key_code": "5"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 5'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 6",
+          "from": {
+            "key_code": "6"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 6'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 7",
+          "from": {
+            "key_code": "7"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 7'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 8",
+          "from": {
+            "key_code": "8"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 8'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 9",
+          "from": {
+            "key_code": "9"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 9'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Switch to workspace 10",
+          "from": {
+            "key_code": "0"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace workspace 10'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 1",
+          "from": {
+            "key_code": "1",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 1'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 2",
+          "from": {
+            "key_code": "2",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 2'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 3",
+          "from": {
+            "key_code": "3",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 3'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 4",
+          "from": {
+            "key_code": "4",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 4'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 5",
+          "from": {
+            "key_code": "5",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 5'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 6",
+          "from": {
+            "key_code": "6",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 6'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 7",
+          "from": {
+            "key_code": "7",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 7'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 8",
+          "from": {
+            "key_code": "8",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 8'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 9",
+          "from": {
+            "key_code": "9",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 9'"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "description": "Move window to workspace 10",
+          "from": {
+            "key_code": "0",
+            "modifiers": {
+              "mandatory": [
+                "shift"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "omacos_super_key",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/bin/zsh -lc '/opt/homebrew/bin/aerospace move-node-to-workspace 10'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

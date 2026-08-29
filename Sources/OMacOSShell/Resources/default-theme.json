@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "name": "Tokyo Night",
+  "slug": "tokyo-night",
+  "mode": "dark",
+  "colors": {
+    "accent": "#7aa2f7",
+    "selection": "#292e42",
+    "muted": "#414868",
+    "background": "#1a1b26",
+    "darkBackground": "#13141c",
+    "darkerBackground": "#0e0e14",
+    "lighterBackground": "#24283b",
+    "foreground": "#a9b1d6",
+    "darkForeground": "#565f89",
+    "lightForeground": "#b4bee6",
+    "brightForeground": "#c0caf5",
+    "red": "#f7768e",
+    "yellow": "#e0af68",
+    "orange": "#eb927b",
+    "green": "#9ece6a",
+    "cyan": "#449dab",
+    "blue": "#7aa2f7",
+    "magenta": "#ad8ee6"
+  }
+}
+

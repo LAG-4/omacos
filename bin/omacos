@@ -1,0 +1,169 @@
+#!/bin/zsh
+
+set -euo pipefail
+
+command_directory=${0:A:h}
+installed_root=${OMACOS_ROOT:-${command_directory:h}}
+omacos_home=${OMACOS_TEST_HOME:-$HOME}
+launch_agent="$omacos_home/Library/LaunchAgents/dev.omacos.shell.plist"
+shell_binary="$omacos_home/.local/bin/omacos-shell"
+
+print_usage() {
+  cat <<'EOF'
+Usage: omacos <command>
+
+Commands:
+  doctor                    Check the OMacOS installation and permissions
+  theme apply [name]        Generate configs from a semantic theme
+  shell start               Start the native bar
+  shell stop                Stop the native bar
+  shell restart             Restart the native bar
+  shell toggle-menu         Toggle the native command menu
+  uninstall                 Restore backed-up config and remove OMacOS files
+EOF
+}
+
+doctor_check() {
+  local label=$1
+  local result=$2
+
+  if [[ $result == "ok" ]]; then
+    print "[ok]   $label"
+  else
+    print "[fail] $label"
+    return 1
+  fi
+}
+
+run_doctor() {
+  local failures=0
+  local macos_major
+  macos_major=$(sw_vers -productVersion | cut -d. -f1)
+
+  doctor_check "Apple Silicon" "$([[ $(uname -m) == "arm64" ]] && print ok || print fail)" || (( failures += 1 ))
+  if (( macos_major >= 26 )); then
+    doctor_check "macOS 26 or newer" "ok" || (( failures += 1 ))
+  else
+    doctor_check "macOS 26 or newer" "fail" || (( failures += 1 ))
+  fi
+  doctor_check "Homebrew" "$(command -v brew >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "AeroSpace CLI" "$(command -v aerospace >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "AeroSpace config" "$([[ -f $omacos_home/.config/aerospace/aerospace.toml ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Karabiner rule installed" "$([[ -f $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Native shell binary" "$([[ -x $shell_binary ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Shell LaunchAgent" "$([[ -f $launch_agent ]] && print ok || print fail)" || (( failures += 1 ))
+
+  if (( failures > 0 )); then
+    print -u2 "OMacOS doctor found $failures problem(s)."
+    return 1
+  fi
+
+  print "OMacOS doctor found no installation problems."
+}
+
+run_shell_command() {
+  local action=${1:-}
+
+  case $action in
+    start)
+      if [[ ! -x $shell_binary ]]; then
+        print -u2 "OMacOS shell is not installed at $shell_binary"
+        return 1
+      fi
+      if [[ -f $launch_agent ]]; then
+        launchctl bootstrap "gui/$UID" "$launch_agent" 2>/dev/null || true
+      elif ! pgrep -x omacos-shell >/dev/null 2>&1; then
+        "$shell_binary" >/dev/null 2>&1 &!
+      fi
+      ;;
+    stop)
+      if [[ -f $launch_agent ]]; then
+        launchctl bootout "gui/$UID" "$launch_agent" >/dev/null 2>&1 || true
+      fi
+      pkill -x omacos-shell 2>/dev/null || true
+      ;;
+    restart)
+      if [[ -f $launch_agent ]]; then
+        launchctl bootout "gui/$UID" "$launch_agent" >/dev/null 2>&1 || true
+      fi
+      pkill -x omacos-shell 2>/dev/null || true
+      if [[ -f $launch_agent ]]; then
+        launchctl bootstrap "gui/$UID" "$launch_agent"
+      else
+        "$shell_binary" >/dev/null 2>&1 &!
+      fi
+      ;;
+    toggle-menu)
+      "$shell_binary" --toggle-menu
+      ;;
+    *)
+      print -u2 "Unknown shell action: $action"
+      return 1
+      ;;
+  esac
+}
+
+run_uninstall() {
+  local state_directory="$omacos_home/.local/state/omacos"
+  local backup_directory="$state_directory/backups"
+  local installed_directory="$omacos_home/.local/share/omacos"
+
+  print "OMacOS will stop its shell, restore backed-up AeroSpace config, and remove its own files."
+  print -n "Continue? [y/N] "
+  read -r answer
+  if [[ $answer != [yY] && $answer != [yY][eE][sS] ]]; then
+    print "Uninstall cancelled."
+    return 0
+  fi
+
+  pkill -x omacos-shell 2>/dev/null || true
+  launchctl bootout "gui/$UID" "$launch_agent" >/dev/null 2>&1 || true
+
+  if [[ -f $state_directory/had-xdg-aerospace-config ]]; then
+    cp "$backup_directory/xdg-aerospace.toml" "$omacos_home/.config/aerospace/aerospace.toml"
+  else
+    rm -f "$omacos_home/.config/aerospace/aerospace.toml"
+  fi
+
+  if [[ -f $state_directory/had-dot-aerospace-config ]]; then
+    cp "$backup_directory/dot-aerospace.toml" "$omacos_home/.aerospace.toml"
+  else
+    rm -f "$omacos_home/.aerospace.toml"
+  fi
+
+  rm -f "$omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json"
+  rm -f "$omacos_home/.config/ghostty/themes/OMacOS"
+  rm -f "$omacos_home/.local/bin/omacos" "$omacos_home/.local/bin/omacos-shell"
+  rm -f "$launch_agent"
+  rm -rf "$omacos_home/.config/omacos" "$installed_directory"
+  rm -rf "$state_directory"
+
+  print "OMacOS files were removed. Homebrew packages were left installed."
+}
+
+case ${1:-help} in
+  doctor)
+    run_doctor
+    ;;
+  theme)
+    if [[ ${2:-} != "apply" ]]; then
+      print -u2 "Usage: omacos theme apply [name]"
+      exit 1
+    fi
+    "$installed_root/scripts/render-theme.zsh" "${3:-tokyo-night}"
+    ;;
+  shell)
+    run_shell_command "${2:-}"
+    ;;
+  uninstall)
+    run_uninstall
+    ;;
+  help|-h|--help)
+    print_usage
+    ;;
+  *)
+    print -u2 "Unknown OMacOS command: ${1:-}"
+    print_usage
+    exit 1
+    ;;
+esac
