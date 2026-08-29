@@ -15,7 +15,7 @@ current_update_channel() {
   if [[ -f $update_channel_file ]]; then
     local channel
     channel=$(<"$update_channel_file")
-    if [[ $channel == "stable" || $channel == "edge" ]]; then
+    if [[ $channel == "stable" || $channel == "rc" || $channel == "edge" || $channel == "dev" ]]; then
       print -r -- "$channel"
       return
     fi
@@ -39,19 +39,21 @@ case $utility in
       status) print "$(current_update_channel)" ;;
       list)
         print 'stable  Signed and notarized GitHub releases'
+        print 'rc      Signed and notarized GitHub prereleases'
         print 'edge    Current main-branch source builds'
+        print 'dev     Experimental dev-branch source builds'
         ;;
       set|switch)
         selected_channel=${2:-}
-        if [[ $selected_channel != "stable" && $selected_channel != "edge" ]]; then
-          print -u2 'Usage: omacos channel set <stable|edge>'
+        if [[ $selected_channel != "stable" && $selected_channel != "rc" && $selected_channel != "edge" && $selected_channel != "dev" ]]; then
+          print -u2 'Usage: omacos channel set <stable|rc|edge|dev>'
           exit 2
         fi
         mkdir -p "${update_channel_file:h}"
         print -r -- "$selected_channel" > "$update_channel_file"
         print "OMacOS update channel set to $selected_channel."
         ;;
-      *) print -u2 'Usage: omacos channel <status|list|set stable|edge>'; exit 2 ;;
+      *) print -u2 'Usage: omacos channel <status|list|set stable|rc|edge|dev>'; exit 2 ;;
     esac
     ;;
   file)

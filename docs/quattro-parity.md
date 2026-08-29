@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 637 | 142 | 0 | 16 | 84 |
+| 879 | 639 | 142 | 0 | 14 | 84 |
 
 ## Remaining portable work
 
@@ -31,7 +31,5 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | menu-entry | `style.bar.position.left` | Left | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `style.bar.position.right` | Right | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `style.unlock` | Unlock | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `update.channel.dev` | Dev | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `update.channel.rc` | RC | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 
 The complete machine-readable ledger, including all implemented, limited, and not-applicable items, is in [`docs/quattro-parity.json`](quattro-parity.json).

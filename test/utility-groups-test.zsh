@@ -37,8 +37,13 @@ utilities="$project_root/scripts/utilities.zsh"
 [[ $("$utilities" file choose) == '/tmp/chosen item' ]]
 [[ $("$utilities" channel status) == 'stable' ]]
 [[ $("$utilities" channel list) == *'Signed and notarized GitHub releases'* ]]
+[[ $("$utilities" channel list) == *'GitHub prereleases'* ]]
 "$utilities" channel set edge >/dev/null
 [[ $("$utilities" channel status) == 'edge' ]]
+"$utilities" channel set rc >/dev/null
+[[ $("$utilities" channel status) == 'rc' ]]
+"$utilities" channel set dev >/dev/null
+[[ $("$utilities" channel status) == 'dev' ]]
 "$utilities" channel set stable >/dev/null
 [[ $("$utilities" version) == OMacOS* ]]
 "$utilities" hook run hello one two

@@ -63,6 +63,8 @@ export OMACOS_FAKE_OSASCRIPT_LOG="$temporary_directory/osascript.log"
 "$project_root/scripts/menu.zsh" run style.font
 "$project_root/scripts/menu.zsh" run update.channel.stable
 "$project_root/scripts/menu.zsh" run update.channel.edge
+"$project_root/scripts/menu.zsh" run update.channel.rc
+"$project_root/scripts/menu.zsh" run update.channel.dev
 "$project_root/scripts/menu.zsh" run style.bar.position.bottom
 "$project_root/scripts/menu.zsh" run style.bar.transparency
 "$project_root/scripts/menu.zsh" run trigger.toggle.window-gaps
@@ -73,6 +75,8 @@ rg -Fq 'shell toggle-panel keybindings' "$temporary_directory/cli.log"
 rg -Fq 'toggle toggle idle' "$temporary_directory/cli.log"
 rg -Fq 'channel set stable' "$temporary_directory/cli.log"
 rg -Fq 'channel set edge' "$temporary_directory/cli.log"
+rg -Fq 'channel set rc' "$temporary_directory/cli.log"
+rg -Fq 'channel set dev' "$temporary_directory/cli.log"
 rg -Fq 'bar position bottom' "$temporary_directory/cli.log"
 rg -Fq 'bar transparency toggle' "$temporary_directory/cli.log"
 rg -Fq 'wm gaps toggle' "$temporary_directory/cli.log"

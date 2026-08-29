@@ -110,6 +110,8 @@ omacos backup create before-experiment
 omacos update apply
 omacos channel status
 omacos channel set edge
+omacos channel set rc
+omacos channel set dev
 omacos package list gaming
 omacos package install utm
 omacos plugin show
@@ -169,7 +171,7 @@ Webcam recording uses a native always-on-top camera preview rather than a heavyw
 
 Pointer gestures stay inside the same Right Option ownership model as keyboard shortcuts. Karabiner consumes only Super+left/right button presses and tells the native shell when a drag starts; the shell event tap performs the Accessibility move or resize and handles Super+wheel workspace navigation. Accessibility and Input Monitoring must be approved. A tiled window may be retiled by the active manager, so floating windows provide the closest Hyprland drag behavior.
 
-Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub tag. `omacos channel set edge` opts into builds from the current public `main` source; switching back with `omacos channel set stable` does not require reinstalling. Development builds are ad-hoc signed. The tag workflow produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
+Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub release; `rc` installs the newest signed prerelease. `edge` tracks current public `main`, while `dev` tracks the explicitly experimental public `dev` branch. Switching channels does not require reinstalling. Source-channel builds are ad-hoc signed. The tag workflow marks `-rc.` tags as prereleases, produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 
 The base install remains deliberately focused. Browsers, GUI development tools, communication apps, media tools, utilities, gaming clients, and virtual-machine apps live in the Optional Apps panel and `omacos package`; choosing Install is the authorization for that one Homebrew cask. OMacOS does not remove those third-party apps during its own uninstall.
 

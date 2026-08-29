@@ -129,7 +129,8 @@ run_menu_action() {
     update.channel) "$omacos_command" channel status ;;
     update.channel.stable) "$omacos_command" channel set stable ;;
     update.channel.edge) "$omacos_command" channel set edge ;;
-    update.channel.rc|update.channel.dev) unsupported "OMacOS does not publish this release channel" ;;
+    update.channel.rc) "$omacos_command" channel set rc ;;
+    update.channel.dev) "$omacos_command" channel set dev ;;
     update.config|update.config.*|update.themes) "$omacos_command" update check ;;
     update.process|update.process.shell) "$omacos_command" shell restart ;;
     update.process.hyprsunset) open_settings "x-apple.systempreferences:com.apple.Displays-Settings.extension" ;;

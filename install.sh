@@ -6,6 +6,7 @@ omacos_repository="https://github.com/LAG-4/omacos"
 curl_command=${OMACOS_CURL:-/usr/bin/curl}
 install_channel=${OMACOS_INSTALL_CHANNEL:-auto}
 requested_release_tag=${OMACOS_RELEASE_TAG:-}
+requested_selected_channel=${OMACOS_SELECTED_CHANNEL:-stable}
 script_path=${(%):-%N}
 script_directory=${script_path:A:h}
 
@@ -54,7 +55,7 @@ if [[ ! -f $script_directory/Package.swift ]]; then
     [[ -n $source_root && -x $source_root/install.sh ]] || return 1
     release_valid=true
     OMACOS_SOURCE_ROOT="$source_root" OMACOS_PREBUILT_SHELL_APP="$prebuilt_app" \
-      OMACOS_SELECTED_CHANNEL=stable "$source_root/install.sh" "$@"
+      OMACOS_SELECTED_CHANNEL="$requested_selected_channel" "$source_root/install.sh" "$@"
   }
 
   if [[ $install_channel != "source" ]]; then
@@ -91,7 +92,7 @@ prebuilt_shell_app=${OMACOS_PREBUILT_SHELL_APP:-}
 selected_channel=${OMACOS_SELECTED_CHANNEL:-stable}
 confirmation_device=${OMACOS_CONFIRMATION_DEVICE:-/dev/tty}
 
-if [[ $selected_channel != "stable" && $selected_channel != "edge" ]]; then
+if [[ $selected_channel != "stable" && $selected_channel != "rc" && $selected_channel != "edge" && $selected_channel != "dev" ]]; then
   print -u2 "Unknown OMacOS update channel: $selected_channel"
   exit 1
 fi
