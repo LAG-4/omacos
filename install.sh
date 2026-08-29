@@ -25,7 +25,7 @@ if [[ ! -f $script_directory/Package.swift ]]; then
       tag=$requested_release_tag
     else
       release_json_path="$bootstrap_directory/latest-release.json"
-      $curl_command -fsSL 'https://api.github.com/repos/LAG-4/omacos/releases/latest' -o "$release_json_path" || return 1
+      $curl_command -fsSL 'https://api.github.com/repos/LAG-4/omacos/releases/latest' -o "$release_json_path" 2>/dev/null || return 1
       tag=$(plutil -extract tag_name raw "$release_json_path" 2>/dev/null) || return 1
     fi
     [[ $tag == v[0-9]* ]] || return 1
