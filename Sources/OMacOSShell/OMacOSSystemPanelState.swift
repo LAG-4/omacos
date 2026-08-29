@@ -1,6 +1,7 @@
 import AppKit
 import Combine
 import Foundation
+import UniformTypeIdentifiers
 
 struct OMacOSKeybinding: Codable, Identifiable {
     let key: String
@@ -55,13 +56,17 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
     @Published private(set) var memorySummary = "—"
     @Published private(set) var uptimeSummary = "—"
     @Published private(set) var keybindings: [OMacOSKeybinding] = []
+    @Published private(set) var availableThemes: [OMacOSTheme] = []
     @Published private(set) var lastRefresh = Date()
+    @Published var panelSearchText = ""
+    @Published private(set) var lastActionMessage = ""
 
     private var refreshTimer: Timer?
 
     /// Begins lightweight polling for values shared by all native panels.
     func startStatusUpdates() {
         loadKeybindings()
+        loadAvailableThemes()
         refreshStatusValues()
         refreshTimer = Timer.scheduledTimer(
             timeInterval: 5,
@@ -74,6 +79,10 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
 
     func refreshNow() {
         refreshStatusValues()
+    }
+
+    func resetPanelSearch() {
+        panelSearchText = ""
     }
 
     func setOutputVolume(_ volume: Int) {
@@ -104,6 +113,56 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
 
     func openApplication(_ application: String) {
         _ = OMacOSCommandRunner.run(executable: "/usr/bin/open", arguments: ["-a", application])
+    }
+
+    func applyTheme(_ theme: OMacOSTheme) {
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        let installedCLI = homeDirectory + "/.local/bin/omacos"
+        let localRenderer = FileManager.default.currentDirectoryPath + "/scripts/render-theme.zsh"
+
+        let result: OMacOSCommandResult
+        if FileManager.default.isExecutableFile(atPath: installedCLI) {
+            result = OMacOSCommandRunner.run(
+                executable: "/usr/bin/env",
+                arguments: [installedCLI, "theme", "apply", theme.slug]
+            )
+        } else {
+            result = OMacOSCommandRunner.run(
+                executable: "/usr/bin/env",
+                arguments: [localRenderer, theme.slug]
+            )
+        }
+
+        if result.exitCode == 0 {
+            lastActionMessage = "Applied \(theme.name). Restart the shell to refresh every surface."
+        } else {
+            lastActionMessage = "Could not apply \(theme.name)."
+        }
+    }
+
+    func chooseWallpaper() {
+        let openPanel = NSOpenPanel()
+        openPanel.title = "Choose OMacOS Wallpaper"
+        openPanel.canChooseDirectories = false
+        openPanel.allowsMultipleSelection = false
+        openPanel.allowedContentTypes = [.png, .jpeg, .heic, .webP, .tiff]
+        guard openPanel.runModal() == .OK, let wallpaperURL = openPanel.url else { return }
+
+        var failedScreens: [String] = []
+        for screen in NSScreen.screens {
+            do {
+                try NSWorkspace.shared.setDesktopImageURL(wallpaperURL, for: screen, options: [:])
+            } catch {
+                failedScreens.append(screen.localizedName)
+            }
+        }
+
+        if failedScreens.isEmpty {
+            lastActionMessage = "Wallpaper applied to \(NSScreen.screens.count) display(s)."
+        } else {
+            lastActionMessage = "Wallpaper failed on: \(failedScreens.joined(separator: ", "))."
+        }
     }
 
     func lockMac() {
@@ -210,6 +269,32 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
             }
             keybindings = document.bindings
             return
+        }
+    }
+
+    private func loadAvailableThemes() {
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        let candidateDirectories = [
+            URL(fileURLWithPath: homeDirectory).appendingPathComponent(".local/share/omacos/current/themes"),
+            URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("themes")
+        ]
+
+        for directory in candidateDirectories {
+            guard let themeURLs = try? FileManager.default.contentsOfDirectory(
+                at: directory,
+                includingPropertiesForKeys: nil
+            ) else {
+                continue
+            }
+            let decodedThemes = themeURLs
+                .filter { $0.pathExtension == "json" }
+                .compactMap { try? OMacOSTheme.decodeTheme(at: $0) }
+                .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+            if !decodedThemes.isEmpty {
+                availableThemes = decodedThemes
+                return
+            }
         }
     }
 

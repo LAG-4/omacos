@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Osaka Jade",
+  "slug": "osaka-jade",
+  "mode": "dark",
+  "colors": {
+    "accent": "#509475",
+    "selection": "#32473B",
+    "muted": "#53685B",
+    "background": "#111c18",
+    "darkBackground": "#0c1512",
+    "darkerBackground": "#090f0d",
+    "lighterBackground": "#23372B",
+    "foreground": "#C1C497",
+    "darkForeground": "#81B8A8",
+    "lightForeground": "#D6D5BC",
+    "brightForeground": "#F7E8B2",
+    "red": "#FF5345",
+    "yellow": "#459451",
+    "orange": "#a2734b",
+    "green": "#549e6a",
+    "cyan": "#2DD5B7",
+    "blue": "#509475",
+    "magenta": "#D2689C",
+    "brightRed": "#db9f9c",
+    "brightYellow": "#E5C736",
+    "brightGreen": "#63b07a",
+    "brightCyan": "#8CD3CB",
+    "brightBlue": "#ACD4CF",
+    "brightMagenta": "#75bbb3"
+  }
+}

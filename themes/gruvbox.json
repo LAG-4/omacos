@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Gruvbox",
+  "slug": "gruvbox",
+  "mode": "dark",
+  "colors": {
+    "accent": "#7daea3",
+    "selection": "#504945",
+    "muted": "#665c54",
+    "background": "#282828",
+    "darkBackground": "#1e1e1e",
+    "darkerBackground": "#161616",
+    "lighterBackground": "#3c3836",
+    "foreground": "#d4be98",
+    "darkForeground": "#7c6f64",
+    "lightForeground": "#bdae93",
+    "brightForeground": "#d4be98",
+    "red": "#ea6962",
+    "yellow": "#d8a657",
+    "orange": "#e1875c",
+    "green": "#a9b665",
+    "cyan": "#89b482",
+    "blue": "#7daea3",
+    "magenta": "#d3869b",
+    "brightRed": "#ea6962",
+    "brightYellow": "#d8a657",
+    "brightGreen": "#a9b665",
+    "brightCyan": "#89b482",
+    "brightBlue": "#7daea3",
+    "brightMagenta": "#d3869b"
+  }
+}

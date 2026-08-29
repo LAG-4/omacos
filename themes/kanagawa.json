@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Kanagawa",
+  "slug": "kanagawa",
+  "mode": "dark",
+  "colors": {
+    "accent": "#dcd7ba",
+    "selection": "#363646",
+    "muted": "#54546D",
+    "background": "#1f1f28",
+    "darkBackground": "#17171e",
+    "darkerBackground": "#111116",
+    "lighterBackground": "#223249",
+    "foreground": "#dcd7ba",
+    "darkForeground": "#727169",
+    "lightForeground": "#c8c093",
+    "brightForeground": "#dcd7ba",
+    "red": "#c34043",
+    "yellow": "#c0a36e",
+    "orange": "#c17158",
+    "green": "#76946a",
+    "cyan": "#6a9589",
+    "blue": "#7e9cd8",
+    "magenta": "#957fb8",
+    "brightRed": "#e82424",
+    "brightYellow": "#e6c384",
+    "brightGreen": "#98bb6c",
+    "brightCyan": "#7aa89f",
+    "brightBlue": "#7fb4ca",
+    "brightMagenta": "#938aa9"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Matte Black",
+  "slug": "matte-black",
+  "mode": "dark",
+  "colors": {
+    "accent": "#e68e0d",
+    "selection": "#2a2a2a",
+    "muted": "#333333",
+    "background": "#121212",
+    "darkBackground": "#0d0d0d",
+    "darkerBackground": "#090909",
+    "lighterBackground": "#1e1e1e",
+    "foreground": "#bebebe",
+    "darkForeground": "#555555",
+    "lightForeground": "#8a8a8d",
+    "brightForeground": "#bebebe",
+    "red": "#D35F5F",
+    "yellow": "#b91c1c",
+    "orange": "#c63d3d",
+    "green": "#FFC107",
+    "cyan": "#bebebe",
+    "blue": "#e68e0d",
+    "magenta": "#D35F5F",
+    "brightRed": "#B91C1C",
+    "brightYellow": "#b90a0a",
+    "brightGreen": "#FFC107",
+    "brightCyan": "#eaeaea",
+    "brightBlue": "#f59e0b",
+    "brightMagenta": "#B91C1C"
+  }
+}

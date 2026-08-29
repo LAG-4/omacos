@@ -13,6 +13,7 @@ struct OMacOSLaunchCommand: Identifiable {
 struct OMacOSCommandMenuView: View {
     let theme: OMacOSTheme
     let dismissMenu: () -> Void
+    let openPanel: (OMacOSPanelID) -> Void
 
     private let launchCommands = [
         OMacOSLaunchCommand(id: "terminal", title: "Terminal", subtitle: "Open a new Ghostty window", systemImage: "apple.terminal", executable: "/usr/bin/open", arguments: ["-na", "Ghostty"]),
@@ -20,6 +21,11 @@ struct OMacOSCommandMenuView: View {
         OMacOSLaunchCommand(id: "files", title: "Files", subtitle: "Open Finder", systemImage: "folder", executable: "/usr/bin/open", arguments: [NSHomeDirectory()]),
         OMacOSLaunchCommand(id: "settings", title: "System Settings", subtitle: "Configure this Mac", systemImage: "gearshape", executable: "/usr/bin/open", arguments: ["-a", "System Settings"]),
         OMacOSLaunchCommand(id: "activity", title: "Activity Monitor", subtitle: "Inspect running processes", systemImage: "waveform.path.ecg", executable: "/usr/bin/open", arguments: ["-a", "Activity Monitor"])
+    ]
+
+    private let panelCommands: [OMacOSPanelID] = [
+        .keybindings, .clipboard, .emojis, .capture,
+        .reminders, .themes, .wallpapers, .system
     ]
 
     var body: some View {
@@ -39,33 +45,63 @@ struct OMacOSCommandMenuView: View {
 
             Divider().overlay(Color(omacosHex: theme.colors.selection))
 
-            ForEach(launchCommands) { command in
-                Button {
-                    _ = OMacOSCommandRunner.run(executable: command.executable, arguments: command.arguments)
-                    dismissMenu()
-                } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: command.systemImage)
-                            .frame(width: 24)
-                            .foregroundStyle(Color(omacosHex: theme.colors.accent))
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(command.title).fontWeight(.semibold)
-                            Text(command.subtitle)
-                                .font(.caption)
-                                .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Open")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+                    ForEach(launchCommands) { command in
+                        Button {
+                            _ = OMacOSCommandRunner.run(executable: command.executable, arguments: command.arguments)
+                            dismissMenu()
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: command.systemImage)
+                                    .frame(width: 24)
+                                    .foregroundStyle(Color(omacosHex: theme.colors.accent))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(command.title).fontWeight(.semibold)
+                                    Text(command.subtitle)
+                                        .font(.caption)
+                                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 7)
+                            .contentShape(Rectangle())
                         }
-                        Spacer()
+                        .buttonStyle(.plain)
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .contentShape(Rectangle())
+
+                    Text("OMacOS")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                        ForEach(panelCommands) { panelID in
+                            Button {
+                                openPanel(panelID)
+                            } label: {
+                                HStack {
+                                    Image(systemName: panelID.systemImage)
+                                        .foregroundStyle(Color(omacosHex: theme.colors.accent))
+                                    Text(panelID.title).fontWeight(.semibold)
+                                    Spacer()
+                                }
+                                .padding(10)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .background(Color(omacosHex: theme.colors.lighterBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
                 }
-                .buttonStyle(.plain)
             }
         }
         .foregroundStyle(Color(omacosHex: theme.colors.foreground))
         .padding(20)
-        .frame(width: 520, height: 390)
+        .frame(width: 540, height: 620)
         .background(Color(omacosHex: theme.colors.darkBackground).opacity(0.98))
         .overlay {
             RoundedRectangle(cornerRadius: 14)
@@ -74,4 +110,3 @@ struct OMacOSCommandMenuView: View {
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 }
-

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Lupine",
+  "slug": "lupine",
+  "mode": "light",
+  "colors": {
+    "accent": "#3264eb",
+    "selection": "#d0d0d0",
+    "muted": "#9e9e9e",
+    "background": "#fafafa",
+    "darkBackground": "#ececec",
+    "darkerBackground": "#dedede",
+    "lighterBackground": "#f5f5f5",
+    "foreground": "#212121",
+    "darkForeground": "#757575",
+    "lightForeground": "#424242",
+    "brightForeground": "#000000",
+    "red": "#c900c4",
+    "yellow": "#026fde",
+    "orange": "#026fde",
+    "green": "#4a2fd0",
+    "cyan": "#0c67de",
+    "blue": "#3264eb",
+    "magenta": "#8a4ad7",
+    "brightRed": "#f930fb",
+    "brightYellow": "#358fff",
+    "brightGreen": "#9f85e0",
+    "brightCyan": "#3986ff",
+    "brightBlue": "#5482ff",
+    "brightMagenta": "#b363ff"
+  }
+}

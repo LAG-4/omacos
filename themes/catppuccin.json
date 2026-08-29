@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Catppuccin",
+  "slug": "catppuccin",
+  "mode": "dark",
+  "colors": {
+    "accent": "#89b4fa",
+    "selection": "#45475a",
+    "muted": "#585b70",
+    "background": "#1e1e2e",
+    "darkBackground": "#161622",
+    "darkerBackground": "#101019",
+    "lighterBackground": "#313244",
+    "foreground": "#cdd6f4",
+    "darkForeground": "#6c7086",
+    "lightForeground": "#bac2de",
+    "brightForeground": "#cdd6f4",
+    "red": "#f38ba8",
+    "yellow": "#f9e2af",
+    "orange": "#f6b6ab",
+    "green": "#a6e3a1",
+    "cyan": "#94e2d5",
+    "blue": "#89b4fa",
+    "magenta": "#f5c2e7",
+    "brightRed": "#f38ba8",
+    "brightYellow": "#f9e2af",
+    "brightGreen": "#a6e3a1",
+    "brightCyan": "#94e2d5",
+    "brightBlue": "#89b4fa",
+    "brightMagenta": "#f5c2e7"
+  }
+}

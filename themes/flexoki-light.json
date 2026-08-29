@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Flexoki Light",
+  "slug": "flexoki-light",
+  "mode": "light",
+  "colors": {
+    "accent": "#205EA6",
+    "selection": "#CECDC3",
+    "muted": "#B7B5AC",
+    "background": "#FFFCF0",
+    "darkBackground": "#f2efe4",
+    "darkerBackground": "#e5e2d8",
+    "lighterBackground": "#E6E4D9",
+    "foreground": "#100F0F",
+    "darkForeground": "#878580",
+    "lightForeground": "#403E3C",
+    "brightForeground": "#100F0F",
+    "red": "#D14D41",
+    "yellow": "#D0A215",
+    "orange": "#d0772b",
+    "green": "#879A39",
+    "cyan": "#3AA99F",
+    "blue": "#205EA6",
+    "magenta": "#CE5D97",
+    "brightRed": "#D14D41",
+    "brightYellow": "#D0A215",
+    "brightGreen": "#879A39",
+    "brightCyan": "#3AA99F",
+    "brightBlue": "#4385BE",
+    "brightMagenta": "#CE5D97"
+  }
+}

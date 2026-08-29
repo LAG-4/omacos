@@ -96,6 +96,7 @@ Files
 
 Existing AeroSpace configuration will be backed up before replacement.
 macOS will ask you to approve Accessibility for AeroSpace and input monitoring for Karabiner-Elements.
+Clipboard paste automation needs Accessibility for the OMacOS shell. Capture and OCR need Screen Recording when first used.
 System Integrity Protection stays enabled.
 EOF
 

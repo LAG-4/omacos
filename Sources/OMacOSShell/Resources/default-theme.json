@@ -21,7 +21,12 @@
     "green": "#9ece6a",
     "cyan": "#449dab",
     "blue": "#7aa2f7",
-    "magenta": "#ad8ee6"
+    "magenta": "#ad8ee6",
+    "brightRed": "#ff7a93",
+    "brightYellow": "#ff9e64",
+    "brightGreen": "#b9f27c",
+    "brightCyan": "#0db9d7",
+    "brightBlue": "#7da6ff",
+    "brightMagenta": "#bb9af7"
   }
 }
-

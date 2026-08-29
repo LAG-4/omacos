@@ -4,6 +4,12 @@ import Foundation
 enum OMacOSPanelID: String, CaseIterable, Identifiable {
     case menu
     case keybindings
+    case clipboard
+    case emojis
+    case capture
+    case reminders
+    case themes
+    case wallpapers
     case system
     case audio
     case bluetooth
@@ -19,6 +25,12 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         switch self {
         case .menu: "OMacOS"
         case .keybindings: "Keybindings"
+        case .clipboard: "Clipboard"
+        case .emojis: "Emoji"
+        case .capture: "Capture"
+        case .reminders: "Reminders"
+        case .themes: "Themes"
+        case .wallpapers: "Background"
         case .system: "System"
         case .audio: "Audio"
         case .bluetooth: "Bluetooth"
@@ -34,6 +46,12 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         switch self {
         case .menu: "command"
         case .keybindings: "keyboard"
+        case .clipboard: "clipboard"
+        case .emojis: "face.smiling"
+        case .capture: "camera.viewfinder"
+        case .reminders: "bell"
+        case .themes: "paintpalette"
+        case .wallpapers: "photo.on.rectangle"
         case .system: "power"
         case .audio: "speaker.wave.2"
         case .bluetooth: "bolt.horizontal.circle"

@@ -49,12 +49,21 @@ final class OMacOSBarWindowCoordinator {
 final class OMacOSPanelCoordinator: NSObject {
     private let theme: OMacOSTheme
     private let systemPanelState: OMacOSSystemPanelState
+    private let clipboardStore: OMacOSClipboardStore
+    private let reminderStore: OMacOSReminderStore
     private var activePanel: NSPanel?
     private var activePanelID: OMacOSPanelID?
 
-    init(theme: OMacOSTheme, systemPanelState: OMacOSSystemPanelState) {
+    init(
+        theme: OMacOSTheme,
+        systemPanelState: OMacOSSystemPanelState,
+        clipboardStore: OMacOSClipboardStore,
+        reminderStore: OMacOSReminderStore
+    ) {
         self.theme = theme
         self.systemPanelState = systemPanelState
+        self.clipboardStore = clipboardStore
+        self.reminderStore = reminderStore
         super.init()
         DistributedNotificationCenter.default().addObserver(
             self,
@@ -80,16 +89,19 @@ final class OMacOSPanelCoordinator: NSObject {
     }
 
     /// Opens or closes one native shell panel on the display containing the pointer.
-    func togglePanel(_ panelID: OMacOSPanelID) {
+    func togglePanel(_ panelID: OMacOSPanelID, targetScreen requestedScreen: NSScreen? = nil) {
         if let activePanel, activePanel.isVisible, activePanelID == panelID {
             dismissPanel()
             return
         }
 
-        let targetScreen = NSScreen.screens.first { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) } ?? NSScreen.main
+        let targetScreen = requestedScreen
+            ?? NSScreen.screens.first { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) }
+            ?? NSScreen.main
         guard let targetScreen else { return }
 
         activePanel?.close()
+        systemPanelState.resetPanelSearch()
         let panelSize = size(for: panelID)
         let panelOrigin = NSPoint(
             x: targetScreen.frame.midX - panelSize.width / 2,
@@ -120,16 +132,20 @@ final class OMacOSPanelCoordinator: NSObject {
         panel.isReleasedWhenClosed = false
         if panelID == .menu {
             panel.contentView = NSHostingView(
-                rootView: OMacOSCommandMenuView(theme: theme) { [weak self] in
-                    self?.dismissPanel()
-                }
+                rootView: OMacOSCommandMenuView(
+                    theme: theme,
+                    dismissMenu: { [weak self] in self?.dismissPanel() },
+                    openPanel: { [weak self] panelID in self?.togglePanel(panelID) }
+                )
             )
         } else {
             panel.contentView = NSHostingView(
                 rootView: OMacOSSystemPanelView(
                     panelID: panelID,
                     theme: theme,
-                    state: systemPanelState
+                    state: systemPanelState,
+                    clipboardStore: clipboardStore,
+                    reminderStore: reminderStore
                 ) { [weak self] in
                     self?.dismissPanel()
                 }
@@ -145,8 +161,8 @@ final class OMacOSPanelCoordinator: NSObject {
 
     private func size(for panelID: OMacOSPanelID) -> NSSize {
         switch panelID {
-        case .menu: NSSize(width: 520, height: 390)
-        case .keybindings: NSSize(width: 620, height: 620)
+        case .menu: NSSize(width: 540, height: 620)
+        case .keybindings, .clipboard, .emojis, .themes: NSSize(width: 620, height: 620)
         case .clock: NSSize(width: 430, height: 520)
         default: NSSize(width: 430, height: 360)
         }
@@ -157,6 +173,8 @@ final class OMacOSPanelCoordinator: NSObject {
 final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var barState: OMacOSBarState?
     private var systemPanelState: OMacOSSystemPanelState?
+    private var clipboardStore: OMacOSClipboardStore?
+    private var reminderStore: OMacOSReminderStore?
     private var barCoordinator: OMacOSBarWindowCoordinator?
     private var panelCoordinator: OMacOSPanelCoordinator?
 
@@ -165,21 +183,32 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
 
         let state = OMacOSBarState()
         let panelState = OMacOSSystemPanelState()
-        let panels = OMacOSPanelCoordinator(theme: state.theme, systemPanelState: panelState)
+        let clipboard = OMacOSClipboardStore()
+        let reminders = OMacOSReminderStore()
+        let panels = OMacOSPanelCoordinator(
+            theme: state.theme,
+            systemPanelState: panelState,
+            clipboardStore: clipboard,
+            reminderStore: reminders
+        )
         let bars = OMacOSBarWindowCoordinator(barState: state) { [weak panels] panelID in
             panels?.togglePanel(panelID)
         }
 
         barState = state
         systemPanelState = panelState
+        clipboardStore = clipboard
+        reminderStore = reminders
         barCoordinator = bars
         panelCoordinator = panels
 
         state.startStatusUpdates()
         panelState.startStatusUpdates()
+        clipboard.startCapture()
+        reminders.startDelivery()
         bars.rebuildDisplayBars()
         if let previewPanelID = OMacOSShellMain.previewPanelID(from: CommandLine.arguments) {
-            panels.togglePanel(previewPanelID)
+            panels.togglePanel(previewPanelID, targetScreen: NSScreen.main)
         }
 
         NotificationCenter.default.addObserver(
@@ -200,6 +229,48 @@ enum OMacOSShellMain {
     @MainActor
     static func main() {
         let arguments = CommandLine.arguments
+        if let recognizeIndex = arguments.firstIndex(of: "--recognize-text"),
+           arguments.indices.contains(recognizeIndex + 1) {
+            do {
+                let text = try OMacOSVisionRecognizer.recognizeText(
+                    at: URL(fileURLWithPath: arguments[recognizeIndex + 1])
+                )
+                print(text)
+                return
+            } catch {
+                FileHandle.standardError.write(Data("OMacOS text recognition failed: \(error)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
+        if let reminderCommandIndex = arguments.firstIndex(of: "--reminder-add"),
+           arguments.indices.contains(reminderCommandIndex + 2),
+           let delay = TimeInterval(arguments[reminderCommandIndex + 1]) {
+            let store = OMacOSReminderStore()
+            guard let reminder = store.add(
+                text: arguments[reminderCommandIndex + 2],
+                dueAt: Date(timeIntervalSinceNow: delay)
+            ) else {
+                FileHandle.standardError.write(Data("Reminder text cannot be empty.\n".utf8))
+                Foundation.exit(1)
+            }
+            print("\(reminder.id.uuidString)\t\(reminder.dueAt.ISO8601Format())\t\(reminder.text)")
+            return
+        }
+
+        if arguments.contains("--reminder-list") {
+            let store = OMacOSReminderStore()
+            for reminder in store.reminders {
+                print("\(reminder.id.uuidString)\t\(reminder.dueAt.ISO8601Format())\t\(reminder.delivered ? "delivered" : "pending")\t\(reminder.text)")
+            }
+            return
+        }
+
+        if arguments.contains("--reminder-clear") {
+            OMacOSReminderStore().clear()
+            return
+        }
+
         if let panelID = requestedPanelID(from: arguments) {
             OMacOSShellMessage.postTogglePanel(panelID)
             RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))

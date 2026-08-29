@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Last Horizon",
+  "slug": "last-horizon",
+  "mode": "dark",
+  "colors": {
+    "accent": "#b59790",
+    "selection": "#584e51",
+    "muted": "#584e51",
+    "background": "#0c0b0c",
+    "darkBackground": "#090809",
+    "darkerBackground": "#060606",
+    "lighterBackground": "#0c0b0c",
+    "foreground": "#FAFCFB",
+    "darkForeground": "#584e51",
+    "lightForeground": "#cfd3cd",
+    "brightForeground": "#e2dddc",
+    "red": "#c38b7b",
+    "yellow": "#6B5E73",
+    "orange": "#c38b7b",
+    "green": "#87a9b0",
+    "cyan": "#a5a0b6",
+    "blue": "#b59790",
+    "magenta": "#c4d8e2",
+    "brightRed": "#c38b7b",
+    "brightYellow": "#6B5E73",
+    "brightGreen": "#87a9b0",
+    "brightCyan": "#a5a0b6",
+    "brightBlue": "#b59790",
+    "brightMagenta": "#c4d8e2"
+  }
+}

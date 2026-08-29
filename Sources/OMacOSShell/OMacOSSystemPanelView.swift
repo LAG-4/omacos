@@ -4,6 +4,8 @@ struct OMacOSSystemPanelView: View {
     let panelID: OMacOSPanelID
     let theme: OMacOSTheme
     @ObservedObject var state: OMacOSSystemPanelState
+    @ObservedObject var clipboardStore: OMacOSClipboardStore
+    @ObservedObject var reminderStore: OMacOSReminderStore
     let dismissPanel: () -> Void
 
     private var colors: OMacOSThemeColors { theme.colors }
@@ -52,6 +54,18 @@ struct OMacOSSystemPanelView: View {
         switch panelID {
         case .keybindings:
             keybindingsPanel
+        case .clipboard:
+            clipboardPanel
+        case .emojis:
+            emojiPanel
+        case .capture:
+            capturePanel
+        case .reminders:
+            remindersPanel
+        case .themes:
+            themesPanel
+        case .wallpapers:
+            wallpapersPanel
         case .system:
             systemPanel
         case .audio:
@@ -74,9 +88,11 @@ struct OMacOSSystemPanelView: View {
     }
 
     private var keybindingsPanel: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(state.keybindings) { binding in
+        VStack(spacing: 10) {
+            searchField("Search keybindings")
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(filteredKeybindings) { binding in
                     HStack(alignment: .firstTextBaseline, spacing: 16) {
                         Text(binding.displayChord)
                             .font(.system(size: 11, weight: .semibold, design: .monospaced))
@@ -91,10 +107,234 @@ struct OMacOSSystemPanelView: View {
                 }
             }
         }
+        }
         .overlay {
             if state.keybindings.isEmpty {
                 ContentUnavailableView("No keybindings found", systemImage: "keyboard")
             }
+        }
+    }
+
+    private var clipboardPanel: some View {
+        VStack(spacing: 10) {
+            HStack {
+                searchField("Search clipboard history")
+                Button("Clear") { clipboardStore.clear() }
+                    .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+            }
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(filteredClipboardEntries) { entry in
+                        HStack(spacing: 10) {
+                            Button {
+                                dismissPanel()
+                                clipboardStore.paste(entry)
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(entry.text)
+                                        .lineLimit(3)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Text(entry.capturedAt, style: .relative)
+                                        .font(.caption2)
+                                        .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                                }
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            Button {
+                                clipboardStore.remove(entry)
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Color(omacosHex: colors.red))
+                        }
+                        .padding(11)
+                        .background(Color(omacosHex: colors.lighterBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                    }
+                }
+            }
+            .overlay {
+                if clipboardStore.entries.isEmpty {
+                    ContentUnavailableView("Clipboard history is empty", systemImage: "clipboard")
+                }
+            }
+        }
+    }
+
+    private var emojiPanel: some View {
+        VStack(spacing: 10) {
+            HStack {
+                searchField("Search common emoji")
+                Button("All Emoji…") {
+                    NSApp.orderFrontCharacterPalette(nil)
+                }
+                .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+            }
+            ScrollView {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 8), spacing: 8) {
+                    ForEach(filteredEmoji, id: \.symbol) { emoji in
+                        Button {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString(emoji.symbol, forType: .string)
+                            dismissPanel()
+                        } label: {
+                            VStack(spacing: 4) {
+                                Text(emoji.symbol).font(.system(size: 28))
+                                Text(emoji.name)
+                                    .font(.system(size: 8))
+                                    .lineLimit(1)
+                                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 58)
+                        }
+                        .buttonStyle(.plain)
+                        .background(Color(omacosHex: colors.lighterBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+            }
+        }
+    }
+
+    private var capturePanel: some View {
+        VStack(spacing: 10) {
+            captureAction("Screenshot", subtitle: "Select a region or window", systemImage: "camera.viewfinder", arguments: ["capture", "screenshot"])
+            captureAction("Full Screen", subtitle: "Capture all connected displays", systemImage: "rectangle.dashed", arguments: ["capture", "screenshot", "--screen"])
+            captureAction("Screen Recording", subtitle: "Select a display or region to record", systemImage: "record.circle", arguments: ["capture", "recording"])
+            captureAction("Extract Text", subtitle: "Recognize text on-device and copy it", systemImage: "text.viewfinder", arguments: ["capture", "text"])
+            captureAction("Color Meter", subtitle: "Open the native macOS color inspector", systemImage: "eyedropper", arguments: ["capture", "color"])
+        }
+    }
+
+    private var remindersPanel: some View {
+        VStack(spacing: 10) {
+            TextField(
+                "What should OMacOS remind you about?",
+                text: Binding(
+                    get: { reminderStore.draftText },
+                    set: { reminderStore.draftText = $0 }
+                )
+            )
+            .textFieldStyle(.plain)
+            .padding(10)
+            .background(Color(omacosHex: colors.lighterBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            HStack {
+                DatePicker(
+                    "Due",
+                    selection: Binding(
+                        get: { reminderStore.draftDate },
+                        set: { reminderStore.draftDate = $0 }
+                    ),
+                    in: Date()...
+                )
+                .datePickerStyle(.compact)
+                Spacer()
+                Button("Add") { reminderStore.addDraft() }
+                    .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                    .disabled(reminderStore.draftText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(reminderStore.reminders) { reminder in
+                        HStack(spacing: 10) {
+                            Image(systemName: reminder.delivered ? "checkmark.circle" : "bell")
+                                .foregroundStyle(Color(omacosHex: reminder.delivered ? colors.green : colors.accent))
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(reminder.text).lineLimit(2)
+                                Text(reminder.dueAt, style: .relative)
+                                    .font(.caption)
+                                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                            }
+                            Spacer()
+                            Button {
+                                reminderStore.remove(id: reminder.id)
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Color(omacosHex: colors.red))
+                        }
+                        .padding(10)
+                        .background(Color(omacosHex: colors.lighterBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+            }
+        }
+    }
+
+    private var themesPanel: some View {
+        VStack(spacing: 10) {
+            searchField("Search 22 semantic themes")
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                    ForEach(filteredThemes, id: \.slug) { availableTheme in
+                        Button {
+                            state.applyTheme(availableTheme)
+                        } label: {
+                            HStack(spacing: 10) {
+                                Circle()
+                                    .fill(Color(omacosHex: availableTheme.colors.accent))
+                                    .frame(width: 22, height: 22)
+                                    .overlay {
+                                        Circle().stroke(Color(omacosHex: availableTheme.colors.foreground), lineWidth: 1)
+                                    }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(availableTheme.name).fontWeight(.semibold)
+                                    Text(availableTheme.mode.capitalized)
+                                        .font(.caption)
+                                        .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                                }
+                                Spacer()
+                            }
+                            .padding(10)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .background(Color(omacosHex: colors.lighterBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                    }
+                }
+            }
+            if !state.lastActionMessage.isEmpty {
+                Text(state.lastActionMessage)
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            }
+        }
+    }
+
+    private var wallpapersPanel: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            statusCard(
+                "Use your own image",
+                detail: "OMacOS applies it through the public macOS desktop-image API.",
+                systemImage: "photo.on.rectangle"
+            )
+            panelAction("Choose Wallpaper", subtitle: "PNG, JPEG, HEIC, WebP, or TIFF", systemImage: "folder") {
+                state.chooseWallpaper()
+            }
+            if !state.lastActionMessage.isEmpty {
+                Text(state.lastActionMessage)
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            }
+        }
+    }
+
+    private func captureAction(_ title: String, subtitle: String, systemImage: String, arguments: [String]) -> some View {
+        panelAction(title, subtitle: subtitle, systemImage: systemImage) {
+            dismissPanel()
+            let homeDirectory = ProcessInfo.processInfo.environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+            _ = OMacOSCommandRunner.run(
+                executable: "/usr/bin/env",
+                arguments: [homeDirectory + "/.local/bin/omacos"] + arguments
+            )
         }
     }
 
@@ -236,14 +476,70 @@ struct OMacOSSystemPanelView: View {
     }
 
     private var panelWidth: CGFloat {
-        panelID == .keybindings ? 620 : 430
+        switch panelID {
+        case .keybindings, .clipboard, .emojis, .themes: 620
+        default: 430
+        }
     }
 
     private var panelHeight: CGFloat {
         switch panelID {
-        case .keybindings: 620
+        case .keybindings, .clipboard, .emojis, .themes: 620
         case .clock: 520
         default: 360
+        }
+    }
+
+    private func searchField(_ prompt: String) -> some View {
+        TextField(
+            prompt,
+            text: Binding(
+                get: { state.panelSearchText },
+                set: { state.panelSearchText = $0 }
+            )
+        )
+            .textFieldStyle(.plain)
+            .padding(.horizontal, 11)
+            .padding(.vertical, 8)
+            .background(Color(omacosHex: colors.lighterBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private var filteredKeybindings: [OMacOSKeybinding] {
+        guard !state.panelSearchText.isEmpty else { return state.keybindings }
+        return state.keybindings.filter {
+            $0.description.localizedCaseInsensitiveContains(state.panelSearchText)
+                || $0.displayChord.localizedCaseInsensitiveContains(state.panelSearchText)
+        }
+    }
+
+    private var filteredClipboardEntries: [OMacOSClipboardEntry] {
+        guard !state.panelSearchText.isEmpty else { return clipboardStore.entries }
+        return clipboardStore.entries.filter { $0.text.localizedCaseInsensitiveContains(state.panelSearchText) }
+    }
+
+    private var filteredEmoji: [(symbol: String, name: String)] {
+        let emoji: [(symbol: String, name: String)] = [
+            ("😀", "grinning"), ("😃", "happy"), ("😄", "smile"), ("😁", "grin"),
+            ("😂", "joy"), ("🤣", "laughing"), ("😊", "blush"), ("😍", "heart eyes"),
+            ("🥰", "love"), ("😎", "cool"), ("🤔", "thinking"), ("🫡", "salute"),
+            ("😴", "sleep"), ("😭", "cry"), ("😡", "angry"), ("🤯", "mind blown"),
+            ("👍", "thumbs up"), ("👎", "thumbs down"), ("👏", "clap"), ("🙏", "please"),
+            ("💪", "strong"), ("🤝", "handshake"), ("👀", "eyes"), ("🧠", "brain"),
+            ("❤️", "heart"), ("💔", "broken heart"), ("🔥", "fire"), ("✨", "sparkles"),
+            ("🎉", "party"), ("🚀", "rocket"), ("✅", "check"), ("❌", "cross"),
+            ("⚠️", "warning"), ("💡", "idea"), ("📌", "pin"), ("🔗", "link"),
+            ("🐛", "bug"), ("🛠️", "tools"), ("💻", "computer"), ("🍎", "apple")
+        ]
+        guard !state.panelSearchText.isEmpty else { return emoji }
+        return emoji.filter { $0.name.localizedCaseInsensitiveContains(state.panelSearchText) }
+    }
+
+    private var filteredThemes: [OMacOSTheme] {
+        guard !state.panelSearchText.isEmpty else { return state.availableThemes }
+        return state.availableThemes.filter {
+            $0.name.localizedCaseInsensitiveContains(state.panelSearchText)
+                || $0.mode.localizedCaseInsensitiveContains(state.panelSearchText)
         }
     }
 }

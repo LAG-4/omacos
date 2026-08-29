@@ -14,6 +14,8 @@ Usage: omacos <command>
 
 Commands:
   doctor                    Check the OMacOS installation and permissions
+  capture ACTION            Screenshot, record, OCR text, or inspect a color
+  reminder ACTION           Add, list, or clear local reminders
   theme apply [name]        Generate configs from a semantic theme
   shell start               Start the native bar
   shell stop                Stop the native bar
@@ -101,18 +103,71 @@ run_shell_command() {
     toggle-panel)
       local panel_name=${2:-}
       case $panel_name in
-        menu|keybindings|system|audio|bluetooth|network|display|clock|power|activity)
+        menu|keybindings|clipboard|emojis|capture|reminders|themes|wallpapers|system|audio|bluetooth|network|display|clock|power|activity)
           "$shell_binary" --toggle-panel "$panel_name"
           ;;
         *)
           print -u2 "Unknown shell panel: $panel_name"
-          print -u2 "Available panels: menu, keybindings, system, audio, bluetooth, network, display, clock, power, activity"
+          print -u2 "Available panels: menu, keybindings, clipboard, emojis, capture, reminders, themes, wallpapers, system, audio, bluetooth, network, display, clock, power, activity"
           return 1
           ;;
       esac
       ;;
     *)
       print -u2 "Unknown shell action: $action"
+      return 1
+      ;;
+  esac
+}
+
+parse_reminder_duration() {
+  local duration=$1
+  local amount
+  local unit
+
+  if [[ $duration != <->(s|m|h|d) ]]; then
+    print -u2 "Invalid reminder duration: $duration (use 30s, 10m, 2h, or 1d)"
+    return 1
+  fi
+
+  amount=${duration[1,-2]}
+  unit=${duration[-1]}
+  case $unit in
+    s) print "$amount" ;;
+    m) print "$(( amount * 60 ))" ;;
+    h) print "$(( amount * 3600 ))" ;;
+    d) print "$(( amount * 86400 ))" ;;
+  esac
+}
+
+run_reminder_command() {
+  local action=${1:-}
+
+  if [[ ! -x $shell_binary ]]; then
+    print -u2 "OMacOS shell is not installed at $shell_binary"
+    return 1
+  fi
+
+  case $action in
+    add)
+      local duration=${2:-}
+      local message=${3:-}
+      if [[ -z $duration || -z $message ]]; then
+        print -u2 "Usage: omacos reminder add DURATION MESSAGE"
+        return 1
+      fi
+      local seconds
+      seconds=$(parse_reminder_duration "$duration")
+      "$shell_binary" --reminder-add "$seconds" "$message"
+      ;;
+    list|show)
+      "$shell_binary" --reminder-list
+      ;;
+    clear)
+      "$shell_binary" --reminder-clear
+      ;;
+    *)
+      print -u2 "Usage: omacos reminder <add DURATION MESSAGE|list|clear>"
       return 1
       ;;
   esac
@@ -167,8 +222,14 @@ run_uninstall() {
 }
 
 case ${1:-help} in
+  capture)
+    "$installed_root/scripts/capture.zsh" "${2:-}" "${3:-}"
+    ;;
   doctor)
     run_doctor
+    ;;
+  reminder)
+    run_reminder_command "${2:-}" "${3:-}" "${4:-}"
     ;;
   theme)
     if [[ ${2:-} != "apply" ]]; then

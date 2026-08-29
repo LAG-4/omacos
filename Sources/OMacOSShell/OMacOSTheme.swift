@@ -56,6 +56,12 @@ struct OMacOSThemeColors: Codable, Equatable {
     let cyan: String
     let blue: String
     let magenta: String
+    let brightRed: String?
+    let brightYellow: String?
+    let brightGreen: String?
+    let brightCyan: String?
+    let brightBlue: String?
+    let brightMagenta: String?
 }
 
 enum OMacOSThemeError: Error, Equatable {
@@ -74,4 +80,3 @@ extension Color {
         self.init(red: red, green: green, blue: blue)
     }
 }
-

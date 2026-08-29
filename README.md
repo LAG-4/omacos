@@ -11,7 +11,8 @@ OMacOS is at its first prototype milestone. The current build includes:
 - AeroSpace tiling with Omarchy-style window and workspace bindings
 - Right Option as the default physical Super key while Left Option and Command stay native
 - a native Swift/AppKit bar, command menu, keybinding reference, and first system panels
-- a Tokyo Night semantic theme for the shell, Ghostty, and JankyBorders
+- clipboard history, emoji, reminders, capture, on-device OCR, background, and system panels
+- all 22 frozen Quattro semantic themes with generated shell, terminal, TUI, editor, tmux, and border targets
 - a readable installer with dry-run, doctor, backup, and uninstall commands
 - macOS 26 compatibility checks and macOS 27 beta test coverage
 
@@ -62,10 +63,15 @@ omacos shell start
 omacos shell toggle-menu
 omacos shell toggle-panel audio
 omacos shell toggle-panel keybindings
+omacos capture screenshot
+omacos capture text
+omacos reminder add 10m "check the build"
 omacos uninstall
 ```
 
-The native shell exposes command menu, keybindings, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
+The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
+
+Clipboard history is stored locally at `~/.local/state/omacos/clipboard-history.json`, capped at 100 text entries, and skips pasteboard entries marked concealed or auto-generated. It can be cleared from its panel. OMacOS does not upload clipboard or reminder data.
 
 For local visual development, run a panel directly without installing the project:
 

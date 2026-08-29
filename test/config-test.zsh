@@ -10,6 +10,22 @@ trap 'rm -rf "$temporary_home"' EXIT
 jq -e '.schemaVersion == 1 and .slug == "tokyo-night"' "$project_root/themes/tokyo-night.json" >/dev/null
 cmp "$project_root/themes/tokyo-night.json" "$project_root/Sources/OMacOSShell/Resources/default-theme.json"
 
+theme_count=0
+for theme_path in "$project_root"/themes/*.json; do
+  jq -e '
+    .schemaVersion == 1
+    and (.slug | length > 0)
+    and (.mode == "dark" or .mode == "light")
+    and ([.colors[] | test("^#[0-9A-Fa-f]{6}$")] | all)
+  ' "$theme_path" >/dev/null
+  (( theme_count += 1 ))
+done
+
+if (( theme_count != 22 )); then
+  print -u2 "Theme config test failed: expected 22 Quattro themes, found $theme_count"
+  exit 1
+fi
+
 generated_karabiner="$temporary_home/omacos-super-key.json"
 "$project_root/scripts/generate-karabiner-config.zsh" "$project_root/config/keybindings.json" "$generated_karabiner" >/dev/null
 jq -e '.title == "OMacOS Super key"' "$generated_karabiner" >/dev/null
@@ -37,5 +53,14 @@ if [[ ! -f $temporary_home/.config/ghostty/themes/OMacOS ]]; then
   print -u2 "Theme config test failed: Ghostty theme was not generated"
   exit 1
 fi
+
+for generated_target in kitty.conf alacritty.toml btop.theme tmux.conf vscode.json zed.json; do
+  if [[ ! -s $temporary_home/.config/omacos/generated/tool-themes/$generated_target ]]; then
+    print -u2 "Theme config test failed: $generated_target was not generated"
+    exit 1
+  fi
+done
+
+jq -e '.schemaVersion == 1 and (.targets | length == 8)' "$temporary_home/.config/omacos/generated/theme-targets.json" >/dev/null
 
 print "Config generation test passed"

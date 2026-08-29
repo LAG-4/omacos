@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Rose Pine",
+  "slug": "rose-pine",
+  "mode": "light",
+  "colors": {
+    "accent": "#56949f",
+    "selection": "#dfdad9",
+    "muted": "#cecacd",
+    "background": "#faf4ed",
+    "darkBackground": "#ede7e1",
+    "darkerBackground": "#e1dbd5",
+    "lighterBackground": "#f2e9e1",
+    "foreground": "#575279",
+    "darkForeground": "#9893a5",
+    "lightForeground": "#6e6a86",
+    "brightForeground": "#575279",
+    "red": "#b4637a",
+    "yellow": "#ea9d34",
+    "orange": "#cf8057",
+    "green": "#286983",
+    "cyan": "#d7827e",
+    "blue": "#56949f",
+    "magenta": "#907aa9",
+    "brightRed": "#b4637a",
+    "brightYellow": "#ea9d34",
+    "brightGreen": "#286983",
+    "brightCyan": "#d7827e",
+    "brightBlue": "#56949f",
+    "brightMagenta": "#907aa9"
+  }
+}

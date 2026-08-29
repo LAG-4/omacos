@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "Solitude",
+  "slug": "solitude",
+  "mode": "dark",
+  "colors": {
+    "accent": "#798186",
+    "selection": "#343d41",
+    "muted": "#4b4e55",
+    "background": "#101315",
+    "darkBackground": "#0c0e10",
+    "darkerBackground": "#080a0b",
+    "lighterBackground": "#101315",
+    "foreground": "#cacccc",
+    "darkForeground": "#4b4e55",
+    "lightForeground": "#cbc2be",
+    "brightForeground": "#a5aeb4",
+    "red": "#565d60",
+    "yellow": "#d9dbdc",
+    "orange": "#565d60",
+    "green": "#9fa5a9",
+    "cyan": "#707070",
+    "blue": "#798186",
+    "magenta": "#aeaeae",
+    "brightRed": "#de6145",
+    "brightYellow": "#c9c2b4",
+    "brightGreen": "#343d41",
+    "brightCyan": "#707070",
+    "brightBlue": "#5d6367",
+    "brightMagenta": "#9a9a9a"
+  }
+}
