@@ -81,6 +81,10 @@ case $action in
   files)
     "$open_binary" "${2:-$PWD}"
     ;;
+  files-cwd)
+    focused_directory=$("$project_root/scripts/focused-directory.zsh")
+    "$open_binary" "$focused_directory"
+    ;;
   webapp)
     if [[ -z ${2:-} ]]; then
       print -u2 "Usage: omacos launch webapp URL"
@@ -128,7 +132,7 @@ case $action in
     "$project_root/scripts/launch.zsh" browser "$url"
     ;;
   *)
-    print -u2 "Usage: omacos launch <terminal|tmux|herdr|browser|browser-private|editor|files|webapp|app|web|docs> [TARGET]"
+    print -u2 "Usage: omacos launch <terminal|tmux|herdr|browser|browser-private|editor|files|files-cwd|webapp|app|web|docs> [TARGET]"
     exit 1
     ;;
 esac

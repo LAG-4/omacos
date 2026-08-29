@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 634 | 137 | 0 | 24 | 84 |
+| 879 | 634 | 138 | 0 | 23 | 84 |
 
 ## Remaining portable work
 
@@ -17,7 +17,6 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Kind | Reference | Outcome | Reason |
 | --- | --- | --- | --- |
-| binding | `default/hypr/bindings/applications.lua:5` | File manager (cwd) | The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter. |
 | binding | `default/hypr/bindings/tiling.lua:6` | Pseudo window | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:70` | Scroll active workspace forward | Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design. |
 | binding | `default/hypr/bindings/tiling.lua:71` | Scroll active workspace backward | Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design. |

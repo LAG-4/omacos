@@ -51,6 +51,7 @@ Hold Right Option and press:
 | Shortcut | Result |
 | --- | --- |
 | `Super + Return` | Open Ghostty |
+| `Super + Shift + Option + F` | Open Finder at the focused terminal working directory |
 | `Super + Space` | Toggle the OMacOS command menu |
 | `Super + W` or `Super + Q` | Close the focused window |
 | `Super + Arrow` | Focus in a direction |
@@ -156,6 +157,8 @@ The installer adds one clearly marked source block to `~/.zshrc`. That block loa
 Dictation uses Apple's Speech framework. Hold F9, or press `Super + Control + X` to toggle it; stopping inserts the recognized text into the focused application. The first use prompts for Microphone and Speech Recognition, and insertion needs Accessibility. When supported by the current language, recognition is required to run on-device.
 
 Screen zoom delegates to Apple's accessibility zoom rather than capturing and redrawing the desktop. Run `omacos zoom setup` once and enable “Use keyboard shortcuts to zoom”; the original Quattro chords then send the native zoom-in command or enough zoom-out steps to return to 1×. This needs Accessibility permission and leaves the system preference under the user's control.
+
+`Super + Shift + Option + F` walks the focused terminal process tree and opens Finder at the deepest readable working directory. It supports Ghostty, Terminal, iTerm, WezTerm, kitty, and Alacritty. macOS does not publish the active tab directory across terminal applications, so a terminal with several live tabs is best effort and reports an error instead of falling back to an unrelated folder.
 
 Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub tag. `omacos channel set edge` opts into builds from the current public `main` source; switching back with `omacos channel set stable` does not require reinstalling. Development builds are ad-hoc signed. The tag workflow produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 

@@ -28,6 +28,7 @@
     { "key": "return_or_enter", "modifiers": ["option"], "description": "Tmux", "command": "$HOME/.local/bin/omacos launch tmux" },
     { "key": "return_or_enter", "modifiers": ["control"], "description": "Herdr", "command": "$HOME/.local/bin/omacos launch herdr" },
     { "key": "f", "modifiers": ["shift"], "description": "File manager", "command": "$HOME/.local/bin/omacos launch files $HOME" },
+    { "key": "f", "modifiers": ["shift", "option"], "description": "File manager (cwd)", "command": "$HOME/.local/bin/omacos launch files-cwd" },
     { "key": "b", "modifiers": ["shift"], "description": "Browser", "command": "$HOME/.local/bin/omacos launch browser" },
     { "key": "b", "modifiers": ["shift", "option"], "description": "Browser (private)", "command": "$HOME/.local/bin/omacos launch browser-private" },
     { "key": "n", "modifiers": ["shift"], "description": "Editor", "command": "$HOME/.local/bin/omacos launch editor $HOME" },

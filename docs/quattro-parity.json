@@ -1543,10 +1543,10 @@
         "kind": "binding",
         "id": "default/hypr/bindings/applications.lua:5",
         "title": "File manager (cwd)",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter.",
+        "implementationStatus": "limited",
+        "grade": "close-substitute",
+        "route": "omacos launch files-cwd",
+        "notes": "OMacOS resolves the deepest descendant working directory for supported focused terminals and opens Finder there. macOS does not expose the focused tab directory directly, so multi-tab terminal selection is best effort.",
         "source": "default/hypr/bindings/applications.lua"
       },
       {
@@ -8830,9 +8830,9 @@
   "summary": {
     "total": 879,
     "implemented": 634,
-    "limited": 137,
+    "limited": 138,
     "pending": 0,
-    "unavailable": 24,
+    "unavailable": 23,
     "notApplicable": 84
   }
 }

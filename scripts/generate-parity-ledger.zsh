@@ -81,6 +81,8 @@ jq --slurpfile keys "$keybindings_path" '
     | ([ $keys[0].bindings[].description, ($keys[0].globalBindings // [])[].description ] | index($title) != null) as $isBound
     | if $isBound and $title == "Invoke last notification" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos notification invoke-one"; "The shortcut invokes an action URL attached to the newest OMacOS notification; Apple does not expose actions owned by third-party Notification Center entries."; $item.source)
+      elif $isBound and $title == "File manager (cwd)" then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos launch files-cwd"; "OMacOS resolves the deepest descendant working directory for supported focused terminals and opens Finder there. macOS does not expose the focused tab directory directly, so multi-tab terminal selection is best effort."; $item.source)
       elif $isBound and $title == "Toggle window transparency" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "optional-unsafe"; "omacos wm transparency toggle"; "The original shortcut controls focused-window opacity in manually enabled yabai power mode; AeroSpace and Rift have no equivalent compositor-opacity API."; $item.source)
       elif $isBound and $title == "Toggle single-window square aspect" then
@@ -104,7 +106,7 @@ jq --slurpfile keys "$keybindings_path" '
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "macOS window and power UI"; "macOS provides the equivalent system-owned behavior without an OMacOS interception."; $item.source)
       elif ($title | test("^(Expand window|Shrink window)")) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "close-substitute"; "omacos wm resize-grow / resize-shrink"; "All window-manager profiles expose smart resizing, although their exact pixel anchoring differs from Hyprland."; $item.source)
-      elif in_list($title; ["File manager (cwd)", "Invoke last notification", "Move window", "Resize window"]) then
+      elif in_list($title; ["Invoke last notification", "Move window", "Resize window"]) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "unavailable"; "impossible"; "docs/quattro-parity.md"; "The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter."; $item.source)
       elif in_list($title; ["Scroll active workspace forward", "Scroll active workspace backward"]) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "unavailable"; "impossible"; "docs/quattro-parity.md"; "Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design."; $item.source)
