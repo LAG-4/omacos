@@ -13,6 +13,8 @@ OMacOS is at its first prototype milestone. The current build includes:
 - a native Swift/AppKit bar, command menu, keybinding reference, and first system panels
 - clipboard history, emoji, reminders, capture, on-device OCR, background, and system panels
 - all 22 frozen Quattro semantic themes with generated shell, terminal, TUI, editor, tmux, and border targets
+- configurable terminal, browser, and editor defaults plus Omarchy-style shell tools, tmux layouts, and a self-contained Neovim profile
+- local web-app bundles and a native agent-usage panel backed by Claude, Codex, and Fireworks collectors
 - a readable installer with dry-run, doctor, backup, and uninstall commands
 - macOS 26 compatibility checks and macOS 27 beta test coverage
 
@@ -66,12 +68,19 @@ omacos shell toggle-panel keybindings
 omacos capture screenshot
 omacos capture text
 omacos reminder add 10m "check the build"
+omacos default set browser brave
+omacos default set editor nvim
+omacos launch tmux
+omacos webapp install Linear https://linear.app
+omacos agent usage-update
 omacos uninstall
 ```
 
-The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
+The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, application defaults, agent usage, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
 
 Clipboard history is stored locally at `~/.local/state/omacos/clipboard-history.json`, capped at 100 text entries, and skips pasteboard entries marked concealed or auto-generated. It can be cleared from its panel. OMacOS does not upload clipboard or reminder data.
+
+The installer adds one clearly marked source block to `~/.zshrc`. That block loads the OMacOS aliases, fzf/zoxide/mise/Starship initialization, compression helpers, and tmux developer layouts. Uninstall removes only that block and preserves edits made before or after installation.
 
 For local visual development, run a panel directly without installing the project:
 

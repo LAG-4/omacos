@@ -15,7 +15,11 @@ Usage: omacos <command>
 Commands:
   doctor                    Check the OMacOS installation and permissions
   capture ACTION            Screenshot, record, OCR text, or inspect a color
+  default ACTION            View or set terminal, browser, and editor defaults
+  launch TARGET             Launch a default app, file manager, or web app
+  agent ACTION              Refresh or inspect AI agent usage records
   reminder ACTION           Add, list, or clear local reminders
+  webapp ACTION             Install, list, or remove URL app bundles
   theme apply [name]        Generate configs from a semantic theme
   shell start               Start the native bar
   shell stop                Stop the native bar
@@ -56,6 +60,8 @@ run_doctor() {
   doctor_check "Karabiner rule installed" "$([[ -f $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Native shell binary" "$([[ -x $shell_binary ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Shell LaunchAgent" "$([[ -f $launch_agent ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Application defaults" "$([[ -f $omacos_home/.config/omacos/defaults.json ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Shell integration" "$(rg -Fq '# >>> OMacOS shell integration >>>' "$omacos_home/.zshrc" 2>/dev/null && print ok || print fail)" || (( failures += 1 ))
 
   if (( failures > 0 )); then
     print -u2 "OMacOS doctor found $failures problem(s)."
@@ -103,12 +109,12 @@ run_shell_command() {
     toggle-panel)
       local panel_name=${2:-}
       case $panel_name in
-        menu|keybindings|clipboard|emojis|capture|reminders|themes|wallpapers|system|audio|bluetooth|network|display|clock|power|activity)
+        menu|keybindings|clipboard|emojis|capture|reminders|themes|wallpapers|defaults|agents|system|audio|bluetooth|network|display|clock|power|activity)
           "$shell_binary" --toggle-panel "$panel_name"
           ;;
         *)
           print -u2 "Unknown shell panel: $panel_name"
-          print -u2 "Available panels: menu, keybindings, clipboard, emojis, capture, reminders, themes, wallpapers, system, audio, bluetooth, network, display, clock, power, activity"
+          print -u2 "Available panels: menu, keybindings, clipboard, emojis, capture, reminders, themes, wallpapers, defaults, agents, system, audio, bluetooth, network, display, clock, power, activity"
           return 1
           ;;
       esac
@@ -199,6 +205,10 @@ run_uninstall() {
   pkill -x omacos-shell 2>/dev/null || true
   launchctl bootout "gui/$UID" "$launch_agent" >/dev/null 2>&1 || true
 
+  if [[ -x $installed_root/scripts/shell-integration.zsh ]]; then
+    "$installed_root/scripts/shell-integration.zsh" remove
+  fi
+
   if [[ -f $state_directory/had-xdg-aerospace-config ]]; then
     cp "$backup_directory/xdg-aerospace.toml" "$omacos_home/.config/aerospace/aerospace.toml"
   else
@@ -215,6 +225,7 @@ run_uninstall() {
   rm -f "$omacos_home/.config/ghostty/themes/OMacOS"
   rm -f "$omacos_home/.local/bin/omacos" "$omacos_home/.local/bin/omacos-shell"
   rm -f "$launch_agent"
+  rm -rf "$omacos_home/Applications/OMacOS Web Apps"
   rm -rf "$omacos_home/.config/omacos" "$installed_directory"
   rm -rf "$state_directory"
 
@@ -222,8 +233,24 @@ run_uninstall() {
 }
 
 case ${1:-help} in
+  agent)
+    case ${2:-} in
+      usage-update|refresh) "$installed_root/bin/omacos-agent-usage-update" "${@:3}" ;;
+      list) find "$omacos_home/.local/state/omacos/agents/usage" -maxdepth 1 -name '*.json' -print 2>/dev/null | sort ;;
+      *) print -u2 "Usage: omacos agent <usage-update|list>"; exit 1 ;;
+    esac
+    ;;
   capture)
     "$installed_root/scripts/capture.zsh" "${2:-}" "${3:-}"
+    ;;
+  default)
+    "$installed_root/scripts/defaults.zsh" "${2:-}" "${3:-}" "${4:-}"
+    ;;
+  launch)
+    "$installed_root/scripts/launch.zsh" "${2:-}" "${3:-}"
+    ;;
+  webapp)
+    "$installed_root/scripts/webapps.zsh" "${2:-}" "${3:-}" "${4:-}"
     ;;
   doctor)
     run_doctor

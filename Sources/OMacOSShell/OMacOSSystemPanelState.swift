@@ -60,6 +60,9 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
     @Published private(set) var lastRefresh = Date()
     @Published var panelSearchText = ""
     @Published private(set) var lastActionMessage = ""
+    @Published private(set) var defaultTerminal = "ghostty"
+    @Published private(set) var defaultBrowser = "system"
+    @Published private(set) var defaultEditor = "nvim"
 
     private var refreshTimer: Timer?
 
@@ -67,6 +70,7 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
     func startStatusUpdates() {
         loadKeybindings()
         loadAvailableThemes()
+        loadApplicationDefaults()
         refreshStatusValues()
         refreshTimer = Timer.scheduledTimer(
             timeInterval: 5,
@@ -162,6 +166,20 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
             lastActionMessage = "Wallpaper applied to \(NSScreen.screens.count) display(s)."
         } else {
             lastActionMessage = "Wallpaper failed on: \(failedScreens.joined(separator: ", "))."
+        }
+    }
+
+    func setApplicationDefault(category: String, value: String) {
+        let script = projectScript(named: "defaults.zsh")
+        let result = OMacOSCommandRunner.run(
+            executable: "/usr/bin/env",
+            arguments: [script, "set", category, value]
+        )
+        if result.exitCode == 0 {
+            loadApplicationDefaults()
+            lastActionMessage = "Set default \(category) to \(value)."
+        } else {
+            lastActionMessage = "Could not set default \(category)."
         }
     }
 
@@ -296,6 +314,30 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
                 return
             }
         }
+    }
+
+    private func loadApplicationDefaults() {
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        let defaultsURL = URL(fileURLWithPath: homeDirectory)
+            .appendingPathComponent(".config/omacos/defaults.json")
+        guard let data = try? Data(contentsOf: defaultsURL),
+              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return
+        }
+        defaultTerminal = object["terminal"] as? String ?? defaultTerminal
+        defaultBrowser = object["browser"] as? String ?? defaultBrowser
+        defaultEditor = object["editor"] as? String ?? defaultEditor
+    }
+
+    private func projectScript(named scriptName: String) -> String {
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        let installedScript = homeDirectory + "/.local/share/omacos/current/scripts/\(scriptName)"
+        if FileManager.default.isExecutableFile(atPath: installedScript) {
+            return installedScript
+        }
+        return FileManager.default.currentDirectoryPath + "/scripts/\(scriptName)"
     }
 
     nonisolated static func firstMatch(in input: String, pattern: String, captureGroup: Int = 0) -> String? {

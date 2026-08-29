@@ -8,6 +8,7 @@ temporary_home=$(mktemp -d -t omacos-lifecycle-test.XXXXXX)
 trap 'rm -rf "$temporary_home"' EXIT
 
 mkdir -p "$temporary_home/.config/aerospace"
+print "original shell config" > "$temporary_home/.zshrc"
 print "original dot config" > "$temporary_home/.aerospace.toml"
 print "original xdg config" > "$temporary_home/.config/aerospace/aerospace.toml"
 print "y" > "$temporary_home/installer-confirmation"
@@ -50,6 +51,11 @@ fi
 
 if [[ $(<"$temporary_home/.config/aerospace/aerospace.toml") != "original xdg config" ]]; then
   print -u2 "Install lifecycle test failed: XDG AeroSpace config was not restored"
+  exit 1
+fi
+
+if [[ $(<"$temporary_home/.zshrc") != "original shell config" ]]; then
+  print -u2 "Install lifecycle test failed: shell integration was not removed cleanly"
   exit 1
 fi
 

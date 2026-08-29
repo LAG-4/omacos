@@ -10,6 +10,8 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
     case reminders
     case themes
     case wallpapers
+    case defaults
+    case agents
     case system
     case audio
     case bluetooth
@@ -31,6 +33,8 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .reminders: "Reminders"
         case .themes: "Themes"
         case .wallpapers: "Background"
+        case .defaults: "Defaults"
+        case .agents: "Agents"
         case .system: "System"
         case .audio: "Audio"
         case .bluetooth: "Bluetooth"
@@ -52,6 +56,8 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .reminders: "bell"
         case .themes: "paintpalette"
         case .wallpapers: "photo.on.rectangle"
+        case .defaults: "star"
+        case .agents: "brain.head.profile"
         case .system: "power"
         case .audio: "speaker.wave.2"
         case .bluetooth: "bolt.horizontal.circle"

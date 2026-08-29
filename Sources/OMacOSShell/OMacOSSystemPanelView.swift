@@ -6,6 +6,7 @@ struct OMacOSSystemPanelView: View {
     @ObservedObject var state: OMacOSSystemPanelState
     @ObservedObject var clipboardStore: OMacOSClipboardStore
     @ObservedObject var reminderStore: OMacOSReminderStore
+    @ObservedObject var agentStore: OMacOSAgentUsageStore
     let dismissPanel: () -> Void
 
     private var colors: OMacOSThemeColors { theme.colors }
@@ -66,6 +67,10 @@ struct OMacOSSystemPanelView: View {
             themesPanel
         case .wallpapers:
             wallpapersPanel
+        case .defaults:
+            defaultsPanel
+        case .agents:
+            agentsPanel
         case .system:
             systemPanel
         case .audio:
@@ -327,6 +332,191 @@ struct OMacOSSystemPanelView: View {
         }
     }
 
+    private var defaultsPanel: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                defaultChoices(
+                    title: "Terminal",
+                    selected: state.defaultTerminal,
+                    choices: [("ghostty", "Ghostty"), ("terminal", "Terminal"), ("iterm2", "iTerm2")]
+                ) { state.setApplicationDefault(category: "terminal", value: $0) }
+                defaultChoices(
+                    title: "Browser",
+                    selected: state.defaultBrowser,
+                    choices: [("system", "System"), ("safari", "Safari"), ("chrome", "Chrome"), ("brave", "Brave"), ("firefox", "Firefox"), ("helium", "Helium")]
+                ) { state.setApplicationDefault(category: "browser", value: $0) }
+                defaultChoices(
+                    title: "Editor",
+                    selected: state.defaultEditor,
+                    choices: [("nvim", "Neovim"), ("vscode", "VS Code"), ("cursor", "Cursor"), ("zed", "Zed"), ("sublime", "Sublime")]
+                ) { state.setApplicationDefault(category: "editor", value: $0) }
+                if !state.lastActionMessage.isEmpty {
+                    Text(state.lastActionMessage)
+                        .font(.caption)
+                        .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                }
+            }
+        }
+    }
+
+    private var agentsPanel: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if agentStore.records.isEmpty {
+                ContentUnavailableView(
+                    "No agent usage yet",
+                    systemImage: "brain.head.profile",
+                    description: Text("Run `omacos agent usage-update` after signing in to Codex, Claude, or Fireworks.")
+                )
+            } else {
+                HStack(spacing: 8) {
+                    ForEach(agentStore.records) { record in
+                        Button {
+                            agentStore.selectedAgentID = record.id
+                        } label: {
+                            Text(record.name)
+                                .font(.system(size: 11, weight: .semibold))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(Color(omacosHex: record.id == agentStore.selectedRecord?.id ? colors.background : colors.foreground))
+                        .background(Color(omacosHex: record.id == agentStore.selectedRecord?.id ? colors.accent : colors.lighterBackground))
+                        .clipShape(Capsule())
+                    }
+                    Spacer()
+                    Button("Refresh") { agentStore.refresh() }
+                        .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                }
+
+                if let record = agentStore.selectedRecord {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 14) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(record.name).font(.title2.bold())
+                                    Text(record.usageStatusText?.isEmpty == false ? record.usageStatusText! : (record.tierLabel ?? "Subscription"))
+                                        .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                                }
+                                Spacer()
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    Text(formatTokenCount(record.todayTotalTokens ?? 0)).font(.title3.bold())
+                                    Text("tokens today").font(.caption).foregroundStyle(Color(omacosHex: colors.darkForeground))
+                                }
+                            }
+
+                            ForEach(record.limits ?? []) { limit in
+                                VStack(alignment: .leading, spacing: 5) {
+                                    HStack {
+                                        Text(limit.displayTitle).fontWeight(.semibold)
+                                        Spacer()
+                                        Text("\(Int((limit.percent ?? 0) * 100))%")
+                                    }
+                                    ProgressView(value: min(max(limit.percent ?? 0, 0), 1))
+                                        .tint(Color(omacosHex: (limit.percent ?? 0) >= 0.9 ? colors.red : colors.accent))
+                                }
+                            }
+
+                            if let balance = record.balance, let remaining = balance.remaining {
+                                statusCard(
+                                    String(format: "%@%.2f remaining", currencyPrefix(balance.currency), remaining),
+                                    detail: balance.estimated == true ? "Estimated prepaid balance" : "Prepaid balance",
+                                    systemImage: "creditcard"
+                                )
+                            }
+
+                            agentUsageDays(record.recentDays ?? [])
+                            agentModelUsage(record.modelUsage ?? [:])
+                        }
+                    }
+                }
+            }
+
+            if !agentStore.refreshMessage.isEmpty {
+                Text(agentStore.refreshMessage)
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            }
+        }
+    }
+
+    private func agentUsageDays(_ days: [OMacOSAgentUsageDay]) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text("Tokens by day").font(.caption.weight(.bold)).foregroundStyle(Color(omacosHex: colors.darkForeground))
+            let maximum = max(days.map { $0.messageCount ?? 0 }.max() ?? 1, 1)
+            ForEach(days) { day in
+                HStack(spacing: 8) {
+                    Text(day.date.suffix(5)).font(.system(size: 10, design: .monospaced)).frame(width: 40, alignment: .leading)
+                    GeometryReader { geometry in
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(Color(omacosHex: colors.accent))
+                            .frame(width: geometry.size.width * CGFloat(day.messageCount ?? 0) / CGFloat(maximum))
+                    }
+                    .frame(height: 8)
+                    Text(formatTokenCount(day.messageCount ?? 0)).font(.system(size: 10, design: .monospaced)).frame(width: 54, alignment: .trailing)
+                }
+            }
+        }
+    }
+
+    private func agentModelUsage(_ models: [String: OMacOSAgentModelUsage]) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text("Tokens by model").font(.caption.weight(.bold)).foregroundStyle(Color(omacosHex: colors.darkForeground))
+            ForEach(models.sorted { $0.value.totalTokens > $1.value.totalTokens }.prefix(5), id: \.key) { model, usage in
+                HStack {
+                    Text(model).lineLimit(1)
+                    Spacer()
+                    Text(formatTokenCount(usage.totalTokens)).font(.system(size: 10, design: .monospaced))
+                }
+            }
+        }
+    }
+
+    private func formatTokenCount(_ count: Int) -> String {
+        if count >= 1_000_000 { return String(format: "%.1fM", Double(count) / 1_000_000) }
+        if count >= 1_000 { return String(format: "%.1fK", Double(count) / 1_000) }
+        return String(count)
+    }
+
+    private func currencyPrefix(_ currency: String?) -> String {
+        switch currency?.uppercased() {
+        case "EUR": "€"
+        case "GBP": "£"
+        case "USD", nil: "$"
+        default: (currency ?? "") + " "
+        }
+    }
+
+    private func defaultChoices(
+        title: String,
+        selected: String,
+        choices: [(value: String, label: String)],
+        select: @escaping (String) -> Void
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                ForEach(choices, id: \.value) { choice in
+                    Button {
+                        select(choice.value)
+                    } label: {
+                        HStack {
+                            Image(systemName: selected == choice.value ? "checkmark.circle.fill" : "circle")
+                            Text(choice.label)
+                            Spacer()
+                        }
+                        .padding(9)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(Color(omacosHex: selected == choice.value ? colors.accent : colors.foreground))
+                    .background(Color(omacosHex: colors.lighterBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+        }
+    }
+
     private func captureAction(_ title: String, subtitle: String, systemImage: String, arguments: [String]) -> some View {
         panelAction(title, subtitle: subtitle, systemImage: systemImage) {
             dismissPanel()
@@ -477,14 +667,14 @@ struct OMacOSSystemPanelView: View {
 
     private var panelWidth: CGFloat {
         switch panelID {
-        case .keybindings, .clipboard, .emojis, .themes: 620
+        case .keybindings, .clipboard, .emojis, .themes, .agents: 620
         default: 430
         }
     }
 
     private var panelHeight: CGFloat {
         switch panelID {
-        case .keybindings, .clipboard, .emojis, .themes: 620
+        case .keybindings, .clipboard, .emojis, .themes, .agents: 620
         case .clock: 520
         default: 360
         }

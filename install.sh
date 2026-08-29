@@ -83,7 +83,8 @@ System
   Apple Silicon, macOS $(sw_vers -productVersion)
 
 Packages
-  AeroSpace, Karabiner-Elements, Ghostty, JankyBorders, jq, blueutil
+  AeroSpace, Karabiner-Elements, Ghostty, JankyBorders
+  Omarchy-style developer tools including Neovim, tmux, fzf, ripgrep, fd, bat, eza, zoxide, mise, btop, yazi, ffmpeg, and GitHub CLI
 
 Files
   $omacos_home/.local/share/omacos/current
@@ -92,6 +93,7 @@ Files
   $omacos_home/.config/aerospace/aerospace.toml
   $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json
   $omacos_home/.config/omacos
+  one marked, reversible source block in $omacos_home/.zshrc
   $omacos_home/Library/LaunchAgents/dev.omacos.shell.plist
 
 Existing AeroSpace configuration will be backed up before replacement.
@@ -178,6 +180,8 @@ cp "$install_directory/config/aerospace/aerospace.toml" "$aerospace_directory/ae
   "$karabiner_rule_directory/omacos-super-key.json"
 
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/render-theme.zsh" tokyo-night
+OMACOS_ROOT="$install_directory" "$install_directory/scripts/defaults.zsh" init >/dev/null
+OMACOS_ROOT="$install_directory" "$install_directory/scripts/shell-integration.zsh" install
 
 cat > "$launch_agent_directory/dev.omacos.shell.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>

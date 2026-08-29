@@ -1,0 +1,85 @@
+#!/bin/zsh
+
+set -euo pipefail
+
+command_directory=${OMACOS_AGENT_COLLECTOR_DIRECTORY:-${0:A:h}}
+omacos_home=${OMACOS_TEST_HOME:-$HOME}
+usage_directory="$omacos_home/.local/state/omacos/agents/usage"
+mkdir -p "$usage_directory"
+
+typeset -a collector_flags
+typeset -a requested_agents
+typeset -a excluded_agents
+collector_flags=()
+requested_agents=()
+excluded_agents=()
+
+while (( $# > 0 )); do
+  case $1 in
+    --force|--limits-only)
+      collector_flags+=("$1")
+      ;;
+    --except)
+      if (( $# < 2 )); then
+        print -u2 "--except requires an agent id"
+        exit 1
+      fi
+      excluded_agents+=("$2")
+      shift
+      ;;
+    *)
+      requested_agents+=("$1")
+      ;;
+  esac
+  shift
+done
+
+agent_is_wanted() {
+  local agent=$1
+  local candidate
+
+  for candidate in "${excluded_agents[@]}"; do
+    [[ $candidate == $agent ]] && return 1
+  done
+  (( ${#requested_agents[@]} == 0 )) && return 0
+  for candidate in "${requested_agents[@]}"; do
+    [[ $candidate == $agent ]] && return 0
+  done
+  return 1
+}
+
+collect_agent_usage() {
+  local collector=$1
+  local agent=$2
+  local record
+  local temporary_record
+
+  if ! record=$("$collector" "${collector_flags[@]}") \
+    || [[ -z $record ]] \
+    || ! jq -e '.schemaVersion == 1 and (.id | length > 0)' >/dev/null 2>&1 <<< "$record"; then
+    print -u2 "omacos-agent-usage-update: $agent collector failed"
+    return 1
+  fi
+
+  temporary_record=$(mktemp "$usage_directory/.$agent.XXXXXX")
+  print -r -- "$record" > "$temporary_record"
+  mv "$temporary_record" "$usage_directory/$agent.json"
+}
+
+typeset -a collector_pids
+collector_pids=()
+for collector in "$command_directory"/omacos-agent-usage-*(N); do
+  [[ -x $collector ]] || continue
+  agent=${collector:t}
+  agent=${agent#omacos-agent-usage-}
+  [[ $agent == "update" ]] && continue
+  agent_is_wanted "$agent" || continue
+  collect_agent_usage "$collector" "$agent" &
+  collector_pids+=($!)
+done
+
+exit_status=0
+for collector_pid in "${collector_pids[@]}"; do
+  wait "$collector_pid" || exit_status=1
+done
+exit $exit_status

@@ -15,17 +15,21 @@ struct OMacOSCommandMenuView: View {
     let dismissMenu: () -> Void
     let openPanel: (OMacOSPanelID) -> Void
 
-    private let launchCommands = [
-        OMacOSLaunchCommand(id: "terminal", title: "Terminal", subtitle: "Open a new Ghostty window", systemImage: "apple.terminal", executable: "/usr/bin/open", arguments: ["-na", "Ghostty"]),
-        OMacOSLaunchCommand(id: "browser", title: "Browser", subtitle: "Open Safari", systemImage: "safari", executable: "/usr/bin/open", arguments: ["-a", "Safari"]),
-        OMacOSLaunchCommand(id: "files", title: "Files", subtitle: "Open Finder", systemImage: "folder", executable: "/usr/bin/open", arguments: [NSHomeDirectory()]),
+    private var launchCommands: [OMacOSLaunchCommand] {
+        let homeDirectory = ProcessInfo.processInfo.environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        let omacosCLI = homeDirectory + "/.local/bin/omacos"
+        return [
+        OMacOSLaunchCommand(id: "terminal", title: "Terminal", subtitle: "Open the OMacOS default terminal", systemImage: "apple.terminal", executable: "/usr/bin/env", arguments: [omacosCLI, "launch", "terminal"]),
+        OMacOSLaunchCommand(id: "browser", title: "Browser", subtitle: "Open the OMacOS default browser", systemImage: "safari", executable: "/usr/bin/env", arguments: [omacosCLI, "launch", "browser"]),
+        OMacOSLaunchCommand(id: "files", title: "Files", subtitle: "Open Finder", systemImage: "folder", executable: "/usr/bin/env", arguments: [omacosCLI, "launch", "files", homeDirectory]),
         OMacOSLaunchCommand(id: "settings", title: "System Settings", subtitle: "Configure this Mac", systemImage: "gearshape", executable: "/usr/bin/open", arguments: ["-a", "System Settings"]),
         OMacOSLaunchCommand(id: "activity", title: "Activity Monitor", subtitle: "Inspect running processes", systemImage: "waveform.path.ecg", executable: "/usr/bin/open", arguments: ["-a", "Activity Monitor"])
-    ]
+        ]
+    }
 
     private let panelCommands: [OMacOSPanelID] = [
         .keybindings, .clipboard, .emojis, .capture,
-        .reminders, .themes, .wallpapers, .system
+        .reminders, .themes, .wallpapers, .defaults, .agents, .system
     ]
 
     var body: some View {

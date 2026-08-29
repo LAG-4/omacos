@@ -15,7 +15,7 @@
 - Add clipboard history, emoji picker, reminders, screenshots, recordings, and OCR.
 - Test one-display, multi-display, clamshell, notch, fullscreen, and permission-revocation cases.
 
-Current progress: the shared panel command API, clickable bar affordances, keybinding reference, system menu, calendar, audio, Bluetooth, network, display, power, activity, clipboard, emoji, reminders, capture, OCR, themes, and background panels are implemented. All 22 semantic palettes are imported without bundling unverified wallpapers. Service depth, application setup, voice, agents, media, weather, and hardware coverage remain in progress.
+Current progress: the shared panel command API, clickable bar affordances, keybinding reference, system menu, calendar, audio, Bluetooth, network, display, power, activity, clipboard, emoji, reminders, capture, OCR, themes, backgrounds, application defaults, web apps, and agent-usage panels are implemented. All 22 semantic palettes are imported without bundling unverified wallpapers. The default install now includes the portable shell toolchain, reversible zsh integration, tmux layouts, and an isolated Neovim profile. Voice, media, weather, optional apps, and hardware coverage remain in progress.
 
 ## Milestone 2: Quattro shell parity
 

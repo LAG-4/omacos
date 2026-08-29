@@ -4,11 +4,17 @@ import SwiftUI
 @MainActor
 final class OMacOSBarWindowCoordinator {
     private let barState: OMacOSBarState
+    private let agentStore: OMacOSAgentUsageStore
     private let togglePanel: (OMacOSPanelID) -> Void
     private var barPanels: [NSPanel] = []
 
-    init(barState: OMacOSBarState, togglePanel: @escaping (OMacOSPanelID) -> Void) {
+    init(
+        barState: OMacOSBarState,
+        agentStore: OMacOSAgentUsageStore,
+        togglePanel: @escaping (OMacOSPanelID) -> Void
+    ) {
         self.barState = barState
+        self.agentStore = agentStore
         self.togglePanel = togglePanel
     }
 
@@ -39,7 +45,9 @@ final class OMacOSBarWindowCoordinator {
         panel.isOpaque = false
         panel.hasShadow = false
         panel.hidesOnDeactivate = false
-        panel.contentView = NSHostingView(rootView: OMacOSBarView(barState: barState, togglePanel: togglePanel))
+        panel.contentView = NSHostingView(
+            rootView: OMacOSBarView(barState: barState, agentStore: agentStore, togglePanel: togglePanel)
+        )
         panel.orderFrontRegardless()
         return panel
     }
@@ -51,6 +59,7 @@ final class OMacOSPanelCoordinator: NSObject {
     private let systemPanelState: OMacOSSystemPanelState
     private let clipboardStore: OMacOSClipboardStore
     private let reminderStore: OMacOSReminderStore
+    private let agentStore: OMacOSAgentUsageStore
     private var activePanel: NSPanel?
     private var activePanelID: OMacOSPanelID?
 
@@ -58,12 +67,14 @@ final class OMacOSPanelCoordinator: NSObject {
         theme: OMacOSTheme,
         systemPanelState: OMacOSSystemPanelState,
         clipboardStore: OMacOSClipboardStore,
-        reminderStore: OMacOSReminderStore
+        reminderStore: OMacOSReminderStore,
+        agentStore: OMacOSAgentUsageStore
     ) {
         self.theme = theme
         self.systemPanelState = systemPanelState
         self.clipboardStore = clipboardStore
         self.reminderStore = reminderStore
+        self.agentStore = agentStore
         super.init()
         DistributedNotificationCenter.default().addObserver(
             self,
@@ -145,7 +156,8 @@ final class OMacOSPanelCoordinator: NSObject {
                     theme: theme,
                     state: systemPanelState,
                     clipboardStore: clipboardStore,
-                    reminderStore: reminderStore
+                    reminderStore: reminderStore,
+                    agentStore: agentStore
                 ) { [weak self] in
                     self?.dismissPanel()
                 }
@@ -162,7 +174,8 @@ final class OMacOSPanelCoordinator: NSObject {
     private func size(for panelID: OMacOSPanelID) -> NSSize {
         switch panelID {
         case .menu: NSSize(width: 540, height: 620)
-        case .keybindings, .clipboard, .emojis, .themes: NSSize(width: 620, height: 620)
+        case .keybindings, .clipboard, .emojis, .themes, .agents: NSSize(width: 620, height: 620)
+        case .defaults: NSSize(width: 540, height: 540)
         case .clock: NSSize(width: 430, height: 520)
         default: NSSize(width: 430, height: 360)
         }
@@ -175,6 +188,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var systemPanelState: OMacOSSystemPanelState?
     private var clipboardStore: OMacOSClipboardStore?
     private var reminderStore: OMacOSReminderStore?
+    private var agentStore: OMacOSAgentUsageStore?
     private var barCoordinator: OMacOSBarWindowCoordinator?
     private var panelCoordinator: OMacOSPanelCoordinator?
 
@@ -185,13 +199,15 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         let panelState = OMacOSSystemPanelState()
         let clipboard = OMacOSClipboardStore()
         let reminders = OMacOSReminderStore()
+        let agents = OMacOSAgentUsageStore()
         let panels = OMacOSPanelCoordinator(
             theme: state.theme,
             systemPanelState: panelState,
             clipboardStore: clipboard,
-            reminderStore: reminders
+            reminderStore: reminders,
+            agentStore: agents
         )
-        let bars = OMacOSBarWindowCoordinator(barState: state) { [weak panels] panelID in
+        let bars = OMacOSBarWindowCoordinator(barState: state, agentStore: agents) { [weak panels] panelID in
             panels?.togglePanel(panelID)
         }
 
@@ -199,6 +215,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         systemPanelState = panelState
         clipboardStore = clipboard
         reminderStore = reminders
+        agentStore = agents
         barCoordinator = bars
         panelCoordinator = panels
 
@@ -206,6 +223,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         panelState.startStatusUpdates()
         clipboard.startCapture()
         reminders.startDelivery()
+        agents.startMonitoring()
         bars.rebuildDisplayBars()
         if let previewPanelID = OMacOSShellMain.previewPanelID(from: CommandLine.arguments) {
             panels.togglePanel(previewPanelID, targetScreen: NSScreen.main)

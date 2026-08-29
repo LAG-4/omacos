@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OMacOSBarView: View {
     @ObservedObject var barState: OMacOSBarState
+    @ObservedObject var agentStore: OMacOSAgentUsageStore
     let togglePanel: (OMacOSPanelID) -> Void
 
     private var colors: OMacOSThemeColors { barState.theme.colors }
@@ -32,6 +33,9 @@ struct OMacOSBarView: View {
 
             panelButton(.network)
             panelButton(.audio)
+            if !agentStore.records.isEmpty {
+                panelButton(.agents)
+            }
 
             if !barState.batteryText.isEmpty {
                 Button {
