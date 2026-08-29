@@ -60,6 +60,10 @@ Hold Right Option and press:
 | `Super + Shift + Option + 1...0` | Move a window silently to workspace |
 | `Super + T` | Toggle floating and tiling |
 | `Super + F` | Toggle fullscreen |
+| `Super + Control + F` | Toggle tiled fullscreen |
+| `Super + Option + F` | Toggle full-width geometry |
+| `Super + O` | Float the focused window; pinning needs optional yabai power mode |
+| `Super + /` | Open native display scaling controls |
 | `Super + J` | Toggle split orientation |
 | `Super + Shift + Backspace` | Toggle window gaps |
 | `Super + S` | Summon the scratchpad workspace |

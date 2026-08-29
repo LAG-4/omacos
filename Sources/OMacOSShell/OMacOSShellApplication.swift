@@ -458,6 +458,16 @@ enum OMacOSShellMain {
             }
         }
 
+        if arguments.contains("--window-full-width") {
+            do {
+                print(Int(try OMacOSWindowActions.toggleFocusedWindowFullWidth().rounded()))
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
         if arguments.contains("--close-all-windows") {
             do {
                 print(try OMacOSWindowActions.closeAllApplicationWindows())

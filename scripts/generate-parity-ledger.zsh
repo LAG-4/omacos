@@ -79,7 +79,11 @@ jq --slurpfile keys "$keybindings_path" '
     . as $item
     | (binding_title) as $title
     | ([ $keys[0].bindings[].description, ($keys[0].globalBindings // [])[].description ] | index($title) != null) as $isBound
-    | if $isBound then
+    | if $isBound and ($title | test("^Monitor scaling")) then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "native display panel"; "The original chord opens display resolution controls because macOS does not expose a supported global scale-step API."; $item.source)
+      elif $isBound and $title == "Pop window out (float & pin)" then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "optional-unsafe"; "omacos wm pop-window"; "The safe path floats the window on every profile. Global pinning requires the manually enabled yabai scripting addition."; $item.source)
+      elif $isBound then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "close-substitute"; "config/keybindings.json"; "Right Option dispatches the matching outcome through Karabiner and an OMacOS adapter."; $item.source)
       elif ($item.source == "default/hypr/bindings/tiling.lua" and ($item.line == 23 or $item.line == 24 or $item.line == 25))
         or ($item.source == "default/hypr/bindings/utilities.lua" and $item.line == 110) then

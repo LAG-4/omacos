@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 627 | 131 | 0 | 40 | 81 |
+| 879 | 631 | 132 | 0 | 35 | 81 |
 
 ## Remaining portable work
 
@@ -18,8 +18,6 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | Kind | Reference | Outcome | Reason |
 | --- | --- | --- | --- |
 | binding | `default/hypr/bindings/applications.lua:5` | File manager (cwd) | The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter. |
-| binding | `default/hypr/bindings/tiling.lua:10` | Full width | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| binding | `default/hypr/bindings/tiling.lua:11` | Pop window out (float & pin) | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:6` | Pseudo window | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:70` | Scroll active workspace forward | Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design. |
 | binding | `default/hypr/bindings/tiling.lua:71` | Scroll active workspace backward | Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design. |
@@ -31,12 +29,9 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | binding | `default/hypr/bindings/tiling.lua:85` | Previous window in group | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:87` | Move grouped window focus left | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:88` | Move grouped window focus right | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| binding | `default/hypr/bindings/tiling.lua:9` | Tiled full screen | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:90` | Next window in group | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:91` | Previous window in group | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:94` | Switch to group window  | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| binding | `default/hypr/bindings/tiling.lua:97` | Monitor scaling up | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| binding | `default/hypr/bindings/tiling.lua:98` | Monitor scaling down | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:117` | Zoom in | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:122` | Reset zoom | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:19` | Toggle window transparency | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |

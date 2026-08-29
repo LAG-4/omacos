@@ -492,6 +492,9 @@ run_action() {
     close-all) "$shell_binary" --close-all-windows; return ;;
     window-width-save) "$shell_binary" --window-width save; return ;;
     window-width-restore) "$shell_binary" --window-width restore; return ;;
+    full-width-toggle) "$shell_binary" --window-full-width; return ;;
+    tiled-fullscreen) action=toggle-fullscreen ;;
+    pop-window) action=toggle-floating ;;
   esac
   case $action in
     workspace-focus|workspace-move|workspace-move-silent|workspace-move-monitor|monitor-focus|focus-cycle|move|join)
@@ -582,7 +585,7 @@ case ${1:-status} in
     stop_profile "$(current_profile)"
     restore_optional_configs
     ;;
-  close|close-all|window-width-save|window-width-restore|toggle-floating|toggle-fullscreen|toggle-split|toggle-workspace-layout|scratchpad-toggle|scratchpad-move|workspace-current|workspace-focus|workspace-move|workspace-move-silent|workspace-next|workspace-previous|workspace-back|workspace-next-monitor|workspace-move-monitor|monitor-focus|focus-cycle|resize-grow|resize-shrink|focus|move|join)
+  close|close-all|window-width-save|window-width-restore|full-width-toggle|tiled-fullscreen|pop-window|toggle-floating|toggle-fullscreen|toggle-split|toggle-workspace-layout|scratchpad-toggle|scratchpad-move|workspace-current|workspace-focus|workspace-move|workspace-move-silent|workspace-next|workspace-previous|workspace-back|workspace-next-monitor|workspace-move-monitor|monitor-focus|focus-cycle|resize-grow|resize-shrink|focus|move|join)
     run_action "$@"
     ;;
   *)

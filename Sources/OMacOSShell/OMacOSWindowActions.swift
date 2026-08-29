@@ -7,6 +7,7 @@ enum OMacOSWindowActionError: LocalizedError {
     case noFocusedWindow
     case windowSizeUnavailable
     case noSavedWidth
+    case noSavedFullWidthFrame
     case operationFailed(AXError)
 
     var errorDescription: String? {
@@ -19,6 +20,8 @@ enum OMacOSWindowActionError: LocalizedError {
             "The focused application does not expose a resizable window."
         case .noSavedWidth:
             "No saved window width exists. Use the save shortcut first."
+        case .noSavedFullWidthFrame:
+            "No saved window frame exists for restoring full width."
         case let .operationFailed(error):
             "The macOS Accessibility operation failed with code \(error.rawValue)."
         }
@@ -92,6 +95,49 @@ enum OMacOSWindowActions {
         return closedCount
     }
 
+    static func toggleFocusedWindowFullWidth(
+        environment: [String: String] = ProcessInfo.processInfo.environment
+    ) throws -> CGFloat {
+        let window = try focusedWindow()
+        let currentFrame = try focusedWindowFrame(window: window)
+        let visibleFrame = visibleScreenFrame(containing: currentFrame)
+        let savedFramePath = savedFullWidthFrameURL(environment: environment)
+        let isFullWidth = abs(currentFrame.minX - visibleFrame.minX) < 2
+            && abs(currentFrame.width - visibleFrame.width) < 2
+
+        let targetFrame: CGRect
+        if isFullWidth {
+            guard let data = try? Data(contentsOf: savedFramePath),
+                  let savedFrame = try? JSONDecoder().decode(SavedHorizontalFrame.self, from: data) else {
+                throw OMacOSWindowActionError.noSavedFullWidthFrame
+            }
+            targetFrame = CGRect(
+                x: savedFrame.x,
+                y: currentFrame.minY,
+                width: savedFrame.width,
+                height: currentFrame.height
+            )
+        } else {
+            try FileManager.default.createDirectory(
+                at: savedFramePath.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            let data = try JSONEncoder().encode(
+                SavedHorizontalFrame(x: currentFrame.minX, width: currentFrame.width)
+            )
+            try data.write(to: savedFramePath, options: .atomic)
+            targetFrame = CGRect(
+                x: visibleFrame.minX,
+                y: currentFrame.minY,
+                width: visibleFrame.width,
+                height: currentFrame.height
+            )
+        }
+
+        try setFocusedWindowFrame(targetFrame, window: window)
+        return targetFrame.width
+    }
+
     private static func focusedWindowSize(window: AXUIElement? = nil) throws -> CGSize {
         let targetWindow = try window ?? focusedWindow()
         var sizeValue: CFTypeRef?
@@ -109,6 +155,67 @@ enum OMacOSWindowActions {
             throw OMacOSWindowActionError.windowSizeUnavailable
         }
         return size
+    }
+
+    private static func focusedWindowFrame(window: AXUIElement) throws -> CGRect {
+        var positionValue: CFTypeRef?
+        let positionResult = AXUIElementCopyAttributeValue(
+            window,
+            kAXPositionAttribute as CFString,
+            &positionValue
+        )
+        guard positionResult == .success, let positionValue else {
+            throw OMacOSWindowActionError.windowSizeUnavailable
+        }
+        let positionAXValue = unsafeDowncast(positionValue, to: AXValue.self)
+        var position = CGPoint.zero
+        guard AXValueGetType(positionAXValue) == .cgPoint,
+              AXValueGetValue(positionAXValue, .cgPoint, &position) else {
+            throw OMacOSWindowActionError.windowSizeUnavailable
+        }
+        return CGRect(origin: position, size: try focusedWindowSize(window: window))
+    }
+
+    private static func setFocusedWindowFrame(_ frame: CGRect, window: AXUIElement) throws {
+        var position = frame.origin
+        var size = frame.size
+        guard let positionValue = AXValueCreate(.cgPoint, &position),
+              let sizeValue = AXValueCreate(.cgSize, &size) else {
+            throw OMacOSWindowActionError.windowSizeUnavailable
+        }
+        let positionResult = AXUIElementSetAttributeValue(
+            window,
+            kAXPositionAttribute as CFString,
+            positionValue
+        )
+        guard positionResult == .success else {
+            throw OMacOSWindowActionError.operationFailed(positionResult)
+        }
+        let sizeResult = AXUIElementSetAttributeValue(
+            window,
+            kAXSizeAttribute as CFString,
+            sizeValue
+        )
+        guard sizeResult == .success else {
+            throw OMacOSWindowActionError.operationFailed(sizeResult)
+        }
+    }
+
+    private static func visibleScreenFrame(containing windowFrame: CGRect) -> CGRect {
+        let screens = NSScreen.screens
+        guard let primaryScreen = screens.first else { return windowFrame }
+        let primaryMaximumY = primaryScreen.frame.maxY
+        let windowCenter = CGPoint(x: windowFrame.midX, y: windowFrame.midY)
+        let matchingScreen = screens.first { screen in
+            let quartzFrame = CGRect(
+                x: screen.frame.minX,
+                y: primaryMaximumY - screen.frame.maxY,
+                width: screen.frame.width,
+                height: screen.frame.height
+            )
+            return quartzFrame.contains(windowCenter)
+        } ?? primaryScreen
+        return matchingScreen.visibleFrame
     }
 
     private static func focusedWindow() throws -> AXUIElement {
@@ -147,4 +254,15 @@ enum OMacOSWindowActions {
         return URL(fileURLWithPath: homeDirectory)
             .appendingPathComponent(".local/state/omacos/window-width")
     }
+
+    private static func savedFullWidthFrameURL(environment: [String: String]) -> URL {
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        return URL(fileURLWithPath: homeDirectory)
+            .appendingPathComponent(".local/state/omacos/window-full-width.json")
+    }
+}
+
+private struct SavedHorizontalFrame: Codable {
+    let x: CGFloat
+    let width: CGFloat
 }

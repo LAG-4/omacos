@@ -79,6 +79,9 @@ rg -q '^gaps.outer.bottom = 42$' "$temporary_home/.config/aerospace/aerospace.to
 "$wm" close-all
 "$wm" window-width-save
 "$wm" window-width-restore
+"$wm" full-width-toggle
+"$wm" tiled-fullscreen
+"$wm" pop-window
 rg -Fq 'aerospace focus left' "$command_log"
 rg -Fq 'aerospace move-node-to-workspace --focus-follows-window 7' "$command_log"
 rg -Fq 'aerospace move-node-to-workspace 8' "$command_log"
@@ -90,6 +93,9 @@ rg -Fq 'aerospace focus --wrap-around dfs-next' "$command_log"
 rg -Fq 'omacos-shell --close-all-windows' "$command_log"
 rg -Fq 'omacos-shell --window-width save' "$command_log"
 rg -Fq 'omacos-shell --window-width restore' "$command_log"
+rg -Fq 'omacos-shell --window-full-width' "$command_log"
+rg -Fq 'aerospace fullscreen' "$command_log"
+rg -Fq 'aerospace layout floating tiling' "$command_log"
 
 "$wm" profile rift >/dev/null
 [[ $("$wm" profile) == "rift" ]]
