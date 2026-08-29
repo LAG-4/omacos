@@ -175,9 +175,9 @@ mv "$staging_directory/current" "$install_directory"
 mkdir -p "$shell_app/Contents/MacOS" "$shell_app/Contents/Resources"
 cp "$source_root/.build/release/omacos-shell" "$shell_app/Contents/MacOS/omacos-shell"
 cp "$source_root/app/Info.plist" "$shell_app/Contents/Info.plist"
-resource_bundles=("$source_root"/.build/release/*.resources(N))
+resource_bundles=("$source_root"/.build/release/*.bundle(N) "$source_root"/.build/release/*.resources(N))
 if (( ${#resource_bundles[@]} > 0 )); then
-  cp -R "$resource_bundles[1]" "$shell_app/Contents/MacOS/"
+  cp -R "$resource_bundles[1]" "$shell_app/Contents/Resources/"
 fi
 chmod +x "$shell_app/Contents/MacOS/omacos-shell"
 codesign --force --deep --sign - "$shell_app" >/dev/null

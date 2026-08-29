@@ -6,6 +6,7 @@ script_directory=${0:A:h}
 project_root=${script_directory:h}
 reference_root=${OMARCHY_REFERENCE_ROOT:-/Users/lag/Developer/omarchy}
 output_path=${1:-$project_root/docs/quattro-inventory.json}
+shell_resource_path="$project_root/Sources/OMacOSShell/Resources/quattro-inventory.json"
 expected_commit=${OMARCHY_REFERENCE_COMMIT:-0b3f1b7ead00ac4bcbaae8bac16bab3f7efbe516}
 
 if [[ ! -d $reference_root/.git ]]; then
@@ -49,9 +50,21 @@ find "$reference_root/default/hypr/bindings" -maxdepth 1 -name '*.lua' -print | 
 done
 
 menu_ids_jsonl="$temporary_directory/menu-ids.jsonl"
-sed -n 's/^[[:space:]]*"\([^"]*\)".*/\1/p' "$reference_root/default/omarchy/omarchy-menu.jsonc" | while IFS= read -r menu_id; do
-  jq -nc --arg id "$menu_id" '{id: $id}' >> "$menu_ids_jsonl"
-done
+while IFS= read -r menu_line; do
+  menu_id=$(sed -n 's/^[[:space:]]*"\([^"]*\)".*/\1/p' <<< "$menu_line")
+  [[ -n $menu_id ]] || continue
+  menu_label=$(sed -n 's/.*"label":"\([^"]*\)".*/\1/p' <<< "$menu_line")
+  [[ -n $menu_label ]] || menu_label=$menu_id
+  if [[ $menu_line == *'"action":'* ]]; then
+    menu_kind=action
+  elif [[ $menu_line == *'"provider":'* ]]; then
+    menu_kind=provider
+  else
+    menu_kind=submenu
+  fi
+  jq -nc --arg id "$menu_id" --arg label "$menu_label" --arg kind "$menu_kind" \
+    '{id: $id, label: $label, referenceKind: $kind}' >> "$menu_ids_jsonl"
+done < "$reference_root/default/omarchy/omarchy-menu.jsonc"
 
 packages_jsonl="$temporary_directory/packages.jsonl"
 for package_path in "$reference_root"/install/omarchy-base.packages "$reference_root"/install/omarchy-other.packages; do
@@ -89,5 +102,9 @@ jq -n \
     menuEntries: $menuEntries,
     defaultPackages: $packages
   }' > "$output_path"
+
+if [[ $output_path == "$project_root/docs/quattro-inventory.json" ]]; then
+  cp "$output_path" "$shell_resource_path"
+fi
 
 print "Generated frozen Quattro inventory: $output_path"

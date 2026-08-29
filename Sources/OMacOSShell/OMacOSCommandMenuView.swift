@@ -1,107 +1,23 @@
-import AppKit
 import SwiftUI
-
-struct OMacOSLaunchCommand: Identifiable {
-    let id: String
-    let title: String
-    let subtitle: String
-    let systemImage: String
-    let executable: String
-    let arguments: [String]
-}
 
 struct OMacOSCommandMenuView: View {
     let theme: OMacOSTheme
     let dismissMenu: () -> Void
     let openPanel: (OMacOSPanelID) -> Void
 
-    private var launchCommands: [OMacOSLaunchCommand] {
-        let homeDirectory = ProcessInfo.processInfo.environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
-        let omacosCLI = homeDirectory + "/.local/bin/omacos"
-        return [
-        OMacOSLaunchCommand(id: "terminal", title: "Terminal", subtitle: "Open the OMacOS default terminal", systemImage: "apple.terminal", executable: "/usr/bin/env", arguments: [omacosCLI, "launch", "terminal"]),
-        OMacOSLaunchCommand(id: "browser", title: "Browser", subtitle: "Open the OMacOS default browser", systemImage: "safari", executable: "/usr/bin/env", arguments: [omacosCLI, "launch", "browser"]),
-        OMacOSLaunchCommand(id: "files", title: "Files", subtitle: "Open Finder", systemImage: "folder", executable: "/usr/bin/env", arguments: [omacosCLI, "launch", "files", homeDirectory]),
-        OMacOSLaunchCommand(id: "settings", title: "System Settings", subtitle: "Configure this Mac", systemImage: "gearshape", executable: "/usr/bin/open", arguments: ["-a", "System Settings"]),
-        OMacOSLaunchCommand(id: "activity", title: "Activity Monitor", subtitle: "Inspect running processes", systemImage: "waveform.path.ecg", executable: "/usr/bin/open", arguments: ["-a", "Activity Monitor"])
-        ]
-    }
-
-    private let panelCommands: [OMacOSPanelID] = [
-        .keybindings, .clipboard, .emojis, .capture,
-        .reminders, .notifications, .themes, .wallpapers, .defaults, .agents, .weather, .media,
-        .dictation, .wifiQR, .speedtest, .diskSpeedtest, .tailscale, .dropbox, .packages, .plugins, .system
-    ]
+    @StateObject private var store = OMacOSMenuStore()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("OMacOS")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                    Text("Command menu")
-                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
-                }
-                Spacer()
-                Text("Right Option + Space")
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
-            }
-
+            menuHeader
             Divider().overlay(Color(omacosHex: theme.colors.selection))
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Open")
-                        .font(.caption.weight(.bold))
-                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
-                    ForEach(launchCommands) { command in
-                        Button {
-                            _ = OMacOSCommandRunner.run(executable: command.executable, arguments: command.arguments)
-                            dismissMenu()
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: command.systemImage)
-                                    .frame(width: 24)
-                                    .foregroundStyle(Color(omacosHex: theme.colors.accent))
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(command.title).fontWeight(.semibold)
-                                    Text(command.subtitle)
-                                        .font(.caption)
-                                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
-                                }
-                                Spacer()
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 7)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                    }
-
-                    Text("OMacOS")
-                        .font(.caption.weight(.bold))
-                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                        ForEach(panelCommands) { panelID in
-                            Button {
-                                openPanel(panelID)
-                            } label: {
-                                HStack {
-                                    Image(systemName: panelID.systemImage)
-                                        .foregroundStyle(Color(omacosHex: theme.colors.accent))
-                                    Text(panelID.title).fontWeight(.semibold)
-                                    Spacer()
-                                }
-                                .padding(10)
-                                .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                            .background(Color(omacosHex: theme.colors.lighterBackground))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                    }
-                }
+            searchField
+            menuEntries
+            if !store.actionMessage.isEmpty {
+                Text(store.actionMessage)
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+                    .lineLimit(3)
             }
         }
         .foregroundStyle(Color(omacosHex: theme.colors.foreground))
@@ -113,5 +29,114 @@ struct OMacOSCommandMenuView: View {
                 .stroke(Color(omacosHex: theme.colors.selection), lineWidth: 1)
         }
         .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+
+    private var menuHeader: some View {
+        HStack(spacing: 10) {
+            if store.currentMenuID != nil {
+                Button { store.navigateBack() } label: {
+                    Image(systemName: "chevron.left")
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.plain)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("OMacOS")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                Text(store.currentTitle)
+                    .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+            }
+            Spacer()
+            Text("Right Option + Space")
+                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+        }
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+            TextField("Search all Quattro actions", text: $store.searchText)
+                .textFieldStyle(.plain)
+            if !store.searchText.isEmpty {
+                Button { store.searchText = "" } label: {
+                    Image(systemName: "xmark.circle.fill")
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background(Color(omacosHex: theme.colors.lighterBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 9))
+    }
+
+    private var menuEntries: some View {
+        ScrollView {
+            LazyVStack(spacing: 7) {
+                ForEach(store.visibleEntries) { entry in
+                    menuButton(for: entry)
+                }
+            }
+        }
+    }
+
+    private func menuButton(for entry: OMacOSMenuEntry) -> some View {
+        let hasChildren = store.hasChildren(entry)
+        return Button {
+            if hasChildren {
+                store.open(entry)
+            } else {
+                Task {
+                    if await store.execute(entry) {
+                        dismissMenu()
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: icon(for: entry.id))
+                    .frame(width: 24)
+                    .foregroundStyle(Color(omacosHex: theme.colors.accent))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(entry.label).fontWeight(.semibold)
+                    if !store.searchText.isEmpty {
+                        Text(entry.id)
+                            .font(.caption.monospaced())
+                            .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+                    }
+                }
+                Spacer()
+                if store.actionRunning && !hasChildren {
+                    ProgressView().controlSize(.small)
+                } else if hasChildren {
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(Color(omacosHex: theme.colors.lighterBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 9))
+    }
+
+    private func icon(for id: String) -> String {
+        switch id.split(separator: ".").first.map(String.init) {
+        case "apps": "square.grid.2x2"
+        case "learn": "book"
+        case "trigger": "bolt"
+        case "style": "paintpalette"
+        case "setup": "gearshape"
+        case "install": "square.and.arrow.down"
+        case "remove": "trash"
+        case "update": "arrow.triangle.2.circlepath"
+        case "about": "info.circle"
+        case "system": "power"
+        default: "command"
+        }
     }
 }

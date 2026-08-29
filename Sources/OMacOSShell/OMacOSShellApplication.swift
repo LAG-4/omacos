@@ -355,6 +355,20 @@ enum OMacOSShellMain {
             }
         }
 
+        if let recognizeIndex = arguments.firstIndex(of: "--recognize-qr"),
+           arguments.indices.contains(recognizeIndex + 1) {
+            do {
+                let payload = try OMacOSVisionRecognizer.recognizeQRCode(
+                    at: URL(fileURLWithPath: arguments[recognizeIndex + 1])
+                )
+                print(payload)
+                return
+            } catch {
+                FileHandle.standardError.write(Data("OMacOS QR recognition failed: \(error)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
         if let reminderCommandIndex = arguments.firstIndex(of: "--reminder-add"),
            arguments.indices.contains(reminderCommandIndex + 2),
            let delay = TimeInterval(arguments[reminderCommandIndex + 1]) {

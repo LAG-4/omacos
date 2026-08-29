@@ -33,6 +33,10 @@ Commands:
   package ACTION            Browse, install, or remove optional applications
   plugin ACTION             Inspect built-ins or manage out-of-process providers
   wm ACTION                 Manage AeroSpace, Rift, or yabai through one interface
+  menu run ID               Execute an entry from the complete Quattro menu
+  share ACTION              Share clipboard text, files, or folders with AirDrop
+  transcode ACTION          Convert images, video, GIF, and audio locally
+  font ACTION               List, install, or remove the Quattro font choices
   reminder ACTION           Add, list, or clear local reminders
   webapp ACTION             Install, list, or remove URL app bundles
   theme apply [name]        Generate configs from a semantic theme
@@ -327,6 +331,18 @@ case ${1:-help} in
     ;;
   wm|window-manager)
     "$installed_root/scripts/window-manager.zsh" "${@:2}"
+    ;;
+  menu)
+    "$installed_root/scripts/menu.zsh" "${@:2}"
+    ;;
+  share)
+    "$installed_root/scripts/share.zsh" "${@:2}"
+    ;;
+  transcode)
+    "$installed_root/scripts/transcode.zsh" "${@:2}"
+    ;;
+  font)
+    "$installed_root/scripts/fonts.zsh" "${@:2}"
     ;;
   weather)
     "$installed_root/scripts/weather.zsh" "${@:2}"

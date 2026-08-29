@@ -254,11 +254,16 @@ struct OMacOSSystemPanelView: View {
     }
 
     private var capturePanel: some View {
-        VStack(spacing: 10) {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
             captureAction("Screenshot", subtitle: "Select a region or window", systemImage: "camera.viewfinder", arguments: ["capture", "screenshot"])
             captureAction("Full Screen", subtitle: "Capture all connected displays", systemImage: "rectangle.dashed", arguments: ["capture", "screenshot", "--screen"])
-            captureAction("Screen Recording", subtitle: "Select a display or region to record", systemImage: "record.circle", arguments: ["capture", "recording"])
+            captureAction("Screen Recording", subtitle: "Record without audio", systemImage: "record.circle", arguments: ["capture", "recording"])
+            captureAction("System Audio", subtitle: "Record the screen and Mac audio", systemImage: "speaker.wave.2", arguments: ["capture", "recording", "--system-audio"])
+            captureAction("Microphone", subtitle: "Record the screen and microphone", systemImage: "mic", arguments: ["capture", "recording", "--microphone"])
+            captureAction("All Audio", subtitle: "Record system audio and microphone", systemImage: "waveform", arguments: ["capture", "recording", "--all-audio"])
+            captureAction("Stop Recording", subtitle: "Finish the current capture", systemImage: "stop.circle", arguments: ["capture", "record-stop"])
             captureAction("Extract Text", subtitle: "Recognize text on-device and copy it", systemImage: "text.viewfinder", arguments: ["capture", "text"])
+            captureAction("Read QR Code", subtitle: "Recognize a QR code and copy its payload", systemImage: "qrcode.viewfinder", arguments: ["capture", "qr"])
             captureAction("Color Meter", subtitle: "Open the native macOS color inspector", systemImage: "eyedropper", arguments: ["capture", "color"])
         }
     }

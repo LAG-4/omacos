@@ -28,6 +28,10 @@ if [[ ! -x $shell_app/Contents/MacOS/omacos-shell ]]; then
   print -u2 "Install lifecycle test failed: native app bundle was not installed"
   exit 1
 fi
+if ! find "$shell_app/Contents/Resources" -maxdepth 1 \( -name '*.bundle' -o -name '*.resources' \) | grep -q .; then
+  print -u2 "Install lifecycle test failed: Swift resource bundle was not copied into the app"
+  exit 1
+fi
 if [[ $(/usr/libexec/PlistBuddy -c 'Print :NSMicrophoneUsageDescription' "$shell_app/Contents/Info.plist") != *dictation* ]]; then
   print -u2 "Install lifecycle test failed: native app permission descriptions are missing"
   exit 1

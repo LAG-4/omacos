@@ -5,6 +5,9 @@ set -euo pipefail
 test_directory=${0:A:h}
 project_root=${test_directory:h}
 inventory="$project_root/docs/quattro-inventory.json"
+shell_inventory="$project_root/Sources/OMacOSShell/Resources/quattro-inventory.json"
+
+cmp "$inventory" "$shell_inventory"
 
 jq -e '.schemaVersion == 1 and .reference.branch == "quattro" and .reference.commit == "0b3f1b7ead00ac4bcbaae8bac16bab3f7efbe516"' "$inventory" >/dev/null
 

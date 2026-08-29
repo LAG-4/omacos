@@ -11,6 +11,7 @@ OMacOS is at its first prototype milestone. The current build includes:
 - replaceable window-manager adapters: AeroSpace by default, experimental Rift, and optional yabai
 - Right Option as the default physical Super key while Left Option and Command stay native
 - a native Swift/AppKit bar, command menu, keybinding reference, and first system panels
+- the complete frozen 328-entry Quattro menu hierarchy with global search, macOS action adapters, and explicit Linux-only limitations
 - clipboard history, emoji, reminders, capture, on-device OCR, background, and system panels
 - all 22 frozen Quattro semantic themes with generated shell, terminal, TUI, editor, tmux, and border targets
 - configurable terminal, browser, and editor defaults plus Omarchy-style shell tools, tmux layouts, and a self-contained Neovim profile
@@ -18,6 +19,7 @@ OMacOS is at its first prototype milestone. The current build includes:
 - weather and media panels, Quattro-style date/battery/weather notices, reversible stay-awake and bar toggles, and native on-device dictation
 - managed snapshots, versioned migrations, tested updates, and one-command rollback
 - locally generated Wi-Fi sharing QR codes, network and disk benchmarks, optional Tailscale and Dropbox panels, and an explicit optional-app catalog
+- QR capture with on-device Vision recognition, system-audio screen recording, native AirDrop handoff, local media transcoding, and Homebrew-backed font choices
 - a complete 29-plugin Quattro parity catalog plus an isolated out-of-process provider contract
 - a readable installer with dry-run, doctor, backup, and uninstall commands
 - macOS 26 compatibility checks and macOS 27 beta test coverage
