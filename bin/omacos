@@ -19,6 +19,7 @@ Commands:
   shell stop                Stop the native bar
   shell restart             Restart the native bar
   shell toggle-menu         Toggle the native command menu
+  shell toggle-panel NAME   Toggle a native Quattro-style panel
   uninstall [--yes]         Restore backed-up config and remove OMacOS files
 EOF
 }
@@ -48,6 +49,7 @@ run_doctor() {
   fi
   doctor_check "Homebrew" "$(command -v brew >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
   doctor_check "AeroSpace CLI" "$(command -v aerospace >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Bluetooth helper" "$(command -v blueutil >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
   doctor_check "AeroSpace config" "$([[ -f $omacos_home/.config/aerospace/aerospace.toml ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Karabiner rule installed" "$([[ -f $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Native shell binary" "$([[ -x $shell_binary ]] && print ok || print fail)" || (( failures += 1 ))
@@ -95,6 +97,19 @@ run_shell_command() {
       ;;
     toggle-menu)
       "$shell_binary" --toggle-menu
+      ;;
+    toggle-panel)
+      local panel_name=${2:-}
+      case $panel_name in
+        menu|keybindings|system|audio|bluetooth|network|display|clock|power|activity)
+          "$shell_binary" --toggle-panel "$panel_name"
+          ;;
+        *)
+          print -u2 "Unknown shell panel: $panel_name"
+          print -u2 "Available panels: menu, keybindings, system, audio, bluetooth, network, display, clock, power, activity"
+          return 1
+          ;;
+      esac
       ;;
     *)
       print -u2 "Unknown shell action: $action"
@@ -163,7 +178,7 @@ case ${1:-help} in
     "$installed_root/scripts/render-theme.zsh" "${3:-tokyo-night}"
     ;;
   shell)
-    run_shell_command "${2:-}"
+    run_shell_command "${2:-}" "${3:-}"
     ;;
   uninstall)
     run_uninstall "${2:-}"

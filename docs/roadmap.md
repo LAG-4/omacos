@@ -15,6 +15,8 @@
 - Add clipboard history, emoji picker, reminders, screenshots, recordings, and OCR.
 - Test one-display, multi-display, clamshell, notch, fullscreen, and permission-revocation cases.
 
+Current progress: the shared panel command API, clickable bar affordances, keybinding reference, system menu, calendar, audio, Bluetooth, network, display, power, and activity panels are implemented. Service depth, pickers, capture, application setup, and hardware coverage remain in progress.
+
 ## Milestone 2: Quattro shell parity
 
 - Add audio, Wi-Fi, Bluetooth, display, power, calendar, weather, media, activity, and agent panels.
@@ -28,4 +30,3 @@
 - Add an isolated yabai power profile with explicit security warnings.
 - Sign and notarize the native application.
 - Publish pinned releases, migrations, rollback, hardware test results, and update channels.
-

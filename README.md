@@ -10,7 +10,7 @@ OMacOS is at its first prototype milestone. The current build includes:
 
 - AeroSpace tiling with Omarchy-style window and workspace bindings
 - Right Option as the default physical Super key while Left Option and Command stay native
-- a native Swift/AppKit bar and command menu on every display
+- a native Swift/AppKit bar, command menu, keybinding reference, and first system panels
 - a Tokyo Night semantic theme for the shell, Ghostty, and JankyBorders
 - a readable installer with dry-run, doctor, backup, and uninstall commands
 - macOS 26 compatibility checks and macOS 27 beta test coverage
@@ -60,8 +60,20 @@ omacos doctor
 omacos theme apply tokyo-night
 omacos shell start
 omacos shell toggle-menu
+omacos shell toggle-panel audio
+omacos shell toggle-panel keybindings
 omacos uninstall
 ```
+
+The native shell exposes command menu, keybindings, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
+
+For local visual development, run a panel directly without installing the project:
+
+```bash
+swift run omacos-shell --preview-panel audio
+```
+
+Stop it with Control-C; preview mode does not write system configuration.
 
 To undo a completed installation from any terminal:
 
@@ -77,7 +89,7 @@ To stop a shell launched locally with `swift run omacos-shell`, run this from th
 
 The local command stops the debug shell. It leaves `.build` in the repository because that directory is only a Swift compilation cache and does not change macOS.
 
-See [the implementation roadmap](docs/roadmap.md) and [the research report](docs/research.md) for the intended scope and known macOS limits.
+See [the implementation roadmap](docs/roadmap.md) and [the research report](docs/research.md) for the intended scope and known macOS limits. The source-complete [frozen Quattro inventory](docs/quattro-inventory.json) tracks every manual chapter, plugin manifest, CLI group, default binding declaration, menu entry, and package from the reference commit.
 
 ## License
 

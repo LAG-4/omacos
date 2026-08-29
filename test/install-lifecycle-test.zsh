@@ -39,6 +39,7 @@ cat > "$temporary_home/test-bin/aerospace" <<'EOF'
 exit 0
 EOF
 chmod +x "$temporary_home/test-bin/aerospace"
+ln -s "$temporary_home/test-bin/aerospace" "$temporary_home/test-bin/blueutil"
 PATH="$temporary_home/test-bin:$PATH" OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" doctor >/dev/null
 OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" uninstall --yes >/dev/null
 

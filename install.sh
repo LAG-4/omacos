@@ -83,7 +83,7 @@ System
   Apple Silicon, macOS $(sw_vers -productVersion)
 
 Packages
-  AeroSpace, Karabiner-Elements, Ghostty, JankyBorders, jq
+  AeroSpace, Karabiner-Elements, Ghostty, JankyBorders, jq, blueutil
 
 Files
   $omacos_home/.local/share/omacos/current

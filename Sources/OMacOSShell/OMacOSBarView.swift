@@ -2,18 +2,24 @@ import SwiftUI
 
 struct OMacOSBarView: View {
     @ObservedObject var barState: OMacOSBarState
+    let togglePanel: (OMacOSPanelID) -> Void
 
     private var colors: OMacOSThemeColors { barState.theme.colors }
 
     var body: some View {
         HStack(spacing: 12) {
-            Text("OM")
-                .font(.system(size: 12, weight: .black, design: .rounded))
-                .foregroundStyle(Color(omacosHex: colors.background))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color(omacosHex: colors.accent))
-                .clipShape(RoundedRectangle(cornerRadius: 5))
+            Button {
+                togglePanel(.menu)
+            } label: {
+                Text("OM")
+                    .font(.system(size: 12, weight: .black, design: .rounded))
+                    .foregroundStyle(Color(omacosHex: colors.background))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(omacosHex: colors.accent))
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+            }
+            .buttonStyle(.plain)
 
             workspaceButtons
 
@@ -24,12 +30,25 @@ struct OMacOSBarView: View {
 
             Spacer(minLength: 12)
 
+            panelButton(.network)
+            panelButton(.audio)
+
             if !barState.batteryText.isEmpty {
-                Label(barState.batteryText, systemImage: "battery.75percent")
+                Button {
+                    togglePanel(.power)
+                } label: {
+                    Label(barState.batteryText, systemImage: "battery.75percent")
+                }
+                .buttonStyle(.plain)
             }
 
-            Text(barState.clockText)
-                .font(.system(size: 12, weight: .semibold, design: .monospaced))
+            Button {
+                togglePanel(.clock)
+            } label: {
+                Text(barState.clockText)
+                    .font(.system(size: 12, weight: .semibold, design: .monospaced))
+            }
+            .buttonStyle(.plain)
         }
         .font(.system(size: 12, weight: .medium))
         .foregroundStyle(Color(omacosHex: colors.foreground))
@@ -67,5 +86,15 @@ struct OMacOSBarView: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+
+    private func panelButton(_ panelID: OMacOSPanelID) -> some View {
+        Button {
+            togglePanel(panelID)
+        } label: {
+            Image(systemName: panelID.systemImage)
+                .frame(width: 16, height: 18)
+        }
+        .buttonStyle(.plain)
     }
 }

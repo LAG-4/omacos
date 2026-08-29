@@ -8,6 +8,15 @@
     { "key": "return_or_enter", "modifiers": [], "description": "Terminal", "command": "/usr/bin/open -na Ghostty" },
     { "key": "return_or_enter", "modifiers": ["shift"], "description": "Browser", "command": "/usr/bin/open -a Safari" },
     { "key": "spacebar", "modifiers": [], "description": "OMacOS menu", "command": "$HOME/.local/bin/omacos shell toggle-menu" },
+    { "key": "escape", "modifiers": [], "description": "System menu", "command": "$HOME/.local/bin/omacos shell toggle-panel system" },
+    { "key": "k", "modifiers": [], "description": "Keybindings", "command": "$HOME/.local/bin/omacos shell toggle-panel keybindings" },
+    { "key": "a", "modifiers": ["control"], "description": "Audio panel", "command": "$HOME/.local/bin/omacos shell toggle-panel audio" },
+    { "key": "b", "modifiers": ["control"], "description": "Bluetooth panel", "command": "$HOME/.local/bin/omacos shell toggle-panel bluetooth" },
+    { "key": "d", "modifiers": ["control"], "description": "Display panel", "command": "$HOME/.local/bin/omacos shell toggle-panel display" },
+    { "key": "d", "modifiers": ["control", "option"], "description": "Calendar panel", "command": "$HOME/.local/bin/omacos shell toggle-panel clock" },
+    { "key": "w", "modifiers": ["control"], "description": "Network panel", "command": "$HOME/.local/bin/omacos shell toggle-panel network" },
+    { "key": "p", "modifiers": ["control"], "description": "Power panel", "command": "$HOME/.local/bin/omacos shell toggle-panel power" },
+    { "key": "t", "modifiers": ["control"], "description": "Activity panel", "command": "$HOME/.local/bin/omacos shell toggle-panel activity" },
     { "key": "t", "modifiers": [], "description": "Toggle floating and tiling", "command": "/opt/homebrew/bin/aerospace layout floating tiling" },
     { "key": "f", "modifiers": [], "description": "Fullscreen", "command": "/opt/homebrew/bin/aerospace fullscreen" },
     { "key": "j", "modifiers": [], "description": "Toggle window split", "command": "/opt/homebrew/bin/aerospace layout tiles horizontal vertical" },
@@ -52,4 +61,3 @@
     { "key": "0", "modifiers": ["shift"], "description": "Move window to workspace 10", "command": "/opt/homebrew/bin/aerospace move-node-to-workspace 10" }
   ]
 }
-

@@ -1,15 +1,15 @@
 import AppKit
 import SwiftUI
 
-private let omacosToggleMenuNotification = Notification.Name("dev.omacos.shell.toggle-menu")
-
 @MainActor
 final class OMacOSBarWindowCoordinator {
     private let barState: OMacOSBarState
+    private let togglePanel: (OMacOSPanelID) -> Void
     private var barPanels: [NSPanel] = []
 
-    init(barState: OMacOSBarState) {
+    init(barState: OMacOSBarState, togglePanel: @escaping (OMacOSPanelID) -> Void) {
         self.barState = barState
+        self.togglePanel = togglePanel
     }
 
     /// Rebuilds one non-activating bar panel for every connected display.
@@ -39,24 +39,27 @@ final class OMacOSBarWindowCoordinator {
         panel.isOpaque = false
         panel.hasShadow = false
         panel.hidesOnDeactivate = false
-        panel.contentView = NSHostingView(rootView: OMacOSBarView(barState: barState))
+        panel.contentView = NSHostingView(rootView: OMacOSBarView(barState: barState, togglePanel: togglePanel))
         panel.orderFrontRegardless()
         return panel
     }
 }
 
 @MainActor
-final class OMacOSCommandMenuCoordinator: NSObject {
+final class OMacOSPanelCoordinator: NSObject {
     private let theme: OMacOSTheme
-    private var menuPanel: NSPanel?
+    private let systemPanelState: OMacOSSystemPanelState
+    private var activePanel: NSPanel?
+    private var activePanelID: OMacOSPanelID?
 
-    init(theme: OMacOSTheme) {
+    init(theme: OMacOSTheme, systemPanelState: OMacOSSystemPanelState) {
         self.theme = theme
+        self.systemPanelState = systemPanelState
         super.init()
         DistributedNotificationCenter.default().addObserver(
             self,
-            selector: #selector(receiveToggleCommandMenuNotification(_:)),
-            name: omacosToggleMenuNotification,
+            selector: #selector(receiveShellCommand(_:)),
+            name: OMacOSShellMessage.notificationName,
             object: nil
         )
     }
@@ -65,33 +68,43 @@ final class OMacOSCommandMenuCoordinator: NSObject {
         DistributedNotificationCenter.default().removeObserver(self)
     }
 
-    /// Opens or closes the native command menu on the display containing the pointer.
-    @objc private func receiveToggleCommandMenuNotification(_ notification: Notification) {
-        toggleCommandMenu()
+    /// Routes property-list-safe commands sent by the CLI and generated keybindings.
+    @objc private func receiveShellCommand(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              userInfo[OMacOSShellMessage.actionKey] as? String == OMacOSShellMessage.togglePanelAction,
+              let rawPanelID = userInfo[OMacOSShellMessage.panelKey] as? String,
+              let panelID = OMacOSPanelID(rawValue: rawPanelID) else {
+            return
+        }
+        togglePanel(panelID)
     }
 
-    private func toggleCommandMenu() {
-        if let menuPanel, menuPanel.isVisible {
-            menuPanel.orderOut(nil)
+    /// Opens or closes one native shell panel on the display containing the pointer.
+    func togglePanel(_ panelID: OMacOSPanelID) {
+        if let activePanel, activePanel.isVisible, activePanelID == panelID {
+            dismissPanel()
             return
         }
 
         let targetScreen = NSScreen.screens.first { NSMouseInRect(NSEvent.mouseLocation, $0.frame, false) } ?? NSScreen.main
         guard let targetScreen else { return }
 
-        let panelSize = NSSize(width: 520, height: 390)
+        activePanel?.close()
+        let panelSize = size(for: panelID)
         let panelOrigin = NSPoint(
             x: targetScreen.frame.midX - panelSize.width / 2,
             y: targetScreen.frame.maxY - panelSize.height - 44
         )
-        let panel = menuPanel ?? makeCommandMenuPanel(size: panelSize)
+        let panel = makePanel(panelID, size: panelSize)
         panel.setFrameOrigin(panelOrigin)
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
-        menuPanel = panel
+        panel.orderFrontRegardless()
+        activePanel = panel
+        activePanelID = panelID
     }
 
-    private func makeCommandMenuPanel(size: NSSize) -> NSPanel {
+    private func makePanel(_ panelID: OMacOSPanelID, size: NSSize) -> NSPanel {
         let panel = NSPanel(
             contentRect: NSRect(origin: .zero, size: size),
             styleMask: [.borderless, .fullSizeContentView],
@@ -103,34 +116,71 @@ final class OMacOSCommandMenuCoordinator: NSObject {
         panel.backgroundColor = .clear
         panel.isOpaque = false
         panel.hasShadow = true
-        panel.contentView = NSHostingView(
-            rootView: OMacOSCommandMenuView(theme: theme) { [weak panel] in
-                panel?.orderOut(nil)
-            }
-        )
+        panel.hidesOnDeactivate = false
+        panel.isReleasedWhenClosed = false
+        if panelID == .menu {
+            panel.contentView = NSHostingView(
+                rootView: OMacOSCommandMenuView(theme: theme) { [weak self] in
+                    self?.dismissPanel()
+                }
+            )
+        } else {
+            panel.contentView = NSHostingView(
+                rootView: OMacOSSystemPanelView(
+                    panelID: panelID,
+                    theme: theme,
+                    state: systemPanelState
+                ) { [weak self] in
+                    self?.dismissPanel()
+                }
+            )
+        }
         return panel
+    }
+
+    private func dismissPanel() {
+        activePanel?.orderOut(nil)
+        activePanelID = nil
+    }
+
+    private func size(for panelID: OMacOSPanelID) -> NSSize {
+        switch panelID {
+        case .menu: NSSize(width: 520, height: 390)
+        case .keybindings: NSSize(width: 620, height: 620)
+        case .clock: NSSize(width: 430, height: 520)
+        default: NSSize(width: 430, height: 360)
+        }
     }
 }
 
 @MainActor
 final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var barState: OMacOSBarState?
+    private var systemPanelState: OMacOSSystemPanelState?
     private var barCoordinator: OMacOSBarWindowCoordinator?
-    private var commandMenuCoordinator: OMacOSCommandMenuCoordinator?
+    private var panelCoordinator: OMacOSPanelCoordinator?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
         let state = OMacOSBarState()
-        let bars = OMacOSBarWindowCoordinator(barState: state)
-        let commandMenu = OMacOSCommandMenuCoordinator(theme: state.theme)
+        let panelState = OMacOSSystemPanelState()
+        let panels = OMacOSPanelCoordinator(theme: state.theme, systemPanelState: panelState)
+        let bars = OMacOSBarWindowCoordinator(barState: state) { [weak panels] panelID in
+            panels?.togglePanel(panelID)
+        }
 
         barState = state
+        systemPanelState = panelState
         barCoordinator = bars
-        commandMenuCoordinator = commandMenu
+        panelCoordinator = panels
 
         state.startStatusUpdates()
+        panelState.startStatusUpdates()
         bars.rebuildDisplayBars()
+        if let previewPanelID = OMacOSShellMain.previewPanelID(from: CommandLine.arguments) {
+            panels.togglePanel(previewPanelID)
+        }
 
         NotificationCenter.default.addObserver(
             self,
@@ -149,19 +199,41 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
 enum OMacOSShellMain {
     @MainActor
     static func main() {
-        if CommandLine.arguments.contains("--toggle-menu") {
-            DistributedNotificationCenter.default().postNotificationName(
-                omacosToggleMenuNotification,
-                object: nil,
-                userInfo: nil,
-                deliverImmediately: true
-            )
+        let arguments = CommandLine.arguments
+        if let panelID = requestedPanelID(from: arguments) {
+            OMacOSShellMessage.postTogglePanel(panelID)
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
             return
+        }
+
+        if arguments.contains("--toggle-panel") || arguments.contains("--toggle-menu") {
+            FileHandle.standardError.write(Data("Unknown OMacOS shell panel.\n".utf8))
+            Foundation.exit(2)
         }
 
         let application = NSApplication.shared
         let delegate = OMacOSShellApplicationDelegate()
         application.delegate = delegate
         application.run()
+    }
+
+    static func requestedPanelID(from arguments: [String]) -> OMacOSPanelID? {
+        if arguments.contains("--toggle-menu") {
+            return .menu
+        }
+
+        guard let toggleIndex = arguments.firstIndex(of: "--toggle-panel"),
+              arguments.indices.contains(toggleIndex + 1) else {
+            return nil
+        }
+        return OMacOSPanelID(rawValue: arguments[toggleIndex + 1])
+    }
+
+    static func previewPanelID(from arguments: [String]) -> OMacOSPanelID? {
+        guard let previewIndex = arguments.firstIndex(of: "--preview-panel"),
+              arguments.indices.contains(previewIndex + 1) else {
+            return nil
+        }
+        return OMacOSPanelID(rawValue: arguments[previewIndex + 1])
     }
 }

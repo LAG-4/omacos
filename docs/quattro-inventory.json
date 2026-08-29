@@ -1,0 +1,3543 @@
+{
+  "schemaVersion": 1,
+  "reference": {
+    "repository": "https://github.com/basecamp/omarchy",
+    "branch": "quattro",
+    "commit": "0b3f1b7ead00ac4bcbaae8bac16bab3f7efbe516"
+  },
+  "manual": [
+    {
+      "id": "01-welcome-to-omarchy",
+      "file": "manual/01-welcome-to-omarchy.md",
+      "title": "Welcome to Omarchy!"
+    },
+    {
+      "id": "02-getting-started",
+      "file": "manual/02-getting-started.md",
+      "title": "Getting Started"
+    },
+    {
+      "id": "03-coming-from-mac-or-windows",
+      "file": "manual/03-coming-from-mac-or-windows.md",
+      "title": "Coming From Mac or Windows"
+    },
+    {
+      "id": "04-navigation",
+      "file": "manual/04-navigation.md",
+      "title": "Navigation"
+    },
+    {
+      "id": "05-the-top-bar",
+      "file": "manual/05-the-top-bar.md",
+      "title": "The Top Bar"
+    },
+    {
+      "id": "06-themes",
+      "file": "manual/06-themes.md",
+      "title": "Themes"
+    },
+    {
+      "id": "07-hotkeys",
+      "file": "manual/07-hotkeys.md",
+      "title": "Hotkeys"
+    },
+    {
+      "id": "08-unified-clipboard-history",
+      "file": "manual/08-unified-clipboard-history.md",
+      "title": "Unified Clipboard & History"
+    },
+    {
+      "id": "09-reminders",
+      "file": "manual/09-reminders.md",
+      "title": "Reminders"
+    },
+    {
+      "id": "10-notices",
+      "file": "manual/10-notices.md",
+      "title": "Notices"
+    },
+    {
+      "id": "11-text-extraction-dictation",
+      "file": "manual/11-text-extraction-dictation.md",
+      "title": "Text Extraction & Dictation"
+    },
+    {
+      "id": "12-screenshots-recording",
+      "file": "manual/12-screenshots-recording.md",
+      "title": "Screenshots & Recording"
+    },
+    {
+      "id": "13-toggles-idle-screensaver",
+      "file": "manual/13-toggles-idle-screensaver.md",
+      "title": "Toggles, Idle & the Screensaver"
+    },
+    {
+      "id": "14-omarchy-cli",
+      "file": "manual/14-omarchy-cli.md",
+      "title": "Omarchy CLI"
+    },
+    {
+      "id": "15-terminal",
+      "file": "manual/15-terminal.md",
+      "title": "Terminal"
+    },
+    {
+      "id": "16-neovim",
+      "file": "manual/16-neovim.md",
+      "title": "Neovim"
+    },
+    {
+      "id": "17-ai",
+      "file": "manual/17-ai.md",
+      "title": "AI"
+    },
+    {
+      "id": "18-development-tools",
+      "file": "manual/18-development-tools.md",
+      "title": "Development Tools"
+    },
+    {
+      "id": "19-shell-tools",
+      "file": "manual/19-shell-tools.md",
+      "title": "Shell Tools"
+    },
+    {
+      "id": "20-shell-functions",
+      "file": "manual/20-shell-functions.md",
+      "title": "Shell Functions"
+    },
+    {
+      "id": "21-tuis",
+      "file": "manual/21-tuis.md",
+      "title": "TUIs"
+    },
+    {
+      "id": "22-guis",
+      "file": "manual/22-guis.md",
+      "title": "GUIs"
+    },
+    {
+      "id": "23-browsers",
+      "file": "manual/23-browsers.md",
+      "title": "Browsers"
+    },
+    {
+      "id": "24-commercial-apps-services",
+      "file": "manual/24-commercial-apps-services.md",
+      "title": "Commercial apps/services"
+    },
+    {
+      "id": "25-web-apps",
+      "file": "manual/25-web-apps.md",
+      "title": "Web Apps"
+    },
+    {
+      "id": "26-gaming",
+      "file": "manual/26-gaming.md",
+      "title": "Gaming"
+    },
+    {
+      "id": "27-filling-out-pdfs",
+      "file": "manual/27-filling-out-pdfs.md",
+      "title": "Filling out PDFs"
+    },
+    {
+      "id": "28-windows-vm",
+      "file": "manual/28-windows-vm.md",
+      "title": "Windows VM"
+    },
+    {
+      "id": "29-other-packages",
+      "file": "manual/29-other-packages.md",
+      "title": "Other Packages"
+    },
+    {
+      "id": "30-updates",
+      "file": "manual/30-updates.md",
+      "title": "Updates"
+    },
+    {
+      "id": "31-dotfiles",
+      "file": "manual/31-dotfiles.md",
+      "title": "Dotfiles"
+    },
+    {
+      "id": "32-shell-plugins",
+      "file": "manual/32-shell-plugins.md",
+      "title": "Shell Plugins"
+    },
+    {
+      "id": "33-monitors",
+      "file": "manual/33-monitors.md",
+      "title": "Monitors"
+    },
+    {
+      "id": "34-keyboard-mouse-trackpad",
+      "file": "manual/34-keyboard-mouse-trackpad.md",
+      "title": "Keyboard, Mouse, Trackpad"
+    },
+    {
+      "id": "35-networking",
+      "file": "manual/35-networking.md",
+      "title": "Networking"
+    },
+    {
+      "id": "36-system-sleep",
+      "file": "manual/36-system-sleep.md",
+      "title": "System sleep"
+    },
+    {
+      "id": "37-hardware-authentication",
+      "file": "manual/37-hardware-authentication.md",
+      "title": "Hardware authentication"
+    },
+    {
+      "id": "38-fonts",
+      "file": "manual/38-fonts.md",
+      "title": "Fonts"
+    },
+    {
+      "id": "39-backgrounds",
+      "file": "manual/39-backgrounds.md",
+      "title": "Backgrounds"
+    },
+    {
+      "id": "40-prompt",
+      "file": "manual/40-prompt.md",
+      "title": "Prompt"
+    },
+    {
+      "id": "41-branding",
+      "file": "manual/41-branding.md",
+      "title": "Branding"
+    },
+    {
+      "id": "42-common-tweaks",
+      "file": "manual/42-common-tweaks.md",
+      "title": "Common tweaks"
+    },
+    {
+      "id": "43-making-your-own-theme",
+      "file": "manual/43-making-your-own-theme.md",
+      "title": "Making your own theme"
+    },
+    {
+      "id": "44-mac-support",
+      "file": "manual/44-mac-support.md",
+      "title": "Mac support"
+    },
+    {
+      "id": "45-troubleshooting",
+      "file": "manual/45-troubleshooting.md",
+      "title": "Troubleshooting"
+    },
+    {
+      "id": "46-faq",
+      "file": "manual/46-faq.md",
+      "title": "FAQ"
+    },
+    {
+      "id": "47-system-snapshots",
+      "file": "manual/47-system-snapshots.md",
+      "title": "System snapshots"
+    },
+    {
+      "id": "48-security",
+      "file": "manual/48-security.md",
+      "title": "Security"
+    },
+    {
+      "id": "49-omarchy-on",
+      "file": "manual/49-omarchy-on.md",
+      "title": "Omarchy on..."
+    },
+    {
+      "id": "50-dual-boot-install",
+      "file": "manual/50-dual-boot-install.md",
+      "title": "Dual Boot Install"
+    },
+    {
+      "id": "51-unattended-installs",
+      "file": "manual/51-unattended-installs.md",
+      "title": "Unattended Installs"
+    }
+  ],
+  "shellPlugins": [
+    {
+      "id": "omarchy.agents",
+      "name": "Agents",
+      "description": "Claude Code, Codex, and Fireworks usage, limits, and pace in a native Omarchy bar panel.",
+      "version": "1.0.0",
+      "source": "shell/plugins/agents/manifest.json"
+    },
+    {
+      "id": "omarchy.background",
+      "name": "Background",
+      "description": "Desktop background renderer with click handling and transitions",
+      "version": "1.0.0",
+      "source": "shell/plugins/background/manifest.json"
+    },
+    {
+      "id": "omarchy.bar",
+      "name": "Bar",
+      "description": "Status bar with widgets",
+      "version": "1.0.0",
+      "source": "shell/plugins/bar/manifest.json"
+    },
+    {
+      "id": "omarchy.clipboard",
+      "name": "Clipboard",
+      "description": "A clipboard manager to view and paste history",
+      "version": "1.0.0",
+      "source": "shell/plugins/clipboard/manifest.json"
+    },
+    {
+      "id": "omarchy.dev-gallery",
+      "name": "Dev gallery",
+      "description": "Visual reference for omarchy-shell common UI components. Summon with: omarchy-shell shell summon omarchy.dev-gallery '{}' (or run: omarchy dev ui-preview).",
+      "version": "1.0.0",
+      "source": "shell/plugins/dev-gallery/manifest.json"
+    },
+    {
+      "id": "omarchy.emojis",
+      "name": "Emojis",
+      "description": "Search, copy, and type emojis",
+      "version": "1.0.0",
+      "source": "shell/plugins/emojis/manifest.json"
+    },
+    {
+      "id": "omarchy.image-picker",
+      "name": "Image picker",
+      "description": "Image-grid selector overlay used for wallpapers, themes, and any other directory of images",
+      "version": "1.0.0",
+      "source": "shell/plugins/image-picker/manifest.json"
+    },
+    {
+      "id": "omarchy.lock",
+      "name": "Lock Screen",
+      "description": "Quickshell session lock with separate password and fingerprint PAM flows.",
+      "version": "1.0.0",
+      "source": "shell/plugins/lock/manifest.json"
+    },
+    {
+      "id": "omarchy.menu",
+      "name": "Omarchy menu",
+      "description": "Quickshell-powered Omarchy command menu",
+      "version": "1.0.0",
+      "source": "shell/plugins/menu/manifest.json"
+    },
+    {
+      "id": "omarchy.notifications",
+      "name": "Notifications",
+      "description": "Notification daemon, popups, DND, and history",
+      "version": "1.0.0",
+      "source": "shell/plugins/notifications/manifest.json"
+    },
+    {
+      "id": "omarchy.osd",
+      "name": "On-screen display",
+      "description": "Quickshell volume, brightness, and status overlays.",
+      "version": "1.0.0",
+      "source": "shell/plugins/osd/manifest.json"
+    },
+    {
+      "id": "omarchy.audio",
+      "name": "Audio",
+      "description": "Volume slider, output picker, per-app mixer",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/audio/manifest.json"
+    },
+    {
+      "id": "omarchy.bluetooth",
+      "name": "Bluetooth",
+      "description": "Bluetooth device list with connect/disconnect",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/bluetooth/manifest.json"
+    },
+    {
+      "id": "omarchy.clock",
+      "name": "Clock",
+      "description": "Date/time label with a calendar popup",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/clock/manifest.json"
+    },
+    {
+      "id": "omarchy.disk-speedtest",
+      "name": "Disk speed test",
+      "description": "Live disk write and read speed dials. Summon with: omarchy-shell shell summon omarchy.disk-speedtest",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/disk-speedtest/manifest.json"
+    },
+    {
+      "id": "omarchy.dropbox",
+      "name": "Dropbox",
+      "description": "Dropbox status, storage usage, login, and recent synced files in the Omarchy bar.",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/dropbox/manifest.json"
+    },
+    {
+      "id": "omarchy.monitor",
+      "name": "Display",
+      "description": "Brightness slider and laptop display controls",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/monitor/manifest.json"
+    },
+    {
+      "id": "omarchy.network",
+      "name": "Network",
+      "description": "Wi-Fi list and connection state",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/network/manifest.json"
+    },
+    {
+      "id": "omarchy.power",
+      "name": "Power",
+      "description": "Battery, power profile, and system stats",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/power/manifest.json"
+    },
+    {
+      "id": "omarchy.speedtest",
+      "name": "Speed Test",
+      "description": "Internet speed test with download and upload dials",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/speedtest/manifest.json"
+    },
+    {
+      "id": "omarchy.tailscale",
+      "name": "Tailscale",
+      "description": "Tailscale status, connection switching, machine browsing, and quick copy actions in the Omarchy bar.",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/tailscale/manifest.json"
+    },
+    {
+      "id": "omarchy.weather",
+      "name": "Weather",
+      "description": "Weather pill with detail popup",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/weather/manifest.json"
+    },
+    {
+      "id": "omarchy.wifiqr",
+      "name": "Wi-Fi QR",
+      "description": "Share the connected Wi-Fi network as a scannable QR code",
+      "version": "1.0.0",
+      "source": "shell/plugins/panels/wifiqr/manifest.json"
+    },
+    {
+      "id": "omarchy.polkit",
+      "name": "Polkit Agent",
+      "description": "Theme-aware authentication dialog for privileged actions.",
+      "version": "1.0.0",
+      "source": "shell/plugins/polkit/manifest.json"
+    },
+    {
+      "id": "omarchy.reminders",
+      "name": "Reminders",
+      "description": "Interactive reminder setup flow",
+      "version": "1.0.0",
+      "source": "shell/plugins/reminders/manifest.json"
+    },
+    {
+      "id": "omarchy.battery",
+      "name": "Battery",
+      "description": "Low battery warning service",
+      "version": "1.0.0",
+      "source": "shell/plugins/services/battery/manifest.json"
+    },
+    {
+      "id": "omarchy.idle",
+      "name": "Idle",
+      "description": "Quickshell-based idle detection for screensaver, lock, and display wake.",
+      "version": "1.0.0",
+      "source": "shell/plugins/services/idle/manifest.json"
+    },
+    {
+      "id": "omarchy.media",
+      "name": "Media",
+      "description": "MPRIS media control service",
+      "version": "1.0.0",
+      "source": "shell/plugins/services/media/manifest.json"
+    },
+    {
+      "id": "omarchy.nightlight",
+      "name": "Night Light",
+      "description": "Owns the hyprsunset night light temperature for the bar indicator and CLI.",
+      "version": "1.0.0",
+      "source": "shell/plugins/services/nightlight/manifest.json"
+    }
+  ],
+  "cliGroups": [
+    {
+      "id": "agent",
+      "description": "AI coding agent usage data"
+    },
+    {
+      "id": "ascii",
+      "description": "Text drawn as ASCII art"
+    },
+    {
+      "id": "audio",
+      "description": "Audio input and output controls"
+    },
+    {
+      "id": "bar",
+      "description": "Omarchy shell bar layout and settings"
+    },
+    {
+      "id": "battery",
+      "description": "Battery status helpers"
+    },
+    {
+      "id": "bluetooth",
+      "description": "Bluetooth device controls"
+    },
+    {
+      "id": "branch",
+      "description": "Omarchy git branch management"
+    },
+    {
+      "id": "branding",
+      "description": "About and screensaver branding"
+    },
+    {
+      "id": "brightness",
+      "description": "Display and keyboard brightness"
+    },
+    {
+      "id": "capture",
+      "description": "Screenshots and screen recording"
+    },
+    {
+      "id": "channel",
+      "description": "Omarchy release channel management"
+    },
+    {
+      "id": "clipboard",
+      "description": "Clipboard helpers"
+    },
+    {
+      "id": "cmd",
+      "description": "Command and shortcut helpers"
+    },
+    {
+      "id": "config",
+      "description": "System configuration helpers"
+    },
+    {
+      "id": "crash",
+      "description": "Crash notification controls"
+    },
+    {
+      "id": "debug",
+      "description": "Diagnostics and support logs"
+    },
+    {
+      "id": "finalize",
+      "description": "Finalize user setup"
+    },
+    {
+      "id": "default",
+      "description": "Default application selection"
+    },
+    {
+      "id": "dev",
+      "description": "Omarchy development tools"
+    },
+    {
+      "id": "disk",
+      "description": "Disk performance helpers"
+    },
+    {
+      "id": "display",
+      "description": "Display and text scaling"
+    },
+    {
+      "id": "dns",
+      "description": "DNS resolver configuration"
+    },
+    {
+      "id": "drive",
+      "description": "Drive selection and encryption"
+    },
+    {
+      "id": "file",
+      "description": "File selection helpers"
+    },
+    {
+      "id": "font",
+      "description": "Font management"
+    },
+    {
+      "id": "games",
+      "description": "Game launchers and helpers"
+    },
+    {
+      "id": "hibernation",
+      "description": "Hibernation setup and removal"
+    },
+    {
+      "id": "hook",
+      "description": "User hook runner"
+    },
+    {
+      "id": "hw",
+      "description": "Hardware detection and controls"
+    },
+    {
+      "id": "hyprland",
+      "description": "Hyprland window, monitor, and toggle controls"
+    },
+    {
+      "id": "install",
+      "description": "Optional software installers"
+    },
+    {
+      "id": "installed",
+      "description": "Installed optional service checks"
+    },
+    {
+      "id": "launch",
+      "description": "Application launchers"
+    },
+    {
+      "id": "menu",
+      "description": "Omarchy menu commands"
+    },
+    {
+      "id": "migrate",
+      "description": "Migration runner"
+    },
+    {
+      "id": "monitor",
+      "description": "Monitor status helpers"
+    },
+    {
+      "id": "network",
+      "description": "Network status helpers"
+    },
+    {
+      "id": "notification",
+      "description": "Notification helpers"
+    },
+    {
+      "id": "mise",
+      "description": "Mise tool wrappers"
+    },
+    {
+      "id": "osd",
+      "description": "On-screen display status helpers"
+    },
+    {
+      "id": "pkg",
+      "description": "Package management helpers"
+    },
+    {
+      "id": "plugin",
+      "description": "Omarchy shell plugin and bar widget management"
+    },
+    {
+      "id": "plymouth",
+      "description": "Plymouth boot theme management"
+    },
+    {
+      "id": "power",
+      "description": "Power supply detection"
+    },
+    {
+      "id": "powerprofiles",
+      "description": "Power profile management"
+    },
+    {
+      "id": "refresh",
+      "description": "Reset config to defaults"
+    },
+    {
+      "id": "reinstall",
+      "description": "Reinstall and reset workflows"
+    },
+    {
+      "id": "reminder",
+      "description": "Desktop notification reminders"
+    },
+    {
+      "id": "remove",
+      "description": "Removal workflows"
+    },
+    {
+      "id": "restart",
+      "description": "Restart Omarchy components"
+    },
+    {
+      "id": "setup",
+      "description": "Interactive setup wizards"
+    },
+    {
+      "id": "shell",
+      "description": "Omarchy shell IPC helpers"
+    },
+    {
+      "id": "screensaver",
+      "description": "Screensaver branding and animation"
+    },
+    {
+      "id": "snapshot",
+      "description": "System snapshots"
+    },
+    {
+      "id": "sudo",
+      "description": "Sudo configuration helpers"
+    },
+    {
+      "id": "system",
+      "description": "System status, reboot, shutdown, logout, and lock"
+    },
+    {
+      "id": "tailscale",
+      "description": "Tailscale helpers"
+    },
+    {
+      "id": "theme",
+      "description": "Theme management"
+    },
+    {
+      "id": "toggle",
+      "description": "Toggle Omarchy features"
+    },
+    {
+      "id": "transcode",
+      "description": "Image and video transcoding"
+    },
+    {
+      "id": "tui",
+      "description": "Terminal UI launchers"
+    },
+    {
+      "id": "update",
+      "description": "Omarchy and system updates"
+    },
+    {
+      "id": "version",
+      "description": "Version and channel information"
+    },
+    {
+      "id": "voxtype",
+      "description": "Voxtype dictation"
+    },
+    {
+      "id": "weather",
+      "description": "Weather status"
+    },
+    {
+      "id": "webapp",
+      "description": "Web app launchers"
+    },
+    {
+      "id": "wifi",
+      "description": "Wi-Fi helpers"
+    },
+    {
+      "id": "windows",
+      "description": "Windows VM management"
+    }
+  ],
+  "staticBindingDeclarations": [
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 2,
+      "declaration": "o.bind(\"SUPER + RETURN\", \"Terminal\", { omarchy = \"terminal\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 3,
+      "declaration": "o.bind(\"SUPER + SHIFT + RETURN\", \"Browser\", { omarchy = \"browser\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 4,
+      "declaration": "o.bind(\"SUPER + SHIFT + F\", \"File manager\", { omarchy = \"nautilus\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 5,
+      "declaration": "o.bind(\"SUPER + ALT + SHIFT + F\", \"File manager (cwd)\", { omarchy = \"nautilus-cwd\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 6,
+      "declaration": "o.bind(\"SUPER + SHIFT + B\", \"Browser\", { omarchy = \"browser\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 7,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + B\", \"Browser (private)\", { omarchy = \"browser --private\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 8,
+      "declaration": "o.bind(\"SUPER + SHIFT + N\", \"Editor\", { omarchy = \"editor\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 12,
+      "declaration": "  o.bind(\"SUPER + ALT + RETURN\", \"Tmux\", { omarchy = \"terminal-tmux\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 13,
+      "declaration": "  o.bind(\"SUPER + CTRL + RETURN\", \"Herdr\", { omarchy = \"terminal-herdr\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 14,
+      "declaration": "  o.bind(\"SUPER + SHIFT + M\", \"Music\", { omarchy = \"spotify\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 15,
+      "declaration": "  o.bind(\"SUPER + SHIFT + ALT + M\", \"Music TUI\", { tui = \"cliamp\", focus = true })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 16,
+      "declaration": "  o.bind(\"SUPER + SHIFT + D\", \"Docker\", { tui = \"omarchy-launch-docker-tui\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 17,
+      "declaration": "  o.bind(\"SUPER + SHIFT + G\", \"Signal\", { omarchy = \"signal\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 18,
+      "declaration": "  o.bind(\"SUPER + SHIFT + O\", \"Obsidian\", { launch = \"obsidian\", focus = \"^obsidian$\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 19,
+      "declaration": "  o.bind(\"SUPER + SHIFT + W\", \"Omawrite\", { launch = \"omawrite\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 20,
+      "declaration": "  o.bind(\"SUPER + SHIFT + SLASH\", \"Passwords\", { omarchy = \"1password\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 22,
+      "declaration": "  o.bind(\"SUPER + SHIFT + A\", \"ChatGPT\", { webapp = \"https://chatgpt.com\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 23,
+      "declaration": "  o.bind(\"SUPER + SHIFT + ALT + A\", \"Grok\", { webapp = \"https://grok.com\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 24,
+      "declaration": "  o.bind(\"SUPER + SHIFT + C\", \"Calendar\", { webapp = \"https://app.hey.com/calendar/weeks/\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 25,
+      "declaration": "  o.bind(\"SUPER + SHIFT + E\", \"Email\", { webapp = \"https://app.hey.com\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 26,
+      "declaration": "  o.bind(\"SUPER + SHIFT + ALT + E\", \"New email\", { webapp = \"https://app.hey.com/messages/new?display=standalone&new_window=true\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 27,
+      "declaration": "  o.bind(\"SUPER + SHIFT + Y\", \"YouTube\", { webapp = \"https://youtube.com/\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 28,
+      "declaration": "  o.bind(\"SUPER + SHIFT + ALT + G\", \"WhatsApp\", { webapp = \"https://web.whatsapp.com/\", focus = true })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 29,
+      "declaration": "  o.bind( \"SUPER + SHIFT + CTRL + G\", \"Google Messages\", { webapp = \"https://messages.google.com/web/conversations\", focus = true })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 30,
+      "declaration": "  o.bind(\"SUPER + SHIFT + P\", \"Google Photos\", { webapp = \"https://photos.google.com/\", focus = true })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 31,
+      "declaration": "  o.bind(\"SUPER + SHIFT + S\", \"Google Maps\", { webapp = \"https://maps.google.com/\", focus = true })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 32,
+      "declaration": "  o.bind(\"SUPER + SHIFT + X\", \"X\", { webapp = \"https://x.com/\" })"
+    },
+    {
+      "source": "default/hypr/bindings/applications.lua",
+      "line": 33,
+      "declaration": "  o.bind(\"SUPER + SHIFT + ALT + X\", \"X Post\", { webapp = \"https://x.com/compose/post\" })"
+    },
+    {
+      "source": "default/hypr/bindings/clipboard.lua",
+      "line": 45,
+      "declaration": "o.bind(\"SUPER + C\", \"Universal copy\", universal_clipboard_shortcut(\"CTRL\", \"C\", \"CTRL\", \"Insert\"))"
+    },
+    {
+      "source": "default/hypr/bindings/clipboard.lua",
+      "line": 46,
+      "declaration": "o.bind(\"SUPER + V\", \"Universal paste\", universal_clipboard_shortcut(\"CTRL\", \"V\", \"SHIFT\", \"Insert\"))"
+    },
+    {
+      "source": "default/hypr/bindings/clipboard.lua",
+      "line": 47,
+      "declaration": "o.bind(\"SUPER + X\", \"Universal cut\", send_shortcut_once(\"CTRL\", \"X\"))"
+    },
+    {
+      "source": "default/hypr/bindings/clipboard.lua",
+      "line": 48,
+      "declaration": "o.bind(\"SUPER + CTRL + V\", \"Clipboard manager\", \"omarchy-shell shell toggle omarchy.clipboard\")"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 2,
+      "declaration": "o.bind(\"XF86AudioRaiseVolume\", \"Volume up\", \"omarchy-audio-output-volume raise\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 3,
+      "declaration": "o.bind(\"XF86AudioLowerVolume\", \"Volume down\", \"omarchy-audio-output-volume lower\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 4,
+      "declaration": "o.bind(\"XF86AudioMute\", \"Mute\", \"omarchy-audio-output-volume mute-toggle\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 5,
+      "declaration": "o.bind(\"XF86AudioMicMute\", \"Mute microphone\", \"omarchy-audio-input-mute\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 6,
+      "declaration": "o.bind(\"XF86MonBrightnessUp\", \"Brightness up\", \"omarchy-brightness-display +5%\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 7,
+      "declaration": "o.bind(\"XF86MonBrightnessDown\", \"Brightness down\", \"omarchy-brightness-display 5%-\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 8,
+      "declaration": "o.bind(\"SHIFT + XF86MonBrightnessUp\", \"Brightness maximum\", \"omarchy-brightness-display 100%\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 9,
+      "declaration": "o.bind(\"SHIFT + XF86MonBrightnessDown\", \"Brightness minimum\", \"omarchy-brightness-display 1%\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 10,
+      "declaration": "o.bind(\"XF86KbdBrightnessUp\", \"Keyboard brightness up\", \"omarchy-brightness-keyboard up\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 11,
+      "declaration": "o.bind(\"XF86KbdBrightnessDown\", \"Keyboard brightness down\", \"omarchy-brightness-keyboard down\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 12,
+      "declaration": "o.bind(\"XF86KbdLightOnOff\", \"Keyboard backlight cycle\", \"omarchy-brightness-keyboard cycle\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 13,
+      "declaration": "o.bind_toggle(\"XF86TouchpadToggle\", \"Toggle touchpad\", \"touchpad\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 14,
+      "declaration": "o.bind(\"XF86TouchpadOn\", \"Enable touchpad\", \"omarchy-toggle-touchpad on\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 15,
+      "declaration": "o.bind(\"XF86TouchpadOff\", \"Disable touchpad\", \"omarchy-toggle-touchpad off\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 18,
+      "declaration": "o.bind(\"ALT + XF86AudioRaiseVolume\", \"Volume up precise\", \"omarchy-audio-output-volume +1\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 19,
+      "declaration": "o.bind(\"ALT + XF86AudioLowerVolume\", \"Volume down precise\", \"omarchy-audio-output-volume -1\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 20,
+      "declaration": "o.bind(\"ALT + XF86MonBrightnessUp\", \"Brightness up precise\", \"omarchy-brightness-display +1%\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 21,
+      "declaration": "o.bind(\"ALT + XF86MonBrightnessDown\", \"Brightness down precise\", \"omarchy-brightness-display 1%-\", { locked = true, repeating = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 24,
+      "declaration": "o.bind(\"XF86AudioNext\", \"Next track\", \"omarchy-shell media next\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 25,
+      "declaration": "o.bind(\"ALT + XF86AudioPlay\", \"Next track\", \"omarchy-shell media next\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 26,
+      "declaration": "o.bind(\"XF86AudioPause\", \"Pause\", \"omarchy-shell media playPause\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 27,
+      "declaration": "o.bind(\"XF86AudioPlay\", \"Play\", \"omarchy-shell media playPause\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 28,
+      "declaration": "o.bind(\"XF86AudioPrev\", \"Previous track\", \"omarchy-shell media previous\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 29,
+      "declaration": "o.bind(\"ALT + SHIFT + XF86AudioPlay\", \"Previous track\", \"omarchy-shell media previous\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 30,
+      "declaration": "o.bind(\"XF86Eject\", \"Eject media\", \"eject\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 32,
+      "declaration": "o.bind(\"SHIFT + XF86AudioMute\", \"Switch audio output\", \"omarchy-audio-output-switch\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 33,
+      "declaration": "o.bind(\"SHIFT + XF86AudioPause\", \"Switch media source\", \"omarchy-audio-source-switch\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/media.lua",
+      "line": 34,
+      "declaration": "o.bind(\"SHIFT + XF86AudioPlay\", \"Switch media source\", \"omarchy-audio-source-switch\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 1,
+      "declaration": "o.bind(\"SUPER + W\", \"Close window\", hl.dsp.window.close())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 2,
+      "declaration": "o.bind(\"SUPER + Q\", \"Close window\", hl.dsp.window.close())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 3,
+      "declaration": "o.bind(\"CTRL + ALT + DELETE\", \"Close all windows\", \"omarchy-hyprland-window-close-all\")"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 5,
+      "declaration": "o.bind(\"SUPER + J\", \"Toggle window split\", hl.dsp.layout(\"togglesplit\"))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 6,
+      "declaration": "o.bind(\"SUPER + P\", \"Pseudo window\", hl.dsp.window.pseudo())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 7,
+      "declaration": "o.bind(\"SUPER + T\", \"Toggle window floating/tiling\", hl.dsp.window.float({ action = \"toggle\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 8,
+      "declaration": "o.bind(\"SUPER + F\", \"Full screen\", hl.dsp.window.fullscreen({ mode = \"fullscreen\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 9,
+      "declaration": "o.bind(\"SUPER + CTRL + F\", \"Tiled full screen\", \"omarchy-hyprland-window-tiled-fullscreen-toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 10,
+      "declaration": "o.bind(\"SUPER + ALT + F\", \"Full width\", hl.dsp.window.fullscreen({ mode = \"maximized\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 11,
+      "declaration": "o.bind(\"SUPER + O\", \"Pop window out (float & pin)\", \"omarchy-hyprland-window-pop\")"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 12,
+      "declaration": "o.bind(\"SUPER + ALT + Home\", \"Save window width\", \"omarchy-hyprland-window-width save\")"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 13,
+      "declaration": "o.bind(\"SUPER + Home\", \"Restore window width\", \"omarchy-hyprland-window-width restore\")"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 14,
+      "declaration": "o.bind(\"SUPER + L\", \"Toggle workspace layout\", \"omarchy-hyprland-workspace-layout-toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 16,
+      "declaration": "o.bind(\"SUPER + LEFT\", \"Focus on left window\", hl.dsp.focus({ direction = \"l\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 17,
+      "declaration": "o.bind(\"SUPER + RIGHT\", \"Focus on right window\", hl.dsp.focus({ direction = \"r\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 18,
+      "declaration": "o.bind(\"SUPER + UP\", \"Focus on above window\", hl.dsp.focus({ direction = \"u\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 19,
+      "declaration": "o.bind(\"SUPER + DOWN\", \"Focus on below window\", hl.dsp.focus({ direction = \"d\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 23,
+      "declaration": "  o.bind(\"SUPER + \" .. key, \"Switch to workspace \" .. workspace, hl.dsp.focus({ workspace = tostring(workspace) }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 24,
+      "declaration": "  o.bind(\"SUPER + SHIFT + \" .. key, \"Move window to workspace \" .. workspace, hl.dsp.window.move({ workspace = tostring(workspace) }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 25,
+      "declaration": "  o.bind(\"SUPER + SHIFT + ALT + \" .. key, \"Move window silently to workspace \" .. workspace, hl.dsp.window.move({ workspace = tostring(workspace), follow = false }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 28,
+      "declaration": "o.bind(\"SUPER + S\", \"Toggle scratchpad\", hl.dsp.workspace.toggle_special(\"scratchpad\"))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 29,
+      "declaration": "o.bind(\"SUPER + ALT + S\", \"Move window to scratchpad\", hl.dsp.window.move({ workspace = \"special:scratchpad\", follow = false }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 30,
+      "declaration": "o.bind(\"SUPER + grave\", \"Toggle scratchpad\", hl.dsp.workspace.toggle_special(\"scratchpad\"))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 31,
+      "declaration": "o.bind(\"SUPER + SHIFT + grave\", \"Move window to scratchpad\", hl.dsp.window.move({ workspace = \"special:scratchpad\", follow = false }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 33,
+      "declaration": "o.bind(\"SUPER + TAB\", \"Next workspace\", hl.dsp.focus({ workspace = \"e+1\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 34,
+      "declaration": "o.bind(\"SUPER + SHIFT + TAB\", \"Previous workspace\", hl.dsp.focus({ workspace = \"e-1\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 35,
+      "declaration": "o.bind(\"SUPER + CTRL + TAB\", \"Former workspace\", hl.dsp.focus({ workspace = \"previous\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 37,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + LEFT\", \"Move workspace to left monitor\", hl.dsp.workspace.move({ monitor = \"l\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 38,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + RIGHT\", \"Move workspace to right monitor\", hl.dsp.workspace.move({ monitor = \"r\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 39,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + UP\", \"Move workspace to up monitor\", hl.dsp.workspace.move({ monitor = \"u\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 40,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + DOWN\", \"Move workspace to down monitor\", hl.dsp.workspace.move({ monitor = \"d\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 42,
+      "declaration": "o.bind(\"SUPER + SHIFT + LEFT\", \"Swap window to the left\", hl.dsp.window.swap({ direction = \"l\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 43,
+      "declaration": "o.bind(\"SUPER + SHIFT + RIGHT\", \"Swap window to the right\", hl.dsp.window.swap({ direction = \"r\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 44,
+      "declaration": "o.bind(\"SUPER + SHIFT + UP\", \"Swap window up\", hl.dsp.window.swap({ direction = \"u\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 45,
+      "declaration": "o.bind(\"SUPER + SHIFT + DOWN\", \"Swap window down\", hl.dsp.window.swap({ direction = \"d\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 47,
+      "declaration": "o.bind(\"ALT + TAB\", \"Focus on next window\", hl.dsp.window.cycle_next())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 48,
+      "declaration": "o.bind(\"ALT + SHIFT + TAB\", \"Focus on previous window\", hl.dsp.window.cycle_next({ next = false }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 49,
+      "declaration": "o.bind(\"ALT + TAB\", \"Reveal active window on top\", hl.dsp.window.bring_to_top())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 50,
+      "declaration": "o.bind(\"ALT + SHIFT + TAB\", \"Reveal active window on top\", hl.dsp.window.bring_to_top())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 52,
+      "declaration": "o.bind(\"CTRL + ALT + TAB\", \"Focus on next monitor\", hl.dsp.focus({ monitor = \"+1\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 53,
+      "declaration": "o.bind(\"CTRL + ALT + SHIFT + TAB\", \"Focus on previous monitor\", hl.dsp.focus({ monitor = \"-1\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 55,
+      "declaration": "o.bind(\"SUPER + code:20\", \"Expand window left\", hl.dsp.window.resize({ x = -100, y = 0, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 56,
+      "declaration": "o.bind(\"SUPER + code:21\", \"Shrink window left\", hl.dsp.window.resize({ x = 100, y = 0, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 57,
+      "declaration": "o.bind(\"SUPER + SHIFT + code:20\", \"Shrink window up\", hl.dsp.window.resize({ x = 0, y = -100, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 58,
+      "declaration": "o.bind(\"SUPER + SHIFT + code:21\", \"Expand window down\", hl.dsp.window.resize({ x = 0, y = 100, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 60,
+      "declaration": "o.bind(\"SUPER + ALT + code:20\", \"Expand window left a little\", hl.dsp.window.resize({ x = -25, y = 0, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 61,
+      "declaration": "o.bind(\"SUPER + ALT + code:21\", \"Shrink window left a little\", hl.dsp.window.resize({ x = 25, y = 0, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 62,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + code:20\", \"Shrink window up a little\", hl.dsp.window.resize({ x = 0, y = -25, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 63,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + code:21\", \"Expand window down a little\", hl.dsp.window.resize({ x = 0, y = 25, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 65,
+      "declaration": "o.bind(\"SUPER + CTRL + code:20\", \"Expand window left a lot\", hl.dsp.window.resize({ x = -300, y = 0, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 66,
+      "declaration": "o.bind(\"SUPER + CTRL + code:21\", \"Shrink window left a lot\", hl.dsp.window.resize({ x = 300, y = 0, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 67,
+      "declaration": "o.bind(\"SUPER + CTRL + SHIFT + code:20\", \"Shrink window up a lot\", hl.dsp.window.resize({ x = 0, y = -300, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 68,
+      "declaration": "o.bind(\"SUPER + CTRL + SHIFT + code:21\", \"Expand window down a lot\", hl.dsp.window.resize({ x = 0, y = 300, relative = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 70,
+      "declaration": "o.bind(\"SUPER + mouse_down\", \"Scroll active workspace forward\", hl.dsp.focus({ workspace = \"e+1\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 71,
+      "declaration": "o.bind(\"SUPER + mouse_up\", \"Scroll active workspace backward\", hl.dsp.focus({ workspace = \"e-1\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 73,
+      "declaration": "o.bind(\"SUPER + mouse:272\", \"Move window\", hl.dsp.window.drag(), { mouse = true })"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 74,
+      "declaration": "o.bind(\"SUPER + mouse:273\", \"Resize window\", hl.dsp.window.resize(), { mouse = true })"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 76,
+      "declaration": "o.bind(\"SUPER + G\", \"Toggle window grouping\", hl.dsp.group.toggle())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 77,
+      "declaration": "o.bind(\"SUPER + ALT + G\", \"Move active window out of group\", hl.dsp.window.move({ out_of_group = true }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 79,
+      "declaration": "o.bind(\"SUPER + ALT + LEFT\", \"Move window to group on left\", hl.dsp.window.move({ into_group = \"l\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 80,
+      "declaration": "o.bind(\"SUPER + ALT + RIGHT\", \"Move window to group on right\", hl.dsp.window.move({ into_group = \"r\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 81,
+      "declaration": "o.bind(\"SUPER + ALT + UP\", \"Move window to group on top\", hl.dsp.window.move({ into_group = \"u\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 82,
+      "declaration": "o.bind(\"SUPER + ALT + DOWN\", \"Move window to group on bottom\", hl.dsp.window.move({ into_group = \"d\" }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 84,
+      "declaration": "o.bind(\"SUPER + ALT + TAB\", \"Next window in group\", hl.dsp.group.next())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 85,
+      "declaration": "o.bind(\"SUPER + ALT + SHIFT + TAB\", \"Previous window in group\", hl.dsp.group.prev())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 87,
+      "declaration": "o.bind(\"SUPER + CTRL + LEFT\", \"Move grouped window focus left\", hl.dsp.group.prev())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 88,
+      "declaration": "o.bind(\"SUPER + CTRL + RIGHT\", \"Move grouped window focus right\", hl.dsp.group.next())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 90,
+      "declaration": "o.bind(\"SUPER + ALT + mouse_down\", \"Next window in group\", hl.dsp.group.next())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 91,
+      "declaration": "o.bind(\"SUPER + ALT + mouse_up\", \"Previous window in group\", hl.dsp.group.prev())"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 94,
+      "declaration": "  o.bind(\"SUPER + ALT + code:\" .. tostring(index + 9), \"Switch to group window \" .. index, hl.dsp.group.active({ index = index }))"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 97,
+      "declaration": "o.bind(\"SUPER + SLASH\", \"Monitor scaling up\", \"omarchy-hyprland-monitor-scaling up\")"
+    },
+    {
+      "source": "default/hypr/bindings/tiling.lua",
+      "line": 98,
+      "declaration": "o.bind(\"SUPER + ALT + SLASH\", \"Monitor scaling down\", \"omarchy-hyprland-monitor-scaling down\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 1,
+      "declaration": "o.bind(\"SUPER + SPACE\", \"Omarchy menu\", \"omarchy-menu toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 2,
+      "declaration": "o.bind(\"SUPER + ALT + SPACE\", \"Apps menu\", \"omarchy-menu toggle apps\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 3,
+      "declaration": "o.bind(\"SUPER + CTRL + E\", \"Emojis\", \"omarchy-shell shell toggle omarchy.emojis\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 4,
+      "declaration": "o.bind(\"SUPER + CTRL + C\", \"Capture menu\", \"omarchy-menu toggle capture\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 5,
+      "declaration": "o.bind(\"SUPER + CTRL + O\", \"Toggle menu\", \"omarchy-menu toggle toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 6,
+      "declaration": "o.bind(\"SUPER + CTRL + H\", \"Hardware menu\", \"omarchy-menu toggle hardware\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 7,
+      "declaration": "o.bind(\"SUPER + SHIFT + code:201\", \"Omarchy menu\", \"omarchy-menu toggle root\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 8,
+      "declaration": "o.bind(\"SUPER + ESCAPE\", \"System menu\", \"omarchy-menu toggle system\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 9,
+      "declaration": "o.bind(\"XF86PowerOff\", \"Power menu\", \"omarchy-menu toggle system\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 10,
+      "declaration": "o.bind(\"SUPER + K\", \"Keybindings\", \"omarchy-menu-keybindings\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 11,
+      "declaration": "o.bind(\"SUPER + ALT + K\", \"Tmux keybindings\", \"omarchy-menu-tmux-keybindings\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 12,
+      "declaration": "o.bind(\"SUPER + CTRL + K\", \"Herdr keybindings\", \"omarchy-menu-herdr-keybindings\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 13,
+      "declaration": "o.bind(\"SUPER + CTRL + Q\", \"Calculator\", \"omacalc\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 14,
+      "declaration": "o.bind(\"XF86Calculator\", \"Calculator\", \"omacalc\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 16,
+      "declaration": "o.bind_toggle(\"SUPER + SHIFT + SPACE\", \"Toggle top bar\", \"bar\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 17,
+      "declaration": "o.bind(\"SUPER + CTRL + SPACE\", \"Background switcher\", \"omarchy-menu toggle background\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 18,
+      "declaration": "o.bind(\"SUPER + SHIFT + CTRL + SPACE\", \"Theme menu\", \"omarchy-menu toggle theme\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 19,
+      "declaration": "o.bind(\"SUPER + BACKSPACE\", \"Toggle window transparency\", \"omarchy-hyprland-window-transparency-toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 20,
+      "declaration": "o.bind(\"SUPER + SHIFT + BACKSPACE\", \"Toggle window gaps\", \"omarchy-hyprland-window-gaps-toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 21,
+      "declaration": "o.bind(\"SUPER + CTRL + BACKSPACE\", \"Toggle single-window square aspect\", \"omarchy-hyprland-window-single-square-aspect-toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 24,
+      "declaration": "o.bind(\"SUPER + comma\", \"Dismiss last notification\", \"omarchy-shell notifications dismissOne\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 25,
+      "declaration": "o.bind(\"SUPER + SHIFT + comma\", \"Dismiss all notifications\", \"omarchy-shell notifications dismissAll\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 26,
+      "declaration": "o.bind_toggle(\"SUPER + CTRL + comma\", \"Toggle silencing notifications\", \"notification-silencing\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 27,
+      "declaration": "o.bind(\"SUPER + ALT + comma\", \"Invoke last notification\", \"omarchy-shell notifications invokeLast\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 28,
+      "declaration": "o.bind(\"SUPER + SHIFT + ALT + comma\", \"Open notification history\", \"omarchy-shell notifications showHistory\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 30,
+      "declaration": "o.bind_toggle(\"SUPER + CTRL + I\", \"Toggle locking on idle\", \"idle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 31,
+      "declaration": "o.bind_toggle(\"SUPER + CTRL + N\", \"Toggle nightlight\", \"nightlight\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 32,
+      "declaration": "o.bind(\"SUPER + CTRL + Delete\", \"Toggle laptop display\", \"omarchy-hyprland-monitor-internal toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 33,
+      "declaration": "o.bind(\"SUPER + CTRL + ALT + Delete\", \"Toggle laptop display mirroring\", \"omarchy-hyprland-monitor-internal-mirror toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 34,
+      "declaration": "o.bind(\"switch:on:Lid Switch\", nil, \"omarchy-system-lid-close\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 35,
+      "declaration": "o.bind(\"switch:off:Lid Switch\", nil, \"omarchy-hyprland-monitor-clamshell\", { locked = true })"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 37,
+      "declaration": "o.bind(\"PRINT\", \"Screenshot\", \"omarchy-capture-screenshot\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 38,
+      "declaration": "o.bind(\"ALT + PRINT\", \"Screenrecording\", \"omarchy-capture-screenrecording --stop-recording || omarchy-menu toggle trigger.capture.screenrecord\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 39,
+      "declaration": "o.bind(\"SUPER + ALT + code:34\", \"Make webcam overlay smaller\", \"omarchy-capture-webcam-resize smaller\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 40,
+      "declaration": "o.bind(\"SUPER + ALT + code:35\", \"Make webcam overlay larger\", \"omarchy-capture-webcam-resize larger\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 41,
+      "declaration": "o.bind(\"SUPER + PRINT\", \"Color picker\", \"pkill hyprpicker || hyprpicker -a\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 42,
+      "declaration": "o.bind(\"SUPER + CTRL + PRINT\", \"Extract text (OCR) from screenshot\", \"omarchy-capture-text\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 84,
+      "declaration": "o.bind(\"SUPER + CTRL + S\", \"Share\", \"omarchy-menu toggle share\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 86,
+      "declaration": "o.bind(\"SUPER + CTRL + PERIOD\", \"Transcode\", \"omarchy-transcode\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 88,
+      "declaration": "o.bind(\"SUPER + CTRL + R\", \"Set reminder\", \"omarchy-menu toggle reminder-set\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 89,
+      "declaration": "o.bind(\"SUPER + CTRL + ALT + R\", \"Show reminders\", \"omarchy-reminder show\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 90,
+      "declaration": "o.bind(\"SUPER + SHIFT + CTRL + R\", \"Clear reminders\", \"omarchy-reminder clear\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 92,
+      "declaration": "o.bind(\"SUPER + CTRL + ALT + T\", \"Show time\", \"omarchy-notification-time\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 93,
+      "declaration": "o.bind(\"SUPER + CTRL + ALT + B\", \"Show battery remaining\", \"omarchy-notification-battery\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 94,
+      "declaration": "o.bind(\"SUPER + CTRL + ALT + W\", \"Toggle weather\", \"omarchy-notification-weather\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 96,
+      "declaration": "o.bind(\"SUPER + SHIFT + CTRL + A\", \"Agent\", \"omarchy-agent --pick\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 97,
+      "declaration": "o.bind(\"SUPER + CTRL + A\", \"Audio\", \"omarchy-shell shell toggle omarchy.audio\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 98,
+      "declaration": "o.bind(\"SUPER + CTRL + B\", \"Bluetooth\", \"omarchy-shell shell toggle omarchy.bluetooth\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 99,
+      "declaration": "o.bind(\"SUPER + CTRL + D\", \"Display\", \"omarchy-shell shell toggle omarchy.monitor\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 100,
+      "declaration": "o.bind(\"SUPER + CTRL + ALT + D\", \"Calendar\", \"omarchy-shell shell toggle omarchy.clock\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 101,
+      "declaration": "o.bind(\"SUPER + CTRL + W\", \"Network\", \"omarchy-shell shell toggle omarchy.network\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 102,
+      "declaration": "o.bind(\"SUPER + CTRL + P\", \"Power\", \"omarchy-shell shell toggle omarchy.power\")"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 103,
+      "declaration": "o.bind(\"SUPER + CTRL + T\", \"Activity\", { tui = \"btop\" })"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 110,
+      "declaration": "  o.bind("
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 117,
+      "declaration": "o.bind(\"SUPER + CTRL + Z\", \"Zoom in\", function()"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 122,
+      "declaration": "o.bind(\"SUPER + CTRL + ALT + Z\", \"Reset zoom\", function()"
+    },
+    {
+      "source": "default/hypr/bindings/utilities.lua",
+      "line": 126,
+      "declaration": "o.bind(\"SUPER + CTRL + L\", \"Lock system\", \"omarchy-system-lock\")"
+    },
+    {
+      "source": "default/hypr/bindings/voxtype.lua",
+      "line": 2,
+      "declaration": "  o.bind(\"SUPER + CTRL + X\", \"Toggle dictation\", \"voxtype record toggle\")"
+    },
+    {
+      "source": "default/hypr/bindings/voxtype.lua",
+      "line": 3,
+      "declaration": "  o.bind(\"F9\", \"Start dictation (push-to-talk)\", \"voxtype record start\")"
+    },
+    {
+      "source": "default/hypr/bindings/voxtype.lua",
+      "line": 4,
+      "declaration": "  o.bind(\"F9\", \"Stop dictation (push-to-talk)\", \"voxtype record stop\", { release = true })"
+    }
+  ],
+  "dynamicBindingFamilies": [
+    {
+      "id": "workspaces",
+      "source": "default/hypr/bindings/tiling.lua",
+      "expansion": "workspaces 1 through 10: focus, move and silent move"
+    },
+    {
+      "id": "group-windows",
+      "source": "default/hypr/bindings/tiling.lua",
+      "expansion": "group windows 1 through 5"
+    },
+    {
+      "id": "bar-panels",
+      "source": "default/hypr/bindings/utilities.lua",
+      "expansion": "right-side bar panels 1 through 9"
+    }
+  ],
+  "menuEntries": [
+    {
+      "id": "apps"
+    },
+    {
+      "id": "learn"
+    },
+    {
+      "id": "trigger"
+    },
+    {
+      "id": "style"
+    },
+    {
+      "id": "setup"
+    },
+    {
+      "id": "install"
+    },
+    {
+      "id": "remove"
+    },
+    {
+      "id": "update"
+    },
+    {
+      "id": "about"
+    },
+    {
+      "id": "system"
+    },
+    {
+      "id": "system.screensaver"
+    },
+    {
+      "id": "system.lock"
+    },
+    {
+      "id": "system.suspend"
+    },
+    {
+      "id": "system.hibernate"
+    },
+    {
+      "id": "system.logout"
+    },
+    {
+      "id": "system.reboot"
+    },
+    {
+      "id": "system.shutdown"
+    },
+    {
+      "id": "learn.keybindings"
+    },
+    {
+      "id": "learn.omarchy"
+    },
+    {
+      "id": "learn.hyprland"
+    },
+    {
+      "id": "learn.arch"
+    },
+    {
+      "id": "learn.neovim"
+    },
+    {
+      "id": "learn.bash"
+    },
+    {
+      "id": "learn.tmux-keybindings"
+    },
+    {
+      "id": "learn.herdr-keybindings"
+    },
+    {
+      "id": "learn.community"
+    },
+    {
+      "id": "trigger.emoji"
+    },
+    {
+      "id": "trigger.reminder"
+    },
+    {
+      "id": "trigger.capture"
+    },
+    {
+      "id": "trigger.capture.screenshot"
+    },
+    {
+      "id": "trigger.capture.screenrecord.stop"
+    },
+    {
+      "id": "trigger.capture.screenrecord"
+    },
+    {
+      "id": "trigger.capture.text"
+    },
+    {
+      "id": "trigger.capture.qr"
+    },
+    {
+      "id": "trigger.capture.color"
+    },
+    {
+      "id": "trigger.capture.screenrecord.no-audio"
+    },
+    {
+      "id": "trigger.capture.screenrecord.desktop-audio"
+    },
+    {
+      "id": "trigger.capture.screenrecord.microphone"
+    },
+    {
+      "id": "trigger.capture.screenrecord.webcam"
+    },
+    {
+      "id": "trigger.transcode"
+    },
+    {
+      "id": "trigger.share"
+    },
+    {
+      "id": "trigger.toggle"
+    },
+    {
+      "id": "trigger.hardware"
+    },
+    {
+      "id": "trigger.tests"
+    },
+    {
+      "id": "trigger.hardware.laptop-display"
+    },
+    {
+      "id": "trigger.hardware.mirror-display"
+    },
+    {
+      "id": "trigger.hardware.hybrid-gpu"
+    },
+    {
+      "id": "trigger.hardware.touchpad"
+    },
+    {
+      "id": "trigger.hardware.touchpad-haptics"
+    },
+    {
+      "id": "trigger.hardware.touchpad-haptics.low"
+    },
+    {
+      "id": "trigger.hardware.touchpad-haptics.mid"
+    },
+    {
+      "id": "trigger.hardware.touchpad-haptics.high"
+    },
+    {
+      "id": "trigger.hardware.touchscreen"
+    },
+    {
+      "id": "trigger.reminder.set"
+    },
+    {
+      "id": "trigger.reminder.show"
+    },
+    {
+      "id": "trigger.reminder.clear"
+    },
+    {
+      "id": "trigger.share.clipboard"
+    },
+    {
+      "id": "trigger.share.file"
+    },
+    {
+      "id": "trigger.share.folder"
+    },
+    {
+      "id": "trigger.share.receive"
+    },
+    {
+      "id": "trigger.toggle.idle-lock"
+    },
+    {
+      "id": "trigger.toggle.notifications"
+    },
+    {
+      "id": "trigger.toggle.crash-capture"
+    },
+    {
+      "id": "trigger.toggle.screensaver"
+    },
+    {
+      "id": "trigger.toggle.nightlight"
+    },
+    {
+      "id": "trigger.toggle.top-bar"
+    },
+    {
+      "id": "trigger.toggle.battery-percentage"
+    },
+    {
+      "id": "trigger.toggle.workspace-layout"
+    },
+    {
+      "id": "trigger.toggle.window-gaps"
+    },
+    {
+      "id": "trigger.toggle.one-window-ratio"
+    },
+    {
+      "id": "trigger.tests.network-speedtest"
+    },
+    {
+      "id": "trigger.tests.disk-speedtest"
+    },
+    {
+      "id": "style.theme"
+    },
+    {
+      "id": "style.background"
+    },
+    {
+      "id": "style.unlock"
+    },
+    {
+      "id": "style.font"
+    },
+    {
+      "id": "style.bar"
+    },
+    {
+      "id": "style.bar.position"
+    },
+    {
+      "id": "style.bar.transparency"
+    },
+    {
+      "id": "style.hyprland"
+    },
+    {
+      "id": "style.screensaver"
+    },
+    {
+      "id": "style.about"
+    },
+    {
+      "id": "style.bar.position.top"
+    },
+    {
+      "id": "style.bar.position.bottom"
+    },
+    {
+      "id": "style.bar.position.left"
+    },
+    {
+      "id": "style.bar.position.right"
+    },
+    {
+      "id": "style.about.text"
+    },
+    {
+      "id": "style.about.image"
+    },
+    {
+      "id": "style.about.default"
+    },
+    {
+      "id": "style.screensaver.text"
+    },
+    {
+      "id": "style.screensaver.image"
+    },
+    {
+      "id": "style.screensaver.default"
+    },
+    {
+      "id": "setup.monitors"
+    },
+    {
+      "id": "setup.keybindings"
+    },
+    {
+      "id": "setup.input"
+    },
+    {
+      "id": "setup.network"
+    },
+    {
+      "id": "setup.network.dns"
+    },
+    {
+      "id": "setup.network.dns.dhcp"
+    },
+    {
+      "id": "setup.network.dns.cloudflare"
+    },
+    {
+      "id": "setup.network.dns.google"
+    },
+    {
+      "id": "setup.network.dns.custom"
+    },
+    {
+      "id": "setup.network.qr"
+    },
+    {
+      "id": "setup.default"
+    },
+    {
+      "id": "setup.default.agent"
+    },
+    {
+      "id": "setup.default.agent.agy"
+    },
+    {
+      "id": "setup.default.agent.claude"
+    },
+    {
+      "id": "setup.default.agent.codex"
+    },
+    {
+      "id": "setup.default.agent.copilot"
+    },
+    {
+      "id": "setup.default.agent.crush"
+    },
+    {
+      "id": "setup.default.agent.grok"
+    },
+    {
+      "id": "setup.default.agent.omp"
+    },
+    {
+      "id": "setup.default.agent.opencode"
+    },
+    {
+      "id": "setup.default.agent.ori"
+    },
+    {
+      "id": "setup.default.agent.pi"
+    },
+    {
+      "id": "setup.default.browser"
+    },
+    {
+      "id": "setup.default.browser.chromium"
+    },
+    {
+      "id": "setup.default.browser.chrome"
+    },
+    {
+      "id": "setup.default.browser.brave"
+    },
+    {
+      "id": "setup.default.browser.brave-origin"
+    },
+    {
+      "id": "setup.default.browser.edge"
+    },
+    {
+      "id": "setup.default.browser.firefox"
+    },
+    {
+      "id": "setup.default.browser.zen"
+    },
+    {
+      "id": "setup.default.terminal"
+    },
+    {
+      "id": "setup.default.terminal.alacritty"
+    },
+    {
+      "id": "setup.default.terminal.foot"
+    },
+    {
+      "id": "setup.default.terminal.ghostty"
+    },
+    {
+      "id": "setup.default.terminal.kitty"
+    },
+    {
+      "id": "setup.default.editor"
+    },
+    {
+      "id": "setup.default.editor.neovim"
+    },
+    {
+      "id": "setup.default.editor.vscode"
+    },
+    {
+      "id": "setup.default.editor.cursor"
+    },
+    {
+      "id": "setup.default.editor.zed"
+    },
+    {
+      "id": "setup.default.editor.sublime"
+    },
+    {
+      "id": "setup.default.editor.helix"
+    },
+    {
+      "id": "setup.default.editor.vim"
+    },
+    {
+      "id": "setup.default.editor.emacs"
+    },
+    {
+      "id": "setup.plugin"
+    },
+    {
+      "id": "setup.plugin.enable"
+    },
+    {
+      "id": "setup.plugin.disable"
+    },
+    {
+      "id": "setup.plugin.add"
+    },
+    {
+      "id": "setup.plugin.clone"
+    },
+    {
+      "id": "setup.plugin.remove"
+    },
+    {
+      "id": "setup.security"
+    },
+    {
+      "id": "setup.config"
+    },
+    {
+      "id": "setup.security.fingerprint"
+    },
+    {
+      "id": "setup.security.fido2"
+    },
+    {
+      "id": "setup.security.sshd"
+    },
+    {
+      "id": "setup.security.passwordless-sudo"
+    },
+    {
+      "id": "setup.security.sudoless-docker"
+    },
+    {
+      "id": "setup.config.hyprland"
+    },
+    {
+      "id": "setup.config.hyprsunset"
+    },
+    {
+      "id": "setup.config.xcompose"
+    },
+    {
+      "id": "setup.direct-boot"
+    },
+    {
+      "id": "setup.reset"
+    },
+    {
+      "id": "install.package"
+    },
+    {
+      "id": "install.aur"
+    },
+    {
+      "id": "install.ai"
+    },
+    {
+      "id": "install.service"
+    },
+    {
+      "id": "install.development"
+    },
+    {
+      "id": "install.editor"
+    },
+    {
+      "id": "install.style"
+    },
+    {
+      "id": "install.style.theme"
+    },
+    {
+      "id": "install.style.background"
+    },
+    {
+      "id": "install.style.font"
+    },
+    {
+      "id": "install.style.font.cascadia"
+    },
+    {
+      "id": "install.style.font.meslo"
+    },
+    {
+      "id": "install.style.font.fira"
+    },
+    {
+      "id": "install.style.font.victor"
+    },
+    {
+      "id": "install.style.font.bitstream"
+    },
+    {
+      "id": "install.style.font.iosevka"
+    },
+    {
+      "id": "install.gaming"
+    },
+    {
+      "id": "install.browser"
+    },
+    {
+      "id": "install.webapp"
+    },
+    {
+      "id": "install.terminal"
+    },
+    {
+      "id": "install.tui"
+    },
+    {
+      "id": "install.windows"
+    },
+    {
+      "id": "install.preinstalls"
+    },
+    {
+      "id": "install.browser.chrome"
+    },
+    {
+      "id": "install.browser.edge"
+    },
+    {
+      "id": "install.browser.brave"
+    },
+    {
+      "id": "install.browser.brave-origin"
+    },
+    {
+      "id": "install.browser.firefox"
+    },
+    {
+      "id": "install.browser.zen"
+    },
+    {
+      "id": "install.service.1password"
+    },
+    {
+      "id": "install.service.dropbox"
+    },
+    {
+      "id": "install.service.spotify"
+    },
+    {
+      "id": "install.service.signal"
+    },
+    {
+      "id": "install.service.tailscale"
+    },
+    {
+      "id": "install.service.nordvpn"
+    },
+    {
+      "id": "install.service.once"
+    },
+    {
+      "id": "install.service.bitwarden"
+    },
+    {
+      "id": "install.service.chromium-account"
+    },
+    {
+      "id": "install.editor.vscode"
+    },
+    {
+      "id": "install.editor.cursor"
+    },
+    {
+      "id": "install.editor.zed"
+    },
+    {
+      "id": "install.editor.sublime"
+    },
+    {
+      "id": "install.editor.helix"
+    },
+    {
+      "id": "install.editor.vim"
+    },
+    {
+      "id": "install.editor.emacs"
+    },
+    {
+      "id": "install.terminal.alacritty"
+    },
+    {
+      "id": "install.terminal.foot"
+    },
+    {
+      "id": "install.terminal.ghostty"
+    },
+    {
+      "id": "install.terminal.kitty"
+    },
+    {
+      "id": "install.ai.chatgpt"
+    },
+    {
+      "id": "install.ai.dictation"
+    },
+    {
+      "id": "install.ai.grok-bot"
+    },
+    {
+      "id": "install.ai.lm-studio"
+    },
+    {
+      "id": "install.ai.ollama"
+    },
+    {
+      "id": "install.ai.t3-code"
+    },
+    {
+      "id": "install.gaming.steam"
+    },
+    {
+      "id": "install.gaming.retroarch"
+    },
+    {
+      "id": "install.gaming.minecraft"
+    },
+    {
+      "id": "install.gaming.geforce-now"
+    },
+    {
+      "id": "install.gaming.xbox-cloud"
+    },
+    {
+      "id": "install.gaming.xbox-controllers"
+    },
+    {
+      "id": "install.gaming.battlenet"
+    },
+    {
+      "id": "install.gaming.lutris"
+    },
+    {
+      "id": "install.gaming.heroic"
+    },
+    {
+      "id": "install.gaming.retro-launcher"
+    },
+    {
+      "id": "install.development.rails"
+    },
+    {
+      "id": "install.development.docker-dbs"
+    },
+    {
+      "id": "install.development.javascript"
+    },
+    {
+      "id": "install.development.go"
+    },
+    {
+      "id": "install.development.php"
+    },
+    {
+      "id": "install.development.python"
+    },
+    {
+      "id": "install.development.elixir"
+    },
+    {
+      "id": "install.development.zig"
+    },
+    {
+      "id": "install.development.rust"
+    },
+    {
+      "id": "install.development.java"
+    },
+    {
+      "id": "install.development.dotnet"
+    },
+    {
+      "id": "install.development.ocaml"
+    },
+    {
+      "id": "install.development.clojure"
+    },
+    {
+      "id": "install.development.scala"
+    },
+    {
+      "id": "install.development.javascript.node"
+    },
+    {
+      "id": "install.development.javascript.bun"
+    },
+    {
+      "id": "install.development.javascript.deno"
+    },
+    {
+      "id": "install.development.php.php"
+    },
+    {
+      "id": "install.development.php.laravel"
+    },
+    {
+      "id": "install.development.php.symfony"
+    },
+    {
+      "id": "install.development.elixir.elixir"
+    },
+    {
+      "id": "install.development.elixir.phoenix"
+    },
+    {
+      "id": "remove.package"
+    },
+    {
+      "id": "remove.ai"
+    },
+    {
+      "id": "remove.service"
+    },
+    {
+      "id": "remove.development"
+    },
+    {
+      "id": "remove.theme"
+    },
+    {
+      "id": "remove.gaming"
+    },
+    {
+      "id": "remove.browser"
+    },
+    {
+      "id": "remove.webapp"
+    },
+    {
+      "id": "remove.tui"
+    },
+    {
+      "id": "remove.windows"
+    },
+    {
+      "id": "remove.preinstalls"
+    },
+    {
+      "id": "remove.security"
+    },
+    {
+      "id": "remove.security.fingerprint"
+    },
+    {
+      "id": "remove.security.fido2"
+    },
+    {
+      "id": "remove.security.sshd"
+    },
+    {
+      "id": "remove.security.sudoless-docker"
+    },
+    {
+      "id": "remove.browser.chrome"
+    },
+    {
+      "id": "remove.browser.edge"
+    },
+    {
+      "id": "remove.browser.brave"
+    },
+    {
+      "id": "remove.browser.brave-origin"
+    },
+    {
+      "id": "remove.browser.firefox"
+    },
+    {
+      "id": "remove.browser.zen"
+    },
+    {
+      "id": "remove.service.dropbox"
+    },
+    {
+      "id": "remove.service.tailscale"
+    },
+    {
+      "id": "remove.ai.chatgpt"
+    },
+    {
+      "id": "remove.ai.dictation"
+    },
+    {
+      "id": "remove.ai.grok-bot"
+    },
+    {
+      "id": "remove.ai.lm-studio"
+    },
+    {
+      "id": "remove.ai.ollama"
+    },
+    {
+      "id": "remove.ai.t3-code"
+    },
+    {
+      "id": "remove.gaming.steam"
+    },
+    {
+      "id": "remove.gaming.retroarch"
+    },
+    {
+      "id": "remove.gaming.minecraft"
+    },
+    {
+      "id": "remove.gaming.geforce-now"
+    },
+    {
+      "id": "remove.gaming.xbox-cloud"
+    },
+    {
+      "id": "remove.gaming.xbox-controllers"
+    },
+    {
+      "id": "remove.gaming.battlenet"
+    },
+    {
+      "id": "remove.gaming.lutris"
+    },
+    {
+      "id": "remove.gaming.heroic"
+    },
+    {
+      "id": "remove.development.rails"
+    },
+    {
+      "id": "remove.development.javascript"
+    },
+    {
+      "id": "remove.development.go"
+    },
+    {
+      "id": "remove.development.php"
+    },
+    {
+      "id": "remove.development.python"
+    },
+    {
+      "id": "remove.development.elixir"
+    },
+    {
+      "id": "remove.development.zig"
+    },
+    {
+      "id": "remove.development.rust"
+    },
+    {
+      "id": "remove.development.java"
+    },
+    {
+      "id": "remove.development.dotnet"
+    },
+    {
+      "id": "remove.development.ocaml"
+    },
+    {
+      "id": "remove.development.clojure"
+    },
+    {
+      "id": "remove.development.scala"
+    },
+    {
+      "id": "remove.development.javascript.node"
+    },
+    {
+      "id": "remove.development.javascript.bun"
+    },
+    {
+      "id": "remove.development.javascript.deno"
+    },
+    {
+      "id": "remove.development.php.php"
+    },
+    {
+      "id": "remove.development.php.laravel"
+    },
+    {
+      "id": "remove.development.php.symfony"
+    },
+    {
+      "id": "remove.development.elixir.elixir"
+    },
+    {
+      "id": "remove.development.elixir.phoenix"
+    },
+    {
+      "id": "update.omarchy"
+    },
+    {
+      "id": "update.channel"
+    },
+    {
+      "id": "update.config"
+    },
+    {
+      "id": "update.themes"
+    },
+    {
+      "id": "update.process"
+    },
+    {
+      "id": "update.hardware"
+    },
+    {
+      "id": "update.firmware"
+    },
+    {
+      "id": "update.password"
+    },
+    {
+      "id": "update.timezone"
+    },
+    {
+      "id": "update.time"
+    },
+    {
+      "id": "update.channel.stable"
+    },
+    {
+      "id": "update.channel.rc"
+    },
+    {
+      "id": "update.channel.edge"
+    },
+    {
+      "id": "update.channel.dev"
+    },
+    {
+      "id": "update.process.hyprsunset"
+    },
+    {
+      "id": "update.process.shell"
+    },
+    {
+      "id": "update.config.hyprland"
+    },
+    {
+      "id": "update.config.hyprsunset"
+    },
+    {
+      "id": "update.config.plymouth"
+    },
+    {
+      "id": "update.config.tmux"
+    },
+    {
+      "id": "update.config.shell"
+    },
+    {
+      "id": "update.hardware.audio"
+    },
+    {
+      "id": "update.hardware.wifi"
+    },
+    {
+      "id": "update.hardware.bluetooth"
+    },
+    {
+      "id": "update.hardware.trackpad"
+    },
+    {
+      "id": "update.password.drive"
+    },
+    {
+      "id": "update.password.user"
+    }
+  ],
+  "defaultPackages": [
+    {
+      "name": "aether",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "alsa-utils",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "asdcontrol",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "avahi",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "bash-completion",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "bat",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "bluez",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "bluez-tools",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "bluez-utils",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "bolt",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "brightnessctl",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "btop",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "chromium",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "clang",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "cliamp",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "cups",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "cups-browsed",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "cups-filters",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "cups-pk-helper",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ddcutil",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "docker",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "docker-buildx",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "docker-compose",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "dosfstools",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "dotnet-runtime",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "dua-cli",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "evince",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "exfatprogs",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "expac",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "eza",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fakeroot",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fastfetch",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fcitx5",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fcitx5-gtk",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fcitx5-qt",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fd",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ffmpegthumbnailer",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fontconfig",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "foot",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "fzf",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "git",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gnome-keyring",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gnome-themes-extra",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "grim",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gpu-screen-recorder",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gum",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gvfs-mtp",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gvfs-nfs",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gvfs-smb",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "herdr",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "hyprland",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "hyprland-guiutils",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "hyprland-preview-share-picker",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "hyprpicker",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "hyprsunset",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "imagemagick",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "imv",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "inetutils",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "inotify-tools",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "inxi",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "networkmanager",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "jq",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "kdenlive",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "kernel-modules-hook",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "lazydocker",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "lazygit",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "less",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "libsecret",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "libvips",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "libyaml",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "libreoffice-fresh",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "llvm",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "localsend",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "lua51",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "luarocks",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "man-db",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "mariadb-libs",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "mise-bin",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "moonlight-qt",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "mpv",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "mpv-mpris",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "nautilus",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "nautilus-python",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "gnome-disk-utility",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "noto-fonts",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "noto-fonts-cjk",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "noto-fonts-emoji",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "nss-mdns",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "nvim",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "obs-studio",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "obsidian",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "omacalc",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "omacut",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "omawrite",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "omarchy-nvim",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "pacman-contrib",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "pamixer",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "pinta",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "plocate",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "plymouth",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "postgresql-libs",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "power-profiles-daemon",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "python-gobject",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "python-poetry-core",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ttfx",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "qemu-user-static-binfmt",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "qrencode",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "qt6-imageformats",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "quickshell",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ripgrep",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ruby",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tensaku",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "sddm",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "slurp",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "socat",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "starship",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "sushi",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "system-config-printer",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tesseract",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tesseract-data-eng",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tldr",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tree-sitter-cli",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tmux",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tobi-try",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ttf-ia-writer",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ttf-jetbrains-mono-nerd-basic",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "tzupdate",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "udiskie",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ufw",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "ufw-docker",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "unzip",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "usage",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "uwsm",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "whois",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "wireless-regdb",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "wireplumber",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "wl-clipboard",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "wtype",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "woff2-font-awesome",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "xdg-desktop-portal-gtk",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "xdg-desktop-portal-hyprland",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "xdg-terminal-exec",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "xournalpp",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "yaru-icon-theme",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "yay",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "yt-dlp",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "zbar",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "zoxide",
+      "source": "install/omarchy-base.packages"
+    },
+    {
+      "name": "autoconf-archive",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "asusctl",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "base",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "base-devel",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "broadcom-wl",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "btrfs-progs",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "dkms",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "egl-wayland",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "gst-plugin-pipewire",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "gtk4-layer-shell",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "libpulse",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "intel-ipu7-camera",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "intel-lpmd",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "intel-media-driver",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "libva-intel-driver",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "libva-nvidia-driver",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "limine",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "limine-mkinitcpio-hook",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "limine-snapper-sync",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux-firmware",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux-headers",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux-ptl",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux-ptl-headers",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "macbook12-spi-driver-dkms",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "nvidia-580xx-dkms",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "nvidia-dkms",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "nvidia-open-dkms",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "nvidia-580xx-utils",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "nvidia-utils",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "lib32-nvidia-580xx-utils",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "lib32-nvidia-utils",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "pipewire",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "pipewire-alsa",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "pipewire-jack",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "pipewire-pulse",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "qt6-wayland",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "snapper",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "sof-firmware",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "thermald",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "webp-pixbuf-loader",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "yay-debug",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "tuxedo-drivers-nocompatcheck-dkms",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "yt6801-dkms",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "zram-generator",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "libvpl",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "vpl-gpu-rt",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "vulkan-intel",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "vulkan-radeon",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "vulkan-asahi",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux-firmware-marvell",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "dell-xps-touchpad-haptics",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "dell-xps13-sidecar-amps",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "lsp-plugins-lv2",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "apple-bcm-firmware",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "apple-t2-audio-config",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux-t2",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "linux-t2-headers",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "t2fanrd",
+      "source": "install/omarchy-other.packages"
+    },
+    {
+      "name": "qmk-hid",
+      "source": "install/omarchy-other.packages"
+    }
+  ]
+}
