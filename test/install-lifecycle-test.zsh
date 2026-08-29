@@ -10,8 +10,12 @@ trap 'rm -rf "$temporary_home"' EXIT
 mkdir -p "$temporary_home/.config/aerospace"
 print "original dot config" > "$temporary_home/.aerospace.toml"
 print "original xdg config" > "$temporary_home/.config/aerospace/aerospace.toml"
+print "y" > "$temporary_home/installer-confirmation"
 
-OMACOS_TEST_HOME="$temporary_home" OMACOS_TEST_MODE=true "$project_root/install.sh" --yes >/dev/null
+OMACOS_CONFIRMATION_DEVICE="$temporary_home/installer-confirmation" \
+  OMACOS_TEST_HOME="$temporary_home" \
+  OMACOS_TEST_MODE=true \
+  "$project_root/install.sh" </dev/null >/dev/null
 
 if [[ ! -x $temporary_home/.local/bin/omacos-shell ]]; then
   print -u2 "Install lifecycle test failed: native shell was not installed"
@@ -36,7 +40,7 @@ exit 0
 EOF
 chmod +x "$temporary_home/test-bin/aerospace"
 PATH="$temporary_home/test-bin:$PATH" OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" doctor >/dev/null
-print y | OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" uninstall >/dev/null
+OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" uninstall --yes >/dev/null
 
 if [[ $(<"$temporary_home/.aerospace.toml") != "original dot config" ]]; then
   print -u2 "Install lifecycle test failed: dot AeroSpace config was not restored"

@@ -19,7 +19,7 @@ Commands:
   shell stop                Stop the native bar
   shell restart             Restart the native bar
   shell toggle-menu         Toggle the native command menu
-  uninstall                 Restore backed-up config and remove OMacOS files
+  uninstall [--yes]         Restore backed-up config and remove OMacOS files
 EOF
 }
 
@@ -104,16 +104,26 @@ run_shell_command() {
 }
 
 run_uninstall() {
+  local uninstall_option=${1:-}
   local state_directory="$omacos_home/.local/state/omacos"
   local backup_directory="$state_directory/backups"
   local installed_directory="$omacos_home/.local/share/omacos"
+  local assume_yes=false
+
+  if [[ $uninstall_option == "--yes" || $uninstall_option == "-y" ]]; then
+    assume_yes=true
+  elif [[ -n $uninstall_option ]]; then
+    print -u2 "Unknown uninstall option: $uninstall_option"
+    return 1
+  fi
 
   print "OMacOS will stop its shell, restore backed-up AeroSpace config, and remove its own files."
-  print -n "Continue? [y/N] "
-  read -r answer
-  if [[ $answer != [yY] && $answer != [yY][eE][sS] ]]; then
-    print "Uninstall cancelled."
-    return 0
+  if ! $assume_yes; then
+    print -n "Continue? [y/N] "
+    if ! read -r answer </dev/tty || [[ $answer != [yY] && $answer != [yY][eE][sS] ]]; then
+      print "Uninstall cancelled."
+      return 0
+    fi
   fi
 
   pkill -x omacos-shell 2>/dev/null || true
@@ -156,7 +166,7 @@ case ${1:-help} in
     run_shell_command "${2:-}"
     ;;
   uninstall)
-    run_uninstall
+    run_uninstall "${2:-}"
     ;;
   help|-h|--help)
     print_usage

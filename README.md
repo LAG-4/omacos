@@ -63,6 +63,20 @@ omacos shell toggle-menu
 omacos uninstall
 ```
 
+To undo a completed installation from any terminal:
+
+```bash
+omacos uninstall
+```
+
+To stop a shell launched locally with `swift run omacos-shell`, run this from the repository:
+
+```bash
+./uninstall.sh
+```
+
+The local command stops the debug shell. It leaves `.build` in the repository because that directory is only a Swift compilation cache and does not change macOS.
+
 See [the implementation roadmap](docs/roadmap.md) and [the research report](docs/research.md) for the intended scope and known macOS limits.
 
 ## License

@@ -20,6 +20,21 @@ omacos_home=${OMACOS_TEST_HOME:-$HOME}
 dry_run=false
 assume_yes=false
 test_mode=${OMACOS_TEST_MODE:-false}
+confirmation_device=${OMACOS_CONFIRMATION_DEVICE:-/dev/tty}
+
+read_installer_confirmation() {
+  if [[ ! -r $confirmation_device ]]; then
+    print -u2 "OMacOS confirmation failed: no interactive terminal is available. Re-run with --yes for a non-interactive installation."
+    return 2
+  fi
+
+  if ! read -r answer < "$confirmation_device"; then
+    print -u2 "OMacOS confirmation failed: could not read an answer from $confirmation_device"
+    return 2
+  fi
+
+  [[ $answer == [yY] || $answer == [yY][eE][sS] ]]
+}
 
 for argument in "$@"; do
   case $argument in
@@ -91,10 +106,16 @@ fi
 
 if ! $assume_yes; then
   print -n "\nContinue? [y/N] "
-  read -r answer
-  if [[ $answer != [yY] && $answer != [yY][eE][sS] ]]; then
-    print "Installation cancelled."
-    exit 0
+  if read_installer_confirmation; then
+    :
+  else
+    confirmation_status=$?
+    if (( confirmation_status == 1 )); then
+      print "Installation cancelled."
+      exit 0
+    else
+      exit "$confirmation_status"
+    fi
   fi
 fi
 
