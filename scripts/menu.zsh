@@ -89,7 +89,7 @@ run_menu_action() {
     trigger.toggle.one-window-ratio) "$omacos_command" wm square-aspect-toggle ;;
     trigger.toggle.battery-percentage) open_settings "x-apple.systempreferences:com.apple.ControlCenter-Settings.extension" ;;
     trigger.toggle.screensaver) open_settings "x-apple.systempreferences:com.apple.ScreenSaver-Settings.extension" ;;
-    trigger.toggle.crash-capture) unsupported "macOS DiagnosticReports are system-managed" ;;
+    trigger.toggle.crash-capture) open_application Console ;;
     trigger.hardware|trigger.hardware.laptop-display|trigger.hardware.mirror-display) open_panel display ;;
     trigger.hardware.touchpad|trigger.hardware.touchpad-haptics|trigger.hardware.touchpad-haptics.low|trigger.hardware.touchpad-haptics.mid|trigger.hardware.touchpad-haptics.high) open_settings "x-apple.systempreferences:com.apple.Trackpad-Settings.extension" ;;
     trigger.hardware.hybrid-gpu) unsupported "Apple Silicon does not expose switchable hybrid GPU modes" ;;
@@ -132,7 +132,7 @@ run_menu_action() {
     update.channel.rc|update.channel.dev) unsupported "OMacOS does not publish this release channel" ;;
     update.config|update.config.*|update.themes) "$omacos_command" update check ;;
     update.process|update.process.shell) "$omacos_command" shell restart ;;
-    update.process.hyprsunset) unsupported "Night Shift is controlled by macOS" ;;
+    update.process.hyprsunset) open_settings "x-apple.systempreferences:com.apple.Displays-Settings.extension" ;;
     update.hardware|update.hardware.audio|update.hardware.wifi|update.hardware.bluetooth|update.hardware.trackpad) open_settings ;;
     update.firmware) open_settings "x-apple.systempreferences:com.apple.Software-Update-Settings.extension" ;;
     update.password|update.password.user) open_settings "x-apple.systempreferences:com.apple.Users-Groups-Settings.extension" ;;

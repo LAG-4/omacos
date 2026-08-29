@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 633 | 132 | 0 | 33 | 81 |
+| 879 | 634 | 133 | 0 | 28 | 84 |
 
 ## Remaining portable work
 
@@ -42,13 +42,8 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | menu-entry | `style.bar.position.left` | Left | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `style.bar.position.right` | Right | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `style.unlock` | Unlock | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `system.hibernate` | Hibernate | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `trigger.capture.screenrecord.webcam` | With desktop + microphone audio + webcam | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `trigger.hardware.hybrid-gpu` | Hybrid GPU | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `trigger.hardware.touchscreen` | Touchscreen | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `trigger.toggle.crash-capture` | Crash Capture | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.channel.dev` | Dev | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.channel.rc` | RC | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `update.process.hyprsunset` | Hyprsunset | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 
 The complete machine-readable ledger, including all implemented, limited, and not-applicable items, is in [`docs/quattro-parity.json`](quattro-parity.json).

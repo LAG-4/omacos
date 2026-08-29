@@ -3597,10 +3597,10 @@
         "kind": "menu-entry",
         "id": "system.hibernate",
         "title": "Hibernate",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "implementationStatus": "not-applicable",
+        "grade": "not-applicable",
+        "route": "macOS system policy",
+        "notes": "The supported Apple Silicon Macs do not expose this Linux hardware or power-policy control.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -3927,10 +3927,10 @@
         "kind": "menu-entry",
         "id": "trigger.hardware.hybrid-gpu",
         "title": "Hybrid GPU",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "implementationStatus": "not-applicable",
+        "grade": "not-applicable",
+        "route": "macOS system policy",
+        "notes": "The supported Apple Silicon Macs do not expose this Linux hardware or power-policy control.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -3987,10 +3987,10 @@
         "kind": "menu-entry",
         "id": "trigger.hardware.touchscreen",
         "title": "Touchscreen",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "implementationStatus": "not-applicable",
+        "grade": "not-applicable",
+        "route": "macOS system policy",
+        "notes": "The supported Apple Silicon Macs do not expose this Linux hardware or power-policy control.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -4087,10 +4087,10 @@
         "kind": "menu-entry",
         "id": "trigger.toggle.crash-capture",
         "title": "Crash Capture",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "implementationStatus": "limited",
+        "grade": "native-replacement",
+        "route": "Console.app",
+        "notes": "macOS owns crash collection; OMacOS opens the system crash-report browser instead of replacing that pipeline.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -6617,10 +6617,10 @@
         "kind": "menu-entry",
         "id": "update.process.hyprsunset",
         "title": "Hyprsunset",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
         "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "notes": "The entry routes to an OMacOS workflow, native panel, application, or System Settings.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -8829,10 +8829,10 @@
   },
   "summary": {
     "total": 879,
-    "implemented": 633,
-    "limited": 132,
+    "implemented": 634,
+    "limited": 133,
     "pending": 0,
-    "unavailable": 33,
-    "notApplicable": 81
+    "unavailable": 28,
+    "notApplicable": 84
   }
 }
