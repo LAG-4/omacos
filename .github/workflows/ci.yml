@@ -21,7 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Install test tools
-        run: command -v jq >/dev/null || brew install jq
+        run: brew install jq ripgrep
       - name: Build and test
         run: ./test/all
-
