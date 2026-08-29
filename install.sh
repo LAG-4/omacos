@@ -180,7 +180,8 @@ if (( ${#resource_bundles[@]} > 0 )); then
   cp -R "$resource_bundles[1]" "$shell_app/Contents/Resources/"
 fi
 chmod +x "$shell_app/Contents/MacOS/omacos-shell"
-codesign --force --deep --sign - "$shell_app" >/dev/null
+codesign --force --deep --options runtime --timestamp=none \
+  --entitlements "$source_root/app/OMacOSShell.entitlements" --sign - "$shell_app" >/dev/null
 cat > "$binary_directory/omacos-shell" <<EOF
 #!/bin/zsh
 exec "$shell_app/Contents/MacOS/omacos-shell" "\$@"

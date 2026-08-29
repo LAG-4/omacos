@@ -119,6 +119,8 @@ struct OMacOSSystemPanelView: View {
             developerGalleryPanel
         case .osd:
             onScreenDisplayPanel
+        case .permissions:
+            permissionsPanel
         case .noticeDateTime:
             dateTimeNotice
         case .noticeBattery:
@@ -1043,6 +1045,47 @@ struct OMacOSSystemPanelView: View {
                 .tint(Color(omacosHex: colors.accent))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var permissionsPanel: some View {
+        let permissionStatus = OMacOSPermissionStatus.current()
+        return ScrollView {
+            VStack(spacing: 9) {
+                permissionRow("Accessibility", status: permissionStatus.accessibility, settingsName: "accessibility")
+                permissionRow("Screen Recording", status: permissionStatus.screenRecording, settingsName: "screen-recording")
+                permissionRow("Input Monitoring", status: permissionStatus.inputMonitoring, settingsName: "input-monitoring")
+                permissionRow("Microphone", status: permissionStatus.microphone, settingsName: "microphone")
+                permissionRow("Speech Recognition", status: permissionStatus.speechRecognition, settingsName: "speech-recognition")
+                Text("Karabiner-Elements has a separate Input Monitoring identity. OMacOS never grants permissions on your behalf.")
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            }
+        }
+    }
+
+    private func permissionRow(_ title: String, status: String, settingsName: String) -> some View {
+        HStack(spacing: 11) {
+            Image(systemName: status == "granted" ? "checkmark.circle.fill" : "exclamationmark.circle")
+                .foregroundStyle(Color(omacosHex: status == "granted" ? colors.green : colors.yellow))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).fontWeight(.semibold)
+                Text(status.replacingOccurrences(of: "-", with: " ").capitalized)
+                    .font(.caption)
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            }
+            Spacer()
+            Button("Open Settings") {
+                let homeDirectory = ProcessInfo.processInfo.environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+                _ = OMacOSCommandRunner.run(
+                    executable: "/usr/bin/env",
+                    arguments: [homeDirectory + "/.local/bin/omacos", "permissions", "open", settingsName]
+                )
+            }
+            .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+        }
+        .padding(10)
+        .background(Color(omacosHex: colors.lighterBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     private func pluginGradeColor(_ grade: String) -> String {

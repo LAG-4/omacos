@@ -25,6 +25,7 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
     case plugins
     case devGallery = "dev-gallery"
     case osd
+    case permissions
     case noticeDateTime = "notice-datetime"
     case noticeBattery = "notice-battery"
     case noticeWeather = "notice-weather"
@@ -64,6 +65,7 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .plugins: "Quattro Plugins"
         case .devGallery: "Developer Gallery"
         case .osd: "On-screen Display"
+        case .permissions: "Permissions"
         case .noticeDateTime: "Date & Time"
         case .noticeBattery: "Battery"
         case .noticeWeather: "Weather"
@@ -103,6 +105,7 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .plugins: "puzzlepiece.extension"
         case .devGallery: "paintbrush.pointed"
         case .osd: "speaker.wave.2.circle"
+        case .permissions: "hand.raised"
         case .noticeDateTime: "clock"
         case .noticeBattery: "battery.75percent"
         case .system: "power"

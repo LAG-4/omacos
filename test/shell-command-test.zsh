@@ -15,6 +15,7 @@ OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel weather
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel dev-gallery
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" osd
+OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel permissions
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-menu
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" dictation toggle
 

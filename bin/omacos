@@ -39,6 +39,8 @@ Commands:
   font ACTION               List, install, or remove the Quattro font choices
   parity ACTION             Audit every frozen Quattro capability and limitation
   osd                       Show the native themed status overlay
+  permissions ACTION        Inspect privacy status or open System Settings
+  qa ACTION                 Produce a privacy-safe hardware validation report
   ascii [TEXT]              Draw text as terminal ASCII art
   branch ACTION             Inspect the installed source branch
   channel ACTION            Inspect the OMacOS release channel
@@ -73,6 +75,17 @@ doctor_check() {
   fi
 }
 
+print_permission_status() {
+  if [[ ! -x $shell_binary ]]; then
+    return
+  fi
+  local permission_json
+  permission_json=$("$shell_binary" --permission-status 2>/dev/null || true)
+  [[ -n $permission_json ]] || return
+  print "Permissions"
+  jq -r 'to_entries[] | select(.key != "schemaVersion") | "[\(if .value == "granted" then "ok" else "setup" end)] \(.key)=\(.value)"' <<< "$permission_json"
+}
+
 run_doctor() {
   local failures=0
   local macos_major
@@ -100,6 +113,7 @@ run_doctor() {
   doctor_check "Shell LaunchAgent" "$([[ -f $launch_agent ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Application defaults" "$([[ -f $omacos_home/.config/omacos/defaults.json ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Shell integration" "$(rg -Fq '# >>> OMacOS shell integration >>>' "$omacos_home/.zshrc" 2>/dev/null && print ok || print fail)" || (( failures += 1 ))
+  print_permission_status
 
   if (( failures > 0 )); then
     print -u2 "OMacOS doctor found $failures problem(s)."
@@ -151,7 +165,7 @@ run_shell_command() {
     toggle-panel)
       local panel_name=${2:-}
       case $panel_name in
-        menu|keybindings|clipboard|emojis|capture|reminders|notifications|themes|wallpapers|defaults|agents|weather|media|dictation|wifi-qr|speedtest|disk-speedtest|tailscale|dropbox|packages|plugins|dev-gallery|osd|notice-datetime|notice-battery|notice-weather|system|audio|bluetooth|network|display|clock|power|activity)
+        menu|keybindings|clipboard|emojis|capture|reminders|notifications|themes|wallpapers|defaults|agents|weather|media|dictation|wifi-qr|speedtest|disk-speedtest|tailscale|dropbox|packages|plugins|dev-gallery|osd|permissions|notice-datetime|notice-battery|notice-weather|system|audio|bluetooth|network|display|clock|power|activity)
           "$shell_binary" --toggle-panel "$panel_name"
           ;;
         *)
@@ -366,6 +380,12 @@ case ${1:-help} in
     ;;
   osd)
     run_shell_command toggle-panel osd
+    ;;
+  permissions)
+    "$installed_root/scripts/permissions.zsh" "${@:2}"
+    ;;
+  qa)
+    "$installed_root/scripts/qa.zsh" "${@:2}"
     ;;
   ascii|branch|channel|file|hook|installed|mise|restart|screensaver|version)
     "$installed_root/scripts/utilities.zsh" "$@"

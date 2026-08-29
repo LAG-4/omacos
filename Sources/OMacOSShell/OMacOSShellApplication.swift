@@ -358,6 +358,28 @@ enum OMacOSShellMain {
     @MainActor
     static func main() {
         let arguments = CommandLine.arguments
+        if arguments.contains("--permission-status") {
+            do {
+                let data = try JSONEncoder().encode(OMacOSPermissionStatus.current())
+                print(String(decoding: data, as: UTF8.self))
+                return
+            } catch {
+                FileHandle.standardError.write(Data("Unable to encode permission status: \(error)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
+        if arguments.contains("--hardware-report") {
+            do {
+                let data = try JSONEncoder().encode(OMacOSHardwareReport.current())
+                print(String(decoding: data, as: UTF8.self))
+                return
+            } catch {
+                FileHandle.standardError.write(Data("Unable to encode hardware report: \(error)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
         if let recognizeIndex = arguments.firstIndex(of: "--recognize-text"),
            arguments.indices.contains(recognizeIndex + 1) {
             do {

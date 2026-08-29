@@ -24,6 +24,7 @@ OMacOS is an implementation preview. The frozen Quattro reference has no unclass
 - a machine-checked 879-item parity ledger with explicit macOS limitations and no portable-pending entries
 - native themed OSD and developer-gallery panels, native focused-window width save/restore, and a safe Accessibility-backed close-all action
 - a readable installer with dry-run, doctor, backup, and uninstall commands
+- permission diagnostics, privacy-safe hardware reports, a physical validation matrix, and signed/notarized release packaging
 - macOS 26 compatibility checks and macOS 27 beta test coverage
 
 Do not install this on a primary machine yet. Use the dry run first and read the printed plan.
@@ -96,6 +97,9 @@ omacos parity summary
 omacos parity list unavailable
 omacos shell toggle-panel dev-gallery
 omacos osd
+omacos permissions status
+omacos permissions open accessibility
+omacos qa report hardware.json
 omacos uninstall
 ```
 
@@ -118,7 +122,7 @@ The installer adds one clearly marked source block to `~/.zshrc`. That block loa
 
 Dictation uses Apple's Speech framework. Hold F9, or press `Super + Control + X` to toggle it; stopping inserts the recognized text into the focused application. The first use prompts for Microphone and Speech Recognition, and insertion needs Accessibility. When supported by the current language, recognition is required to run on-device.
 
-Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. Development builds are ad-hoc signed; stable releases still require a consistent Developer ID signature and notarization so privacy permissions survive upgrades reliably.
+Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. Development builds are ad-hoc signed. The tag workflow produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 
 The base install remains deliberately focused. Browsers, GUI development tools, communication apps, media tools, utilities, gaming clients, and virtual-machine apps live in the Optional Apps panel and `omacos package`; choosing Install is the authorization for that one Homebrew cask. OMacOS does not remove those third-party apps during its own uninstall.
 
@@ -146,7 +150,7 @@ To stop a shell launched locally with `swift run omacos-shell`, run this from th
 
 The local command stops the debug shell. It leaves `.build` in the repository because that directory is only a Swift compilation cache and does not change macOS.
 
-See [the implementation roadmap](docs/roadmap.md) and [the research report](docs/research.md) for the intended scope and known macOS limits. The source-complete [frozen Quattro inventory](docs/quattro-inventory.json) tracks every manual chapter, plugin manifest, CLI group, default binding declaration, menu entry, and package from the reference commit. The generated [Quattro parity ledger](docs/quattro-parity.md) gives every one of those 879 items an executable route, deliberate limitation, explicit impossibility, or not-applicable decision.
+See [the implementation roadmap](docs/roadmap.md), [research report](docs/research.md), [release guide](docs/releasing.md), and [hardware validation matrix](docs/hardware-validation.md) for the intended scope and known macOS limits. The source-complete [frozen Quattro inventory](docs/quattro-inventory.json) tracks every manual chapter, plugin manifest, CLI group, default binding declaration, menu entry, and package from the reference commit. The generated [Quattro parity ledger](docs/quattro-parity.md) gives every one of those 879 items an executable route, deliberate limitation, explicit impossibility, or not-applicable decision.
 
 ## License
 

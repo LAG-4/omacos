@@ -36,6 +36,12 @@ if [[ $(/usr/libexec/PlistBuddy -c 'Print :NSMicrophoneUsageDescription' "$shell
   print -u2 "Install lifecycle test failed: native app permission descriptions are missing"
   exit 1
 fi
+installed_entitlements="$temporary_home/installed-entitlements.plist"
+codesign -d --entitlements "$installed_entitlements" --xml "$shell_app" 2>/dev/null
+if ! plutil -p "$installed_entitlements" | rg -Fq '"com.apple.security.device.audio-input" => true'; then
+  print -u2 "Install lifecycle test failed: audio input entitlement is missing"
+  exit 1
+fi
 
 if [[ ! -L $temporary_home/.local/bin/omacos ]]; then
   print -u2 "Install lifecycle test failed: CLI link was not installed"
@@ -57,6 +63,7 @@ EOF
 chmod +x "$temporary_home/test-bin/aerospace"
 ln -s "$temporary_home/test-bin/aerospace" "$temporary_home/test-bin/blueutil"
 PATH="$temporary_home/test-bin:$PATH" OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" doctor >/dev/null
+OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" permissions status | jq -e '.schemaVersion == 1' >/dev/null
 OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" uninstall --yes >/dev/null
 
 if [[ $(<"$temporary_home/.aerospace.toml") != "original dot config" ]]; then
