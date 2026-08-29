@@ -7,6 +7,7 @@ struct OMacOSNotificationRecord: Codable, Identifiable, Equatable {
     let body: String
     let source: String
     let createdAt: Date
+    let actionURL: String?
 }
 
 @MainActor
@@ -24,15 +25,22 @@ final class OMacOSNotificationStore: NSObject, ObservableObject {
     }
 
     @discardableResult
-    func add(title: String, body: String, source: String) -> OMacOSNotificationRecord? {
+    func add(
+        title: String,
+        body: String,
+        source: String,
+        actionURL: String? = nil
+    ) -> OMacOSNotificationRecord? {
         let normalizedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !normalizedBody.isEmpty else { return nil }
+        let normalizedActionURL = Self.validatedActionURL(actionURL)
         let record = OMacOSNotificationRecord(
             id: UUID(),
             title: title,
             body: normalizedBody,
             source: source,
-            createdAt: Date()
+            createdAt: Date(),
+            actionURL: normalizedActionURL
         )
         records.insert(record, at: 0)
         if records.count > 200 {
@@ -53,6 +61,21 @@ final class OMacOSNotificationStore: NSObject, ObservableObject {
         let record = records.removeFirst()
         persistHistory()
         return record
+    }
+
+    func mostRecentActionURL() -> URL? {
+        guard let rawURL = records.first?.actionURL else { return nil }
+        return URL(string: rawURL)
+    }
+
+    nonisolated static func validatedActionURL(_ rawURL: String?) -> String? {
+        guard let rawURL,
+              let url = URL(string: rawURL),
+              let scheme = url.scheme?.lowercased(),
+              ["https", "http", "file", "x-apple.systempreferences"].contains(scheme) else {
+            return nil
+        }
+        return url.absoluteString
     }
 
     private func loadHistory() {

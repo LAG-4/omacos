@@ -83,6 +83,7 @@
     { "key": "comma", "modifiers": ["control"], "description": "Toggle silencing notifications", "command": "$HOME/.local/bin/omacos toggle toggle notification-silencing" },
     { "key": "comma", "modifiers": [], "description": "Dismiss last notification", "command": "$HOME/.local/bin/omacos notification dismiss-one" },
     { "key": "comma", "modifiers": ["shift"], "description": "Dismiss all notifications", "command": "$HOME/.local/bin/omacos notification clear" },
+    { "key": "comma", "modifiers": ["option"], "description": "Invoke last notification", "command": "$HOME/.local/bin/omacos notification invoke-one" },
     { "key": "comma", "modifiers": ["shift", "option"], "description": "Open notification history", "command": "$HOME/.local/bin/omacos notification show" },
     { "key": "n", "modifiers": ["control"], "description": "Toggle nightlight", "command": "$HOME/.local/bin/omacos toggle toggle night-light" },
     { "key": "x", "modifiers": ["control"], "description": "Toggle dictation", "command": "$HOME/.local/bin/omacos dictation toggle" },

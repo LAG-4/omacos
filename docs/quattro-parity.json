@@ -3063,10 +3063,10 @@
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:27",
         "title": "Invoke last notification",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter.",
+        "implementationStatus": "limited",
+        "grade": "close-substitute",
+        "route": "omacos notification invoke-one",
+        "notes": "The shortcut invokes an action URL attached to the newest OMacOS notification; Apple does not expose actions owned by third-party Notification Center entries.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
@@ -8830,9 +8830,9 @@
   "summary": {
     "total": 879,
     "implemented": 634,
-    "limited": 133,
+    "limited": 134,
     "pending": 0,
-    "unavailable": 28,
+    "unavailable": 27,
     "notApplicable": 84
   }
 }

@@ -7,6 +7,7 @@ installed_root=${OMACOS_ROOT:-${command_directory:h}}
 omacos_home=${OMACOS_TEST_HOME:-$HOME}
 launch_agent="$omacos_home/Library/LaunchAgents/dev.omacos.shell.plist"
 shell_binary=${OMACOS_SHELL_BINARY:-$omacos_home/.local/bin/omacos-shell}
+open_command=${OMACOS_OPEN_BINARY:-/usr/bin/open}
 
 print_usage() {
   cat <<'EOF'
@@ -334,13 +335,14 @@ case ${1:-help} in
     case ${2:-} in
       add)
         [[ -n ${3:-} && -n ${4:-} ]] || { print -u2 'Usage: omacos notification add TITLE BODY'; exit 1; }
-        "$shell_binary" --notification-add "$3" "$4"
+        "$shell_binary" --notification-add "$3" "$4" "${5:-}"
         ;;
       list) "$shell_binary" --notification-list ;;
       dismiss-one) "$shell_binary" --notification-dismiss-one ;;
+      invoke-one) "$open_command" "$("$shell_binary" --notification-action-url)" ;;
       clear) "$shell_binary" --notification-clear ;;
       show) run_shell_command toggle-panel notifications ;;
-      *) print -u2 'Usage: omacos notification <add TITLE BODY|list|dismiss-one|clear|show>'; exit 1 ;;
+      *) print -u2 'Usage: omacos notification <add TITLE BODY [ACTION_URL]|list|dismiss-one|invoke-one|clear|show>'; exit 1 ;;
     esac
     ;;
   speedtest)

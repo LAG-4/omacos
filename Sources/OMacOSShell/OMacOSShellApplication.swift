@@ -602,10 +602,14 @@ enum OMacOSShellMain {
         if let notificationAddIndex = arguments.firstIndex(of: "--notification-add"),
            arguments.indices.contains(notificationAddIndex + 2) {
             let store = OMacOSNotificationStore()
+            let actionURL = arguments.indices.contains(notificationAddIndex + 3)
+                ? arguments[notificationAddIndex + 3]
+                : nil
             guard let record = store.add(
                 title: arguments[notificationAddIndex + 1],
                 body: arguments[notificationAddIndex + 2],
-                source: "cli"
+                source: "cli",
+                actionURL: actionURL
             ) else {
                 Foundation.exit(1)
             }
@@ -629,6 +633,15 @@ enum OMacOSShellMain {
             if let record = OMacOSNotificationStore().dismissMostRecent() {
                 print("\(record.id.uuidString)\t\(record.title)\t\(record.body)")
             }
+            return
+        }
+
+        if arguments.contains("--notification-action-url") {
+            guard let actionURL = OMacOSNotificationStore().mostRecentActionURL() else {
+                FileHandle.standardError.write(Data("The most recent OMacOS notification has no action URL.\n".utf8))
+                Foundation.exit(1)
+            }
+            print(actionURL.absoluteString)
             return
         }
 

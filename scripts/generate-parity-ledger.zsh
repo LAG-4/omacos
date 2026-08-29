@@ -79,7 +79,9 @@ jq --slurpfile keys "$keybindings_path" '
     . as $item
     | (binding_title) as $title
     | ([ $keys[0].bindings[].description, ($keys[0].globalBindings // [])[].description ] | index($title) != null) as $isBound
-    | if $isBound and $title == "Toggle single-window square aspect" then
+    | if $isBound and $title == "Invoke last notification" then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos notification invoke-one"; "The shortcut invokes an action URL attached to the newest OMacOS notification; Apple does not expose actions owned by third-party Notification Center entries."; $item.source)
+      elif $isBound and $title == "Toggle single-window square aspect" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "omacos wm square-aspect-toggle"; "Accessibility resizes the focused window to a centered square and restores its saved frame on the next invocation."; $item.source)
       elif $isBound and ($title | test("^Monitor scaling")) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "native display panel"; "The original chord opens display resolution controls because macOS does not expose a supported global scale-step API."; $item.source)

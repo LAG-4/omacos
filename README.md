@@ -67,6 +67,7 @@ Hold Right Option and press:
 | `Super + J` | Toggle split orientation |
 | `Super + Shift + Backspace` | Toggle window gaps |
 | `Super + Control + Backspace` | Toggle a centered square aspect for the focused window |
+| `Super + Option + ,` | Invoke the action attached to the newest OMacOS notification |
 | `Super + S` | Summon the scratchpad workspace |
 | `Super + Option + S` | Move a window to the scratchpad |
 
@@ -84,6 +85,8 @@ omacos shell toggle-panel keybindings
 omacos capture screenshot
 omacos capture text
 omacos reminder add 10m "check the build"
+omacos notification add Build "Finished" https://example.com/build/42
+omacos notification invoke-one
 omacos default set browser brave
 omacos default set editor nvim
 omacos launch tmux
@@ -139,6 +142,8 @@ Window gaps can be toggled with the original Quattro shortcut, through the comma
 Legacy Quattro command-group names remain valid where the underlying outcome is portable. For example, `omacos audio`, `omacos battery`, `omacos bluetooth`, `omacos clipboard`, `omacos monitor`, `omacos power`, `omacos snapshot`, `omacos tailscale`, and `omacos wifi` route into the same native panels and service adapters instead of existing only as documentation aliases.
 
 Clipboard history is stored locally at `~/.local/state/omacos/clipboard-history.json`, capped at 100 text entries, and skips pasteboard entries marked concealed or auto-generated. It can be cleared from its panel. OMacOS does not upload clipboard or reminder data.
+
+OMacOS notifications can carry an optional `http`, `https`, `file`, or System Settings action URL. `Super + Option + ,` opens the action on the newest OMacOS-owned notification. macOS does not expose the actions or history of unrelated applications, so this shortcut deliberately does not claim global Notification Center control.
 
 The installer adds one clearly marked source block to `~/.zshrc`. That block loads the OMacOS aliases, fzf/zoxide/mise/Starship initialization, compression helpers, and tmux developer layouts. Uninstall removes only that block and preserves edits made before or after installation.
 
