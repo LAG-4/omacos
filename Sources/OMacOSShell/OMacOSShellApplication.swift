@@ -140,6 +140,8 @@ final class OMacOSPanelCoordinator: NSObject {
         if action == OMacOSShellMessage.toggleMenuAction {
             requestedMenuID = userInfo[OMacOSShellMessage.valueKey] as? String
             togglePanel(.menu)
+        } else if action == OMacOSShellMessage.clearClipboardAction {
+            clipboardStore.clear()
         } else if action == OMacOSShellMessage.togglePanelAction,
                   let rawPanelID = userInfo[OMacOSShellMessage.panelKey] as? String,
                   let panelID = OMacOSPanelID(rawValue: rawPanelID) {
@@ -435,6 +437,12 @@ enum OMacOSShellMain {
                 FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
                 Foundation.exit(1)
             }
+        }
+
+        if arguments.contains("--clipboard-clear") {
+            OMacOSShellMessage.postClearClipboard()
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
+            return
         }
 
         if let reminderCommandIndex = arguments.firstIndex(of: "--reminder-add"),

@@ -36,4 +36,23 @@ jq -e '
 OMACOS_PARITY_LEDGER="$generated_json" "$project_root/scripts/parity.zsh" summary | rg -q '^total=879$'
 OMACOS_PARITY_LEDGER="$generated_json" "$project_root/scripts/parity.zsh" show plugin omarchy.bar | jq -e '.implementationStatus == "implemented"' >/dev/null
 
+routed_groups="$temporary_directory/routed-groups.txt"
+awk '
+  /^case \$\{1:-help\} in$/ { in_router=1; next }
+  in_router && /^  [a-z0-9_|-]+\)$/ {
+    route=$0
+    sub(/^  /, "", route)
+    sub(/\)$/, "", route)
+    count=split(route, groups, "|")
+    for (i=1; i<=count; i++) print groups[i]
+  }
+' "$project_root/bin/omacos" | sort -u > "$routed_groups"
+
+while IFS= read -r group; do
+  if ! rg -Fxq "$group" "$routed_groups"; then
+    print -u2 "Implemented Quattro CLI group has no OMacOS route: $group"
+    exit 1
+  fi
+done < <(jq -r '.items.cliGroups[] | select(.implementationStatus == "implemented") | .id' "$generated_json")
+
 print 'Exhaustive Quattro parity ledger test passed'

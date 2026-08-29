@@ -102,6 +102,12 @@ omacos osd
 omacos permissions status
 omacos permissions open accessibility
 omacos qa report hardware.json
+omacos audio status
+omacos bluetooth show
+omacos clipboard list
+omacos monitor show
+omacos power show
+omacos snapshot list
 omacos uninstall
 ```
 
@@ -117,6 +123,8 @@ omacos wm profile aerospace
 OMacOS does not weaken SIP, edit sudoers, or load yabai's scripting addition. `omacos wm power-mode guide` explains the separate upstream process and its security tradeoff. Uninstall restores Rift and yabai configuration files that existed before OMacOS first managed them.
 
 The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, application defaults, agent usage, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
+
+Legacy Quattro command-group names remain valid where the underlying outcome is portable. For example, `omacos audio`, `omacos battery`, `omacos bluetooth`, `omacos clipboard`, `omacos monitor`, `omacos power`, `omacos snapshot`, `omacos tailscale`, and `omacos wifi` route into the same native panels and service adapters instead of existing only as documentation aliases.
 
 Clipboard history is stored locally at `~/.local/state/omacos/clipboard-history.json`, capped at 100 text entries, and skips pasteboard entries marked concealed or auto-generated. It can be cleared from its panel. OMacOS does not upload clipboard or reminder data.
 

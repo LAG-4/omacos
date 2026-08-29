@@ -8,6 +8,7 @@ enum OMacOSShellMessage {
     static let togglePanelAction = "toggle-panel"
     static let toggleMenuAction = "toggle-menu"
     static let setBarHiddenAction = "set-bar-hidden"
+    static let clearClipboardAction = "clear-clipboard"
     static let toggleDictationAction = "toggle-dictation"
 
     /// Posts one property-list-safe command to the already-running native shell.
@@ -44,6 +45,15 @@ enum OMacOSShellMessage {
                 actionKey: setBarHiddenAction,
                 valueKey: hidden
             ],
+            deliverImmediately: true
+        )
+    }
+
+    static func postClearClipboard() {
+        DistributedNotificationCenter.default().postNotificationName(
+            notificationName,
+            object: nil,
+            userInfo: [actionKey: clearClipboardAction],
             deliverImmediately: true
         )
     }

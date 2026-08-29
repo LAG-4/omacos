@@ -6,7 +6,7 @@ command_directory=${0:A:h}
 installed_root=${OMACOS_ROOT:-${command_directory:h}}
 omacos_home=${OMACOS_TEST_HOME:-$HOME}
 launch_agent="$omacos_home/Library/LaunchAgents/dev.omacos.shell.plist"
-shell_binary="$omacos_home/.local/bin/omacos-shell"
+shell_binary=${OMACOS_SHELL_BINARY:-$omacos_home/.local/bin/omacos-shell}
 
 print_usage() {
   cat <<'EOF'
@@ -44,6 +44,9 @@ Commands:
   ascii [TEXT]              Draw text as terminal ASCII art
   branch ACTION             Inspect the installed source branch
   channel ACTION            Inspect or switch the OMacOS update channel
+  audio|bar|battery         Control or inspect native shell services
+  bluetooth|monitor|power  Open or control native macOS system adapters
+  clipboard ACTION          Inspect the local clipboard history
   file ACTION               Choose a file or folder with native macOS UI
   hook ACTION               List or run user-owned OMacOS hooks
   installed ID              Check an optional application
@@ -302,6 +305,9 @@ case ${1:-help} in
       list) find "$omacos_home/.local/state/omacos/agents/usage" -maxdepth 1 -name '*.json' -print 2>/dev/null | sort ;;
       *) print -u2 "Usage: omacos agent <usage-update|list>"; exit 1 ;;
     esac
+    ;;
+  audio|bar|battery|bluetooth|branding|clipboard|cmd|config|debug|dev|disk|games|install|monitor|power|remove|setup|snapshot|system|tailscale|wifi)
+    "$installed_root/scripts/quattro-groups.zsh" "$@"
     ;;
   capture)
     "$installed_root/scripts/capture.zsh" "${2:-}" "${3:-}"

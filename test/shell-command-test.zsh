@@ -18,6 +18,7 @@ OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" osd
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel permissions
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-menu
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" dictation toggle
+OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --clipboard-clear
 
 set +e
 invalid_output=$(OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel missing 2>&1)
