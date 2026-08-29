@@ -85,6 +85,8 @@ jq --slurpfile keys "$keybindings_path" '
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "optional-unsafe"; "omacos wm transparency toggle"; "The original shortcut controls focused-window opacity in manually enabled yabai power mode; AeroSpace and Rift have no equivalent compositor-opacity API."; $item.source)
       elif $isBound and $title == "Toggle single-window square aspect" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "omacos wm square-aspect-toggle"; "Accessibility resizes the focused window to a centered square and restores its saved frame on the next invocation."; $item.source)
+      elif $isBound and ($title == "Zoom in" or $title == "Reset zoom") then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "native-replacement"; ("omacos zoom " + (if $title == "Zoom in" then "in" else "reset" end)); "The original chord drives the supported macOS accessibility zoom shortcuts. The user must enable keyboard zoom in System Settings; OMacOS does not silently change accessibility preferences."; $item.source)
       elif $isBound and ($title | test("^Monitor scaling")) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "native display panel"; "The original chord opens display resolution controls because macOS does not expose a supported global scale-step API."; $item.source)
       elif $isBound and $title == "Pop window out (float & pin)" then

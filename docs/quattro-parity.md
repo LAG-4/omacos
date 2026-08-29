@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 634 | 135 | 0 | 26 | 84 |
+| 879 | 634 | 137 | 0 | 24 | 84 |
 
 ## Remaining portable work
 
@@ -32,8 +32,6 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | binding | `default/hypr/bindings/tiling.lua:90` | Next window in group | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:91` | Previous window in group | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/tiling.lua:94` | Switch to group window  | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| binding | `default/hypr/bindings/utilities.lua:117` | Zoom in | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| binding | `default/hypr/bindings/utilities.lua:122` | Reset zoom | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:39` | Make webcam overlay smaller | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:40` | Make webcam overlay larger | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | dynamic-binding-family | `group-windows` | group windows 1 through 5 | Hyprland window groups do not have a common AeroSpace, Rift, and SIP-on yabai abstraction. |

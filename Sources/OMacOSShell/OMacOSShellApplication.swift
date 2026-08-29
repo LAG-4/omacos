@@ -591,6 +591,17 @@ enum OMacOSShellMain {
             return
         }
 
+        if let zoomIndex = arguments.firstIndex(of: "--system-zoom"),
+           arguments.indices.contains(zoomIndex + 1) {
+            do {
+                try OMacOSSystemZoom.perform(arguments[zoomIndex + 1])
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
         if arguments.contains("--reminder-list") {
             let store = OMacOSReminderStore()
             for reminder in store.reminders {

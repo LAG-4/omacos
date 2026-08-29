@@ -69,6 +69,8 @@ Hold Right Option and press:
 | `Super + Backspace` | Toggle focused-window opacity in optional yabai power mode |
 | `Super + Control + Backspace` | Toggle a centered square aspect for the focused window |
 | `Super + Option + ,` | Invoke the action attached to the newest OMacOS notification |
+| `Super + Control + Z` | Increase native macOS accessibility zoom |
+| `Super + Control + Option + Z` | Reset native macOS accessibility zoom |
 | `Super + S` | Summon the scratchpad workspace |
 | `Super + Option + S` | Move a window to the scratchpad |
 
@@ -96,6 +98,7 @@ omacos agent usage-update
 omacos weather location --set Cupertino 37.3230,-122.0322
 omacos media play-pause
 omacos dictation toggle
+omacos zoom setup
 omacos toggle toggle idle
 omacos backup create before-experiment
 omacos update apply
@@ -151,6 +154,8 @@ OMacOS notifications can carry an optional `http`, `https`, `file`, or System Se
 The installer adds one clearly marked source block to `~/.zshrc`. That block loads the OMacOS aliases, fzf/zoxide/mise/Starship initialization, compression helpers, and tmux developer layouts. Uninstall removes only that block and preserves edits made before or after installation.
 
 Dictation uses Apple's Speech framework. Hold F9, or press `Super + Control + X` to toggle it; stopping inserts the recognized text into the focused application. The first use prompts for Microphone and Speech Recognition, and insertion needs Accessibility. When supported by the current language, recognition is required to run on-device.
+
+Screen zoom delegates to Apple's accessibility zoom rather than capturing and redrawing the desktop. Run `omacos zoom setup` once and enable “Use keyboard shortcuts to zoom”; the original Quattro chords then send the native zoom-in command or enough zoom-out steps to return to 1×. This needs Accessibility permission and leaves the system preference under the user's control.
 
 Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub tag. `omacos channel set edge` opts into builds from the current public `main` source; switching back with `omacos channel set stable` does not require reinstalling. Development builds are ad-hoc signed. The tag workflow produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 

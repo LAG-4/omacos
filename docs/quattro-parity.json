@@ -3373,20 +3373,20 @@
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:117",
         "title": "Zoom in",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "limited",
+        "grade": "native-replacement",
+        "route": "omacos zoom in",
+        "notes": "The original chord drives the supported macOS accessibility zoom shortcuts. The user must enable keyboard zoom in System Settings; OMacOS does not silently change accessibility preferences.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:122",
         "title": "Reset zoom",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "limited",
+        "grade": "native-replacement",
+        "route": "omacos zoom reset",
+        "notes": "The original chord drives the supported macOS accessibility zoom shortcuts. The user must enable keyboard zoom in System Settings; OMacOS does not silently change accessibility preferences.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
@@ -8830,9 +8830,9 @@
   "summary": {
     "total": 879,
     "implemented": 634,
-    "limited": 135,
+    "limited": 137,
     "pending": 0,
-    "unavailable": 26,
+    "unavailable": 24,
     "notApplicable": 84
   }
 }

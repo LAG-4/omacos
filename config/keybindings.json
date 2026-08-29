@@ -87,6 +87,8 @@
     { "key": "comma", "modifiers": ["shift", "option"], "description": "Open notification history", "command": "$HOME/.local/bin/omacos notification show" },
     { "key": "n", "modifiers": ["control"], "description": "Toggle nightlight", "command": "$HOME/.local/bin/omacos toggle toggle night-light" },
     { "key": "x", "modifiers": ["control"], "description": "Toggle dictation", "command": "$HOME/.local/bin/omacos dictation toggle" },
+    { "key": "z", "modifiers": ["control"], "description": "Zoom in", "command": "$HOME/.local/bin/omacos zoom in" },
+    { "key": "z", "modifiers": ["control", "option"], "description": "Reset zoom", "command": "$HOME/.local/bin/omacos zoom reset" },
     { "key": "print_screen", "modifiers": ["option"], "description": "Color picker", "command": "$HOME/.local/bin/omacos capture color" },
     { "key": "print_screen", "modifiers": ["control"], "description": "Extract text (OCR) from screenshot", "command": "$HOME/.local/bin/omacos capture text" },
     { "key": "spacebar", "modifiers": ["shift"], "description": "Toggle top bar", "command": "$HOME/.local/bin/omacos toggle toggle bar" },
