@@ -8,7 +8,7 @@ This project is independent from Omarchy and 37signals. It does not distribute o
 
 OMacOS is at its first prototype milestone. The current build includes:
 
-- AeroSpace tiling with Omarchy-style window and workspace bindings
+- replaceable window-manager adapters: AeroSpace by default, experimental Rift, and optional yabai
 - Right Option as the default physical Super key while Left Option and Command stay native
 - a native Swift/AppKit bar, command menu, keybinding reference, and first system panels
 - clipboard history, emoji, reminders, capture, on-device OCR, background, and system panels
@@ -86,8 +86,20 @@ omacos update apply
 omacos package list gaming
 omacos package install utm
 omacos plugin show
+omacos wm status
 omacos uninstall
 ```
+
+All Right Option window and workspace shortcuts go through one stable OMacOS command surface. AeroSpace is installed and selected by default. Rift adds animated layouts and virtual workspaces while keeping SIP enabled, but remains experimental because it uses undocumented macOS APIs. yabai is also available in a reduced SIP-on mode:
+
+```bash
+omacos wm profile
+omacos wm profile rift
+omacos wm profile yabai
+omacos wm profile aerospace
+```
+
+OMacOS does not weaken SIP, edit sudoers, or load yabai's scripting addition. `omacos wm power-mode guide` explains the separate upstream process and its security tradeoff. Uninstall restores Rift and yabai configuration files that existed before OMacOS first managed them.
 
 The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, application defaults, agent usage, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
 

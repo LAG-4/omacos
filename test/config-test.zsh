@@ -38,6 +38,13 @@ if (( generated_manipulator_count != expected_binding_count + 1 )); then
 fi
 jq -e '.rules[1].manipulators[0].from.key_code == "f9" and (.rules[1].manipulators[0].to_after_key_up | length) == 1' "$generated_karabiner" >/dev/null
 
+if jq -e '.bindings[].command | select(test("/aerospace( |$)"))' "$project_root/config/keybindings.json" >/dev/null; then
+  print -u2 "Keybinding config test failed: a window-manager command bypasses the OMacOS adapter"
+  exit 1
+fi
+
+jq -e '[.bindings[].command | select(contains("omacos wm"))] | length >= 40' "$project_root/config/keybindings.json" >/dev/null
+
 OMACOS_TEST_HOME="$temporary_home" "$project_root/scripts/render-theme.zsh" tokyo-night >/dev/null
 
 if [[ ! -f $temporary_home/.config/omacos/generated/shell-theme.json ]]; then

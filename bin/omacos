@@ -32,6 +32,7 @@ Commands:
   service NAME ACTION       Control optional Tailscale and Dropbox services
   package ACTION            Browse, install, or remove optional applications
   plugin ACTION             Inspect built-ins or manage out-of-process providers
+  wm ACTION                 Manage AeroSpace, Rift, or yabai through one interface
   reminder ACTION           Add, list, or clear local reminders
   webapp ACTION             Install, list, or remove URL app bundles
   theme apply [name]        Generate configs from a semantic theme
@@ -68,9 +69,15 @@ run_doctor() {
     doctor_check "macOS 26 or newer" "fail" || (( failures += 1 ))
   fi
   doctor_check "Homebrew" "$(command -v brew >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
-  doctor_check "AeroSpace CLI" "$(command -v aerospace >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
+  local window_manager_profile
+  window_manager_profile=$("$installed_root/scripts/window-manager.zsh" profile)
+  case $window_manager_profile in
+    aerospace) doctor_check "AeroSpace CLI" "$(command -v aerospace >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 )) ;;
+    rift) doctor_check "Rift CLI" "$(command -v rift-cli >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 )) ;;
+    yabai) doctor_check "yabai CLI" "$(command -v yabai >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 )) ;;
+  esac
   doctor_check "Bluetooth helper" "$(command -v blueutil >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
-  doctor_check "AeroSpace config" "$([[ -f $omacos_home/.config/aerospace/aerospace.toml ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Window manager profile ($window_manager_profile)" "$([[ -s $omacos_home/.config/omacos/window-manager-profile ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Karabiner rule installed" "$([[ -f $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Native shell binary" "$([[ -x $shell_binary ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Native shell app bundle" "$([[ -x $omacos_home/.local/share/omacos/OMacOSShell.app/Contents/MacOS/omacos-shell ]] && print ok || print fail)" || (( failures += 1 ))
@@ -226,6 +233,10 @@ run_uninstall() {
     "$installed_root/scripts/shell-integration.zsh" remove
   fi
 
+  if [[ -x $installed_root/scripts/window-manager.zsh ]]; then
+    "$installed_root/scripts/window-manager.zsh" restore
+  fi
+
   if [[ -f $state_directory/had-xdg-aerospace-config ]]; then
     cp "$backup_directory/xdg-aerospace.toml" "$omacos_home/.config/aerospace/aerospace.toml"
   else
@@ -313,6 +324,9 @@ case ${1:-help} in
     else
       "$installed_root/scripts/plugins.zsh" "${@:2}"
     fi
+    ;;
+  wm|window-manager)
+    "$installed_root/scripts/window-manager.zsh" "${@:2}"
     ;;
   weather)
     "$installed_root/scripts/weather.zsh" "${@:2}"

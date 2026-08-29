@@ -1,0 +1,53 @@
+# OMacOS Rift profile. Right Option shortcuts are owned by Karabiner-Elements;
+# this file only defines window-management behavior.
+
+[settings]
+animate = true
+animation_duration = 0.18
+animation_fps = 120
+default_disable = false
+mouse_follows_focus = true
+mouse_hides_on_focus = true
+focus_follows_mouse = false
+hot_reload = true
+
+[settings.layout]
+mode = "traditional"
+
+[settings.layout.gaps.outer]
+top = 42.0
+left = 8.0
+bottom = 8.0
+right = 8.0
+
+[settings.layout.gaps.inner]
+horizontal = 8.0
+vertical = 8.0
+
+[settings.ui.menu_bar]
+enabled = false
+show_empty = false
+mode = "active"
+active_label = "index"
+display_style = "label"
+
+[settings.gestures]
+enabled = true
+consume_dock_swipe = false
+invert_horizontal_swipe = false
+skip_empty = false
+fingers = 3
+haptics_enabled = true
+
+[virtual_workspaces]
+enabled = true
+default_workspace_count = 12
+auto_assign_windows = true
+preserve_focus_per_workspace = true
+workspace_auto_back_and_forth = true
+workspace_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "spare", "scratchpad"]
+default_workspace = 1
+reapply_app_rules_on_title_change = true
+
+[keys]
+

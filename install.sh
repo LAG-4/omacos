@@ -196,6 +196,7 @@ cp "$install_directory/config/aerospace/aerospace.toml" "$aerospace_directory/ae
 
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/render-theme.zsh" tokyo-night
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/defaults.zsh" init >/dev/null
+OMACOS_ROOT="$install_directory" "$install_directory/scripts/window-manager.zsh" init
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/shell-integration.zsh" install
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/migrations.zsh" run
 print -r -- "$(<$install_directory/VERSION)" > "$state_directory/installed-version"

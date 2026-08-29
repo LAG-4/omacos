@@ -10,7 +10,7 @@ Omarchy is distributed under the MIT License. The complete license text is prese
 
 ## Installed applications
 
-OMacOS installs third-party applications through Homebrew. Those applications are not relicensed by OMacOS. AeroSpace, Karabiner-Elements, Ghostty, JankyBorders, Homebrew, jq, and blueutil retain their upstream licenses and copyright notices.
+OMacOS installs third-party applications through Homebrew. Those applications are not relicensed by OMacOS. AeroSpace, Rift, yabai, Karabiner-Elements, Ghostty, JankyBorders, Homebrew, jq, and blueutil retain their upstream licenses and copyright notices. Rift and yabai are optional window-manager profiles and are not bundled in this repository.
 
 The optional OMacOS Neovim profile fetches lazy.nvim, Tokyo Night, Telescope, plenary.nvim, nvim-tree, gitsigns.nvim, lualine.nvim, and toggleterm.nvim from their upstream repositories on first launch. Those plugins are not bundled or relicensed by OMacOS.
 

@@ -44,15 +44,21 @@ AeroSpace does not implement Hyprland's compositor, dwindle layout, exact groups
 
 Use upstream AeroSpace and pin tested versions. Do not fork it before a concrete upstream limitation blocks the product.
 
+Implementation status: all window and workspace shortcuts and native bar workspace controls now call `omacos wm`, not AeroSpace directly. The adapter ships reversible AeroSpace, Rift, and yabai profiles, so changing managers does not regenerate the Karabiner layer or rewrite the shell.
+
 ### Experimental SIP-on profile: Rift
 
 [Rift](https://github.com/acsandmann/rift) offers i3, BSP, master-stack, scrolling, and stack layouts, plus animations, gestures, custom Mission Control behavior, and SketchyBar events. It keeps SIP enabled but explicitly uses private and undocumented APIs reverse-engineered from yabai. It may achieve better visual and layout parity than AeroSpace, with greater macOS-update risk. Treat it as an experimental adapter and contribute fixes upstream before considering a fork.
+
+The implemented Rift profile uses upstream's current CLI for focus, node movement, joins, smart resize, floating, fullscreen, traditional/stack layout selection, virtual workspaces, and display movement. Its scratchpad is a reserved virtual workspace. Moving a whole Rift virtual workspace between displays has no equivalent CLI operation, so OMacOS moves the focused window as an explicit close substitute.
 
 ### Optional power profile: yabai
 
 [yabai](https://github.com/asmvik/yabai) is the closest route to native Space manipulation, opacity, shadows, sticky windows, layers, scratchpads, and deeper WindowServer control. Basic operation works with SIP enabled. Its scripting addition requires partial SIP disablement on Apple Silicon, including reduced filesystem, debugging, and NVRAM protections, as described in the [official SIP instructions](https://github.com/asmvik/yabai/wiki/Disabling-System-Integrity-Protection).
 
 The yabai profile must be isolated, optional, and accompanied by a plain security warning. The normal installer must never weaken SIP.
+
+The implemented yabai profile deliberately configures only its SIP-on feature set. `omacos wm power-mode guide` links to upstream's current SIP and scripting-addition instructions; OMacOS does not run `csrutil`, create sudoers entries, or invoke the scripting addition with elevated privileges. Scratchpad labels and whole-Space display movement are routed only as power features and therefore fail visibly until the user has completed that manual upstream setup.
 
 ## Shell architecture
 
@@ -186,4 +192,3 @@ Before expanding the project, the first implementation must prove:
 - complete restoration of the original configuration on uninstall
 
 Stop and reconsider the architecture if the bar remains unstable through display or fullscreen changes, AeroSpace loses windows or workspaces, no shortcut profile is comfortable for normal typing, or permission onboarding cannot be made understandable and reversible.
-

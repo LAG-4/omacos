@@ -34,11 +34,11 @@ final class OMacOSBarState: NSObject, ObservableObject {
         )
     }
 
-    /// Switches the focused AeroSpace workspace from a bar button.
+    /// Switches the active workspace through the selected window-manager adapter.
     func focusWorkspace(_ workspace: String) {
         _ = OMacOSCommandRunner.run(
-            executable: "/usr/bin/env",
-            arguments: ["aerospace", "workspace", workspace]
+            executable: Self.omacosExecutable,
+            arguments: ["wm", "workspace-focus", workspace]
         )
         activeWorkspace = workspace
     }
@@ -48,8 +48,8 @@ final class OMacOSBarState: NSObject, ObservableObject {
         frontmostApplication = NSWorkspace.shared.frontmostApplication?.localizedName ?? "Desktop"
 
         let workspaceResult = OMacOSCommandRunner.run(
-            executable: "/usr/bin/env",
-            arguments: ["aerospace", "list-workspaces", "--focused"]
+            executable: Self.omacosExecutable,
+            arguments: ["wm", "workspace-current"]
         )
         if workspaceResult.exitCode == 0, !workspaceResult.output.isEmpty {
             activeWorkspace = workspaceResult.output
@@ -68,5 +68,16 @@ final class OMacOSBarState: NSObject, ObservableObject {
             return ""
         }
         return String(output[match])
+    }
+
+    /// Resolves the installed CLI while keeping `swift run omacos-shell` useful in development.
+    nonisolated private static var omacosExecutable: String {
+        let installed = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent(".local/bin/omacos").path
+        if FileManager.default.isExecutableFile(atPath: installed) {
+            return installed
+        }
+
+        return FileManager.default.currentDirectoryPath + "/bin/omacos"
     }
 }
