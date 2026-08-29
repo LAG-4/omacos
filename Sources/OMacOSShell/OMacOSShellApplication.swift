@@ -285,6 +285,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var barCoordinator: OMacOSBarWindowCoordinator?
     private var panelCoordinator: OMacOSPanelCoordinator?
     private var webcamOverlayController: OMacOSWebcamOverlayController?
+    private var pointerGestureController: OMacOSPointerGestureController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -299,6 +300,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         let packages = OMacOSPackageStore()
         let plugins = OMacOSPluginCatalogStore()
         let webcamOverlay = OMacOSWebcamOverlayController()
+        let pointerGestures = OMacOSPointerGestureController()
         let panels = OMacOSPanelCoordinator(
             theme: state.theme,
             systemPanelState: panelState,
@@ -331,6 +333,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         barCoordinator = bars
         panelCoordinator = panels
         webcamOverlayController = webcamOverlay
+        pointerGestureController = pointerGestures
 
         state.startStatusUpdates()
         panelState.startStatusUpdates()
@@ -338,6 +341,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         reminders.startDelivery()
         agents.startMonitoring()
         bars.rebuildDisplayBars()
+        pointerGestures.start()
         if let previewPanelID = OMacOSShellMain.previewPanelID(from: CommandLine.arguments) {
             panels.togglePanel(previewPanelID, targetScreen: NSScreen.main)
         }
@@ -384,6 +388,10 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         case OMacOSShellMessage.webcamOverlayAction:
             if let action = notification.userInfo?[OMacOSShellMessage.valueKey] as? String {
                 webcamOverlayController?.perform(action)
+            }
+        case OMacOSShellMessage.pointerGestureAction:
+            if let action = notification.userInfo?[OMacOSShellMessage.valueKey] as? String {
+                pointerGestureController?.perform(action)
             }
         default:
             break
@@ -607,6 +615,18 @@ enum OMacOSShellMain {
             }
             OMacOSShellMessage.postWebcamOverlayAction(action)
             RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
+            return
+        }
+
+        if let pointerIndex = arguments.firstIndex(of: "--pointer-gesture"),
+           arguments.indices.contains(pointerIndex + 1) {
+            let action = arguments[pointerIndex + 1]
+            guard ["super-down", "super-up", "begin-move", "begin-resize", "end"].contains(action) else {
+                FileHandle.standardError.write(Data("Unknown pointer gesture action.\n".utf8))
+                Foundation.exit(2)
+            }
+            OMacOSShellMessage.postPointerGestureAction(action)
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.08))
             return
         }
 

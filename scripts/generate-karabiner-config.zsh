@@ -23,10 +23,12 @@ jq '
         modifiers: { optional: ["any"] }
       },
       to: [
-        { set_variable: { name: "omacos_super_key", value: 1 } }
+        { set_variable: { name: "omacos_super_key", value: 1 } },
+        { shell_command: ("/bin/zsh -lc " + ("$HOME/.local/bin/omacos pointer super-down" | @sh)) }
       ],
       to_after_key_up: [
-        { set_variable: { name: "omacos_super_key", value: 0 } }
+        { set_variable: { name: "omacos_super_key", value: 0 } },
+        { shell_command: ("/bin/zsh -lc " + ("$HOME/.local/bin/omacos pointer super-up" | @sh)) }
       ],
       to_if_alone: [
         { key_code: .leaderKey }
@@ -78,6 +80,25 @@ jq '
         end
     );
 
+  def pointer_binding_manipulator:
+    {
+      type: "basic",
+      description: .description,
+      from: {
+        pointing_button: .button,
+        modifiers: { optional: ["any"] }
+      },
+      conditions: [
+        { type: "variable_if", name: "omacos_super_key", value: 1 }
+      ],
+      to: [
+        { shell_command: ("/bin/zsh -lc " + (.beginCommand | @sh)) }
+      ],
+      to_after_key_up: [
+        { shell_command: ("/bin/zsh -lc " + (.endCommand | @sh)) }
+      ]
+    };
+
   {
     title: "OMacOS Super key",
     rules: [
@@ -88,6 +109,10 @@ jq '
       {
         description: "Hold F9 for OMacOS dictation",
         manipulators: [(.globalBindings // [])[] | global_binding_manipulator]
+      },
+      {
+        description: "Use OMacOS Super with pointer gestures",
+        manipulators: [(.pointerBindings // [])[] | select(has("button")) | pointer_binding_manipulator]
       }
     ]
   }

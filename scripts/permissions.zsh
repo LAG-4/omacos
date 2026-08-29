@@ -31,8 +31,8 @@ case ${1:-status} in
     cat <<'EOF'
 OMacOS cannot and will not bypass macOS privacy approval.
 
-Accessibility      AeroSpace focus/move, OMacOS paste, and native window actions
-Input Monitoring   Karabiner-Elements Right Option Super layer
+Accessibility      AeroSpace focus/move, OMacOS paste, native window and pointer actions
+Input Monitoring   Karabiner-Elements Right Option layer and OMacOS pointer gestures
 Screen Recording   screenshots, recording, OCR, and QR recognition
 Microphone         local dictation and microphone recording
 Camera             native webcam recording overlay

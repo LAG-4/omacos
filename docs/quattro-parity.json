@@ -2643,40 +2643,40 @@
         "kind": "binding",
         "id": "default/hypr/bindings/tiling.lua:70",
         "title": "Scroll active workspace forward",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design.",
+        "implementationStatus": "limited",
+        "grade": "close-substitute",
+        "route": "native pointer gesture controller",
+        "notes": "Karabiner shares the Right Option layer with the native Accessibility event tap. Dragging moves or resizes the focused window, and wheel events switch workspaces; tiling managers may immediately retile managed windows.",
         "source": "default/hypr/bindings/tiling.lua"
       },
       {
         "kind": "binding",
         "id": "default/hypr/bindings/tiling.lua:71",
         "title": "Scroll active workspace backward",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "Karabiner does not expose scroll-wheel input as a complex-modification source, and adding a second global input daemon would violate the single shortcut-owner design.",
+        "implementationStatus": "limited",
+        "grade": "close-substitute",
+        "route": "native pointer gesture controller",
+        "notes": "Karabiner shares the Right Option layer with the native Accessibility event tap. Dragging moves or resizes the focused window, and wheel events switch workspaces; tiling managers may immediately retile managed windows.",
         "source": "default/hypr/bindings/tiling.lua"
       },
       {
         "kind": "binding",
         "id": "default/hypr/bindings/tiling.lua:73",
         "title": "Move window",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter.",
+        "implementationStatus": "limited",
+        "grade": "close-substitute",
+        "route": "native pointer gesture controller",
+        "notes": "Karabiner shares the Right Option layer with the native Accessibility event tap. Dragging moves or resizes the focused window, and wheel events switch workspaces; tiling managers may immediately retile managed windows.",
         "source": "default/hypr/bindings/tiling.lua"
       },
       {
         "kind": "binding",
         "id": "default/hypr/bindings/tiling.lua:74",
         "title": "Resize window",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter.",
+        "implementationStatus": "limited",
+        "grade": "close-substitute",
+        "route": "native pointer gesture controller",
+        "notes": "Karabiner shares the Right Option layer with the native Accessibility event tap. Dragging moves or resizes the focused window, and wheel events switch workspaces; tiling managers may immediately retile managed windows.",
         "source": "default/hypr/bindings/tiling.lua"
       },
       {
@@ -8830,9 +8830,9 @@
   "summary": {
     "total": 879,
     "implemented": 637,
-    "limited": 138,
+    "limited": 142,
     "pending": 0,
-    "unavailable": 20,
+    "unavailable": 16,
     "notApplicable": 84
   }
 }

@@ -53,7 +53,7 @@ enum OMacOSWindowActions {
               let savedWidth = Double(rawWidth.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw OMacOSWindowActionError.noSavedWidth
         }
-        let window = try focusedWindow()
+        let window = try focusedWindowElement()
         var size = try focusedWindowSize(window: window)
         size.width = CGFloat(savedWidth)
         guard let sizeValue = AXValueCreate(.cgSize, &size) else {
@@ -101,8 +101,8 @@ enum OMacOSWindowActions {
     static func toggleFocusedWindowFullWidth(
         environment: [String: String] = ProcessInfo.processInfo.environment
     ) throws -> CGFloat {
-        let window = try focusedWindow()
-        let currentFrame = try focusedWindowFrame(window: window)
+        let window = try focusedWindowElement()
+        let currentFrame = try windowFrame(window)
         let visibleFrame = visibleScreenFrame(containing: currentFrame)
         let savedFramePath = savedFullWidthFrameURL(environment: environment)
         let isFullWidth = abs(currentFrame.minX - visibleFrame.minX) < 2
@@ -137,15 +137,15 @@ enum OMacOSWindowActions {
             )
         }
 
-        try setFocusedWindowFrame(targetFrame, window: window)
+        try setWindowFrame(targetFrame, window: window)
         return targetFrame.width
     }
 
     static func toggleFocusedWindowSquareAspect(
         environment: [String: String] = ProcessInfo.processInfo.environment
     ) throws -> CGSize {
-        let window = try focusedWindow()
-        let currentFrame = try focusedWindowFrame(window: window)
+        let window = try focusedWindowElement()
+        let currentFrame = try windowFrame(window)
         let savedFramePath = savedSquareFrameURL(environment: environment)
         let isSquare = abs(currentFrame.width - currentFrame.height) < 2
 
@@ -172,12 +172,12 @@ enum OMacOSWindowActions {
             )
         }
 
-        try setFocusedWindowFrame(targetFrame, window: window)
+        try setWindowFrame(targetFrame, window: window)
         return targetFrame.size
     }
 
     private static func focusedWindowSize(window: AXUIElement? = nil) throws -> CGSize {
-        let targetWindow = try window ?? focusedWindow()
+        let targetWindow = try window ?? focusedWindowElement()
         var sizeValue: CFTypeRef?
         let result = AXUIElementCopyAttributeValue(
             targetWindow,
@@ -195,7 +195,7 @@ enum OMacOSWindowActions {
         return size
     }
 
-    private static func focusedWindowFrame(window: AXUIElement) throws -> CGRect {
+    static func windowFrame(_ window: AXUIElement) throws -> CGRect {
         var positionValue: CFTypeRef?
         let positionResult = AXUIElementCopyAttributeValue(
             window,
@@ -214,7 +214,7 @@ enum OMacOSWindowActions {
         return CGRect(origin: position, size: try focusedWindowSize(window: window))
     }
 
-    private static func setFocusedWindowFrame(_ frame: CGRect, window: AXUIElement) throws {
+    static func setWindowFrame(_ frame: CGRect, window: AXUIElement) throws {
         var position = frame.origin
         var size = frame.size
         guard let positionValue = AXValueCreate(.cgPoint, &position),
@@ -256,7 +256,7 @@ enum OMacOSWindowActions {
         return matchingScreen.visibleFrame
     }
 
-    private static func focusedWindow() throws -> AXUIElement {
+    static func focusedWindowElement() throws -> AXUIElement {
         try requireAccessibilityPermission()
         let systemWideElement = AXUIElementCreateSystemWide()
         var applicationValue: CFTypeRef?

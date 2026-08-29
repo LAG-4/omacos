@@ -78,7 +78,7 @@ jq --slurpfile keys "$keybindings_path" '
   def binding_parity:
     . as $item
     | (binding_title) as $title
-    | ([ $keys[0].bindings[].description, ($keys[0].globalBindings // [])[].description ] | index($title) != null) as $isBound
+    | ([ $keys[0].bindings[].description, ($keys[0].globalBindings // [])[].description, ($keys[0].pointerBindings // [])[].description ] | index($title) != null) as $isBound
     | if $isBound and $title == "Invoke last notification" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos notification invoke-one"; "The shortcut invokes an action URL attached to the newest OMacOS notification; Apple does not expose actions owned by third-party Notification Center entries."; $item.source)
       elif $isBound and $title == "File manager (cwd)" then
@@ -91,6 +91,8 @@ jq --slurpfile keys "$keybindings_path" '
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "native-replacement"; ("omacos zoom " + (if $title == "Zoom in" then "in" else "reset" end)); "The original chord drives the supported macOS accessibility zoom shortcuts. The user must enable keyboard zoom in System Settings; OMacOS does not silently change accessibility preferences."; $item.source)
       elif $isBound and ($title | test("^Make webcam overlay")) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "omacos capture webcam smaller/larger"; "The original chords resize the native camera preview overlay while recording."; $item.source)
+      elif $isBound and in_list($title; ["Scroll active workspace forward", "Scroll active workspace backward", "Move window", "Resize window"]) then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "native pointer gesture controller"; "Karabiner shares the Right Option layer with the native Accessibility event tap. Dragging moves or resizes the focused window, and wheel events switch workspaces; tiling managers may immediately retile managed windows."; $item.source)
       elif $isBound and ($title | test("^Monitor scaling")) then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "native display panel"; "The original chord opens display resolution controls because macOS does not expose a supported global scale-step API."; $item.source)
       elif $isBound and $title == "Pop window out (float & pin)" then

@@ -39,6 +39,10 @@ fi
 jq -e '.rules[1].manipulators[0].from.key_code == "f9" and (.rules[1].manipulators[0].to_after_key_up | length) == 1' "$generated_karabiner" >/dev/null
 jq -e '.rules[1].manipulators[] | select(.description == "Focus on next window") | .from.modifiers.mandatory == ["left_option"]' "$generated_karabiner" >/dev/null
 jq -e '.rules[0].manipulators[] | select(.description == "Universal copy") | .to[0].key_code == "c" and .to[0].modifiers == ["command"]' "$generated_karabiner" >/dev/null
+jq -e '.rules[0].manipulators[0].to[] | select((.shell_command // "") | contains("pointer super-down"))' "$generated_karabiner" >/dev/null
+jq -e '.rules[2].manipulators | length == 2' "$generated_karabiner" >/dev/null
+jq -e '.rules[2].manipulators[] | select(.description == "Move window") | .from.pointing_button == "button1"' "$generated_karabiner" >/dev/null
+jq -e '.rules[2].manipulators[] | select(.description == "Resize window") | .from.pointing_button == "button2"' "$generated_karabiner" >/dev/null
 
 duplicate_bindings=$(jq -r '.bindings[] | ((.modifiers | sort | join("+")) + ":" + .key)' "$project_root/config/keybindings.json" | sort | uniq -d)
 if [[ -n $duplicate_bindings ]]; then

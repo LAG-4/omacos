@@ -13,6 +13,7 @@ enum OMacOSShellMessage {
     static let clearClipboardAction = "clear-clipboard"
     static let toggleDictationAction = "toggle-dictation"
     static let webcamOverlayAction = "webcam-overlay"
+    static let pointerGestureAction = "pointer-gesture"
 
     /// Posts one property-list-safe command to the already-running native shell.
     static func postTogglePanel(_ panelID: OMacOSPanelID) {
@@ -93,6 +94,15 @@ enum OMacOSShellMessage {
             notificationName,
             object: nil,
             userInfo: [actionKey: webcamOverlayAction, valueKey: action],
+            deliverImmediately: true
+        )
+    }
+
+    static func postPointerGestureAction(_ action: String) {
+        DistributedNotificationCenter.default().postNotificationName(
+            notificationName,
+            object: nil,
+            userInfo: [actionKey: pointerGestureAction, valueKey: action],
             deliverImmediately: true
         )
     }

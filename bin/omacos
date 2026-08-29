@@ -25,6 +25,7 @@ Commands:
   notice NAME               Show date/time, battery, or weather notice
   dictation ACTION          Start, stop, or toggle native dictation
   zoom ACTION               Control or configure native macOS screen zoom
+  pointer ACTION            Internal Super pointer-gesture bridge
   update ACTION             Check, apply, or roll back OMacOS updates
   backup ACTION             Snapshot or restore files managed by OMacOS
   migrate ACTION            Run or inspect versioned migrations
@@ -328,6 +329,12 @@ case ${1:-help} in
       in|reset) "$shell_binary" --system-zoom "$2" ;;
       setup) "$open_command" 'x-apple.systempreferences:com.apple.Accessibility-Settings.extension' ;;
       *) print -u2 'Usage: omacos zoom <in|reset|setup>'; exit 1 ;;
+    esac
+    ;;
+  pointer)
+    case ${2:-} in
+      super-down|super-up|begin-move|begin-resize|end) "$shell_binary" --pointer-gesture "$2" ;;
+      *) print -u2 'Usage: omacos pointer <super-down|super-up|begin-move|begin-resize|end>'; exit 1 ;;
     esac
     ;;
   update)

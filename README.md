@@ -52,6 +52,9 @@ Hold Right Option and press:
 | --- | --- |
 | `Super + Return` | Open Ghostty |
 | `Super + Shift + Option + F` | Open Finder at the focused terminal working directory |
+| `Super + Scroll` | Switch workspaces forward or backward |
+| `Super + Left drag` | Move the focused window |
+| `Super + Right drag` | Resize the focused window |
 | `Super + Space` | Toggle the OMacOS command menu |
 | `Super + W` or `Super + Q` | Close the focused window |
 | `Super + Arrow` | Focus in a direction |
@@ -163,6 +166,8 @@ Screen zoom delegates to Apple's accessibility zoom rather than capturing and re
 `Super + Shift + Option + F` walks the focused terminal process tree and opens Finder at the deepest readable working directory. It supports Ghostty, Terminal, iTerm, WezTerm, kitty, and Alacritty. macOS does not publish the active tab directory across terminal applications, so a terminal with several live tabs is best effort and reports an error instead of falling back to an unrelated folder.
 
 Webcam recording uses a native always-on-top camera preview rather than a heavyweight recording dependency. `omacos capture recording --webcam` shows the overlay, starts the Apple region recorder with desktop and microphone audio, and removes the overlay when recording ends. The original bracket chords resize it live. Camera, Screen Recording, and Microphone approval remain explicit macOS prompts.
+
+Pointer gestures stay inside the same Right Option ownership model as keyboard shortcuts. Karabiner consumes only Super+left/right button presses and tells the native shell when a drag starts; the shell event tap performs the Accessibility move or resize and handles Super+wheel workspace navigation. Accessibility and Input Monitoring must be approved. A tiled window may be retiled by the active manager, so floating windows provide the closest Hyprland drag behavior.
 
 Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub tag. `omacos channel set edge` opts into builds from the current public `main` source; switching back with `omacos channel set stable` does not require reinstalling. Development builds are ad-hoc signed. The tag workflow produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 

@@ -17,6 +17,12 @@
     { "key": "print_screen", "modifiers": ["left_option"], "description": "Screenrecording", "command": "$HOME/.local/bin/omacos capture recording" },
     { "key": "delete_forward", "modifiers": ["left_option", "control"], "description": "Close all windows", "command": "$HOME/.local/bin/omacos wm close-all" }
   ],
+  "pointerBindings": [
+    { "button": "button1", "description": "Move window", "beginCommand": "$HOME/.local/bin/omacos pointer begin-move", "endCommand": "$HOME/.local/bin/omacos pointer end" },
+    { "button": "button2", "description": "Resize window", "beginCommand": "$HOME/.local/bin/omacos pointer begin-resize", "endCommand": "$HOME/.local/bin/omacos pointer end" },
+    { "gesture": "scroll_down", "description": "Scroll active workspace forward" },
+    { "gesture": "scroll_up", "description": "Scroll active workspace backward" }
+  ],
   "bindings": [
     { "key": "c", "modifiers": [], "description": "Universal copy", "output": { "key": "c", "modifiers": ["command"] } },
     { "key": "v", "modifiers": [], "description": "Universal paste", "output": { "key": "v", "modifiers": ["command"] } },
