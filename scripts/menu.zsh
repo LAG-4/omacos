@@ -124,7 +124,10 @@ run_menu_action() {
     remove|remove.package|remove.ai|remove.service|remove.development|remove.theme|remove.gaming|remove.browser|remove.webapp|remove.tui|remove.windows|remove.preinstalls|remove.security|remove.*) open_panel packages ;;
 
     update|update.omarchy) "$omacos_command" update check ;;
-    update.channel|update.channel.*) unsupported "OMacOS currently has one tested GitHub release channel" ;;
+    update.channel) "$omacos_command" channel status ;;
+    update.channel.stable) "$omacos_command" channel set stable ;;
+    update.channel.edge) "$omacos_command" channel set edge ;;
+    update.channel.rc|update.channel.dev) unsupported "OMacOS does not publish this release channel" ;;
     update.config|update.config.*|update.themes) "$omacos_command" update check ;;
     update.process|update.process.shell) "$omacos_command" shell restart ;;
     update.process.hyprsunset) unsupported "Night Shift is controlled by macOS" ;;

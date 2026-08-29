@@ -931,10 +931,10 @@
         "kind": "cli-group",
         "id": "channel",
         "title": "Omarchy release channel management",
-        "implementationStatus": "limited",
+        "implementationStatus": "implemented",
         "grade": "close-substitute",
         "route": "omacos channel",
-        "notes": "The interface is present, but the current open-source release supports only one tested main channel.",
+        "notes": "Stable installs signed tags and edge tracks public main source, with channel changes included in managed snapshots.",
         "source": "bin/omarchy"
       },
       {
@@ -6577,10 +6577,10 @@
         "kind": "menu-entry",
         "id": "update.channel.stable",
         "title": "Stable",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
         "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "notes": "The entry routes to an OMacOS workflow, native panel, application, or System Settings.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -6597,10 +6597,10 @@
         "kind": "menu-entry",
         "id": "update.channel.edge",
         "title": "Edge",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
         "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "notes": "The entry routes to an OMacOS workflow, native panel, application, or System Settings.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -8829,10 +8829,10 @@
   },
   "summary": {
     "total": 879,
-    "implemented": 620,
-    "limited": 132,
+    "implemented": 623,
+    "limited": 131,
     "pending": 0,
-    "unavailable": 46,
+    "unavailable": 44,
     "notApplicable": 81
   }
 }

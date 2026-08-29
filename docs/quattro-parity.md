@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 620 | 132 | 0 | 46 | 81 |
+| 879 | 623 | 131 | 0 | 44 | 81 |
 
 ## Remaining portable work
 
@@ -59,9 +59,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | menu-entry | `trigger.toggle.one-window-ratio` | 1-Window Ratio | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `trigger.toggle.window-gaps` | Window Gaps | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.channel.dev` | Dev | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `update.channel.edge` | Edge | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.channel.rc` | RC | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `update.channel.stable` | Stable | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.process.hyprsunset` | Hyprsunset | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 
 The complete machine-readable ledger, including all implemented, limited, and not-applicable items, is in [`docs/quattro-parity.json`](quattro-parity.json).
