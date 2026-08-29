@@ -96,6 +96,7 @@ final class OMacOSPanelCoordinator: NSObject {
     private let pluginStore: OMacOSPluginCatalogStore
     private var activePanel: NSPanel?
     private var activePanelID: OMacOSPanelID?
+    private var requestedMenuID: String?
 
     init(
         theme: OMacOSTheme,
@@ -133,12 +134,17 @@ final class OMacOSPanelCoordinator: NSObject {
     /// Routes property-list-safe commands sent by the CLI and generated keybindings.
     @objc private func receiveShellCommand(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
-              userInfo[OMacOSShellMessage.actionKey] as? String == OMacOSShellMessage.togglePanelAction,
-              let rawPanelID = userInfo[OMacOSShellMessage.panelKey] as? String,
-              let panelID = OMacOSPanelID(rawValue: rawPanelID) else {
+              let action = userInfo[OMacOSShellMessage.actionKey] as? String else {
             return
         }
-        togglePanel(panelID)
+        if action == OMacOSShellMessage.toggleMenuAction {
+            requestedMenuID = userInfo[OMacOSShellMessage.valueKey] as? String
+            togglePanel(.menu)
+        } else if action == OMacOSShellMessage.togglePanelAction,
+                  let rawPanelID = userInfo[OMacOSShellMessage.panelKey] as? String,
+                  let panelID = OMacOSPanelID(rawValue: rawPanelID) {
+            togglePanel(panelID)
+        }
     }
 
     /// Opens or closes one native shell panel on the display containing the pointer.
@@ -162,11 +168,21 @@ final class OMacOSPanelCoordinator: NSObject {
         )
         let panel = makePanel(panelID, size: panelSize)
         panel.setFrameOrigin(panelOrigin)
-        NSApp.activate(ignoringOtherApps: true)
+        if panelID != .osd {
+            NSApp.activate(ignoringOtherApps: true)
+        }
         panel.makeKeyAndOrderFront(nil)
         panel.orderFrontRegardless()
         activePanel = panel
         activePanelID = panelID
+        if panelID == .osd {
+            Task { [weak self] in
+                try? await Task.sleep(for: .seconds(1.6))
+                if self?.activePanelID == .osd {
+                    self?.dismissPanel()
+                }
+            }
+        }
     }
 
     private func makePanel(_ panelID: OMacOSPanelID, size: NSSize) -> NSPanel {
@@ -187,10 +203,11 @@ final class OMacOSPanelCoordinator: NSObject {
             panel.contentView = NSHostingView(
                 rootView: OMacOSCommandMenuView(
                     theme: theme,
-                    dismissMenu: { [weak self] in self?.dismissPanel() },
-                    openPanel: { [weak self] panelID in self?.togglePanel(panelID) }
+                    initialMenuID: requestedMenuID,
+                    dismissMenu: { [weak self] in self?.dismissPanel() }
                 )
             )
+            requestedMenuID = nil
         } else {
             panel.contentView = NSHostingView(
                 rootView: OMacOSSystemPanelView(
@@ -220,13 +237,13 @@ final class OMacOSPanelCoordinator: NSObject {
     private func size(for panelID: OMacOSPanelID) -> NSSize {
         switch panelID {
         case .menu: NSSize(width: 540, height: 620)
-        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins: NSSize(width: 620, height: 620)
+        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins, .devGallery: NSSize(width: 620, height: 620)
         case .defaults: NSSize(width: 540, height: 540)
         case .clock: NSSize(width: 430, height: 520)
         case .system: NSSize(width: 430, height: 430)
         case .weather: NSSize(width: 430, height: 440)
         case .wifiQR: NSSize(width: 430, height: 440)
-        case .noticeDateTime, .noticeBattery, .noticeWeather: NSSize(width: 430, height: 280)
+        case .noticeDateTime, .noticeBattery, .noticeWeather, .osd: NSSize(width: 430, height: 280)
         default: NSSize(width: 430, height: 360)
         }
     }
@@ -369,6 +386,35 @@ enum OMacOSShellMain {
             }
         }
 
+        if let widthIndex = arguments.firstIndex(of: "--window-width"),
+           arguments.indices.contains(widthIndex + 1) {
+            do {
+                let width: CGFloat
+                switch arguments[widthIndex + 1] {
+                case "save": width = try OMacOSWindowActions.saveFocusedWindowWidth()
+                case "restore": width = try OMacOSWindowActions.restoreFocusedWindowWidth()
+                default:
+                    FileHandle.standardError.write(Data("Window width action must be save or restore.\n".utf8))
+                    Foundation.exit(2)
+                }
+                print(Int(width.rounded()))
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
+        if arguments.contains("--close-all-windows") {
+            do {
+                print(try OMacOSWindowActions.closeAllApplicationWindows())
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
         if let reminderCommandIndex = arguments.firstIndex(of: "--reminder-add"),
            arguments.indices.contains(reminderCommandIndex + 2),
            let delay = TimeInterval(arguments[reminderCommandIndex + 1]) {
@@ -448,6 +494,13 @@ enum OMacOSShellMain {
             return
         }
 
+        if arguments.contains("--notification-dismiss-one") {
+            if let record = OMacOSNotificationStore().dismissMostRecent() {
+                print("\(record.id.uuidString)\t\(record.title)\t\(record.body)")
+            }
+            return
+        }
+
         if arguments.contains("--reminder-clear") {
             OMacOSReminderStore().clear()
             return
@@ -456,6 +509,15 @@ enum OMacOSShellMain {
         if arguments.contains("--reminder-deliver") {
             let notifications = OMacOSNotificationStore()
             OMacOSReminderStore(notificationStore: notifications).deliverDueReminders()
+            return
+        }
+
+        if let toggleMenuIndex = arguments.firstIndex(of: "--toggle-menu") {
+            let menuID = arguments.indices.contains(toggleMenuIndex + 1)
+                ? arguments[toggleMenuIndex + 1]
+                : nil
+            OMacOSShellMessage.postToggleMenu(menuID)
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
             return
         }
 
@@ -477,10 +539,6 @@ enum OMacOSShellMain {
     }
 
     static func requestedPanelID(from arguments: [String]) -> OMacOSPanelID? {
-        if arguments.contains("--toggle-menu") {
-            return .menu
-        }
-
         guard let toggleIndex = arguments.firstIndex(of: "--toggle-panel"),
               arguments.indices.contains(toggleIndex + 1) else {
             return nil

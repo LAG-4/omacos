@@ -13,6 +13,8 @@ ln -s "$shell_binary" "$temporary_home/.local/bin/omacos-shell"
 
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel audio
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel weather
+OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel dev-gallery
+OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" osd
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-menu
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" dictation toggle
 

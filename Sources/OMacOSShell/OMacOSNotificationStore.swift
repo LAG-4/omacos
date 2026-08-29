@@ -47,6 +47,14 @@ final class OMacOSNotificationStore: NSObject, ObservableObject {
         persistHistory()
     }
 
+    @discardableResult
+    func dismissMostRecent() -> OMacOSNotificationRecord? {
+        guard !records.isEmpty else { return nil }
+        let record = records.removeFirst()
+        persistHistory()
+        return record
+    }
+
     private func loadHistory() {
         guard let data = try? Data(contentsOf: historyURL),
               let decoded = try? JSONDecoder().decode([OMacOSNotificationRecord].self, from: data) else {

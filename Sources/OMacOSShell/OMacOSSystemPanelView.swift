@@ -115,6 +115,10 @@ struct OMacOSSystemPanelView: View {
             packagesPanel
         case .plugins:
             pluginsPanel
+        case .devGallery:
+            developerGalleryPanel
+        case .osd:
+            onScreenDisplayPanel
         case .noticeDateTime:
             dateTimeNotice
         case .noticeBattery:
@@ -985,6 +989,62 @@ struct OMacOSSystemPanelView: View {
         }
     }
 
+    private var developerGalleryPanel: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Typography")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                Text("Quattro display heading")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                Text("Native SwiftUI components share the active semantic theme.")
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+
+                Text("Semantic palette")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
+                    ForEach([
+                        ("Accent", colors.accent), ("Red", colors.red),
+                        ("Green", colors.green), ("Yellow", colors.yellow),
+                        ("Blue", colors.blue), ("Magenta", colors.magenta),
+                        ("Cyan", colors.cyan), ("Text", colors.foreground)
+                    ], id: \.0) { name, color in
+                        VStack(spacing: 6) {
+                            RoundedRectangle(cornerRadius: 7)
+                                .fill(Color(omacosHex: color))
+                                .frame(height: 38)
+                            Text(name).font(.caption2)
+                        }
+                    }
+                }
+
+                statusCard("Status card", detail: "Reusable shell component", systemImage: "checkmark.circle")
+                ProgressView(value: 0.68)
+                    .tint(Color(omacosHex: colors.accent))
+                HStack {
+                    Button("Primary") {}
+                        .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                    Button("Secondary") {}
+                        .buttonStyle(.borderless)
+                }
+            }
+        }
+    }
+
+    private var onScreenDisplayPanel: some View {
+        VStack(spacing: 18) {
+            Image(systemName: state.outputMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                .font(.system(size: 54, weight: .semibold))
+                .foregroundStyle(Color(omacosHex: colors.accent))
+            Text(state.outputMuted ? "Muted" : "Volume \(state.volumePercentage)%")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+            ProgressView(value: Double(state.volumePercentage), total: 100)
+                .tint(Color(omacosHex: colors.accent))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     private func pluginGradeColor(_ grade: String) -> String {
         switch grade {
         case "exact": colors.green
@@ -1159,19 +1219,19 @@ struct OMacOSSystemPanelView: View {
 
     private var panelWidth: CGFloat {
         switch panelID {
-        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins: 620
+        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins, .devGallery: 620
         default: 430
         }
     }
 
     private var panelHeight: CGFloat {
         switch panelID {
-        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins: 620
+        case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins, .devGallery: 620
         case .clock: 520
         case .system: 430
         case .weather: 440
         case .wifiQR: 440
-        case .noticeDateTime, .noticeBattery, .noticeWeather: 280
+        case .noticeDateTime, .noticeBattery, .noticeWeather, .osd: 280
         default: 360
         }
     }

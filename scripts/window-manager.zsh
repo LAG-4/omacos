@@ -14,6 +14,8 @@ rift_command=${OMACOS_RIFT:-rift}
 rift_cli_command=${OMACOS_RIFT_CLI:-rift-cli}
 yabai_command=${OMACOS_YABAI:-yabai}
 brew_command=${OMACOS_BREW:-brew}
+shell_binary=${OMACOS_SHELL_BINARY:-$omacos_home/.local/bin/omacos-shell}
+[[ -x $shell_binary ]] || shell_binary="$omacos_root/.build/debug/omacos-shell"
 
 current_profile() {
   if [[ -s $profile_file ]]; then
@@ -43,6 +45,8 @@ direction_for_yabai() {
     right) print "east" ;;
     up) print "north" ;;
     down) print "south" ;;
+    next) print "next" ;;
+    prev|previous) print "prev" ;;
     *) print -u2 "Unknown direction: $1"; return 1 ;;
   esac
 }
@@ -213,9 +217,15 @@ run_aerospace_action() {
     scratchpad-move) "$aerospace_command" move-node-to-workspace scratchpad ;;
     workspace-current) "$aerospace_command" list-workspaces --focused ;;
     workspace-focus) "$aerospace_command" workspace "$1" ;;
-    workspace-move) "$aerospace_command" move-node-to-workspace "$1" ;;
+    workspace-move) "$aerospace_command" move-node-to-workspace --focus-follows-window "$1" ;;
+    workspace-move-silent) "$aerospace_command" move-node-to-workspace "$1" ;;
+    workspace-next) "$aerospace_command" workspace --wrap-around next ;;
+    workspace-previous) "$aerospace_command" workspace --wrap-around prev ;;
     workspace-back) "$aerospace_command" workspace-back-and-forth ;;
     workspace-next-monitor) "$aerospace_command" move-workspace-to-monitor --wrap-around next ;;
+    workspace-move-monitor) "$aerospace_command" move-workspace-to-monitor --wrap-around "$1" ;;
+    monitor-focus) "$aerospace_command" focus-monitor --wrap-around "$1" ;;
+    focus-cycle) "$aerospace_command" focus --wrap-around "dfs-$1" ;;
     resize-grow) "$aerospace_command" resize smart +50 ;;
     resize-shrink) "$aerospace_command" resize smart -50 ;;
     focus) "$aerospace_command" focus "$1" ;;
@@ -254,9 +264,18 @@ run_rift_action() {
     scratchpad-move) "$rift_cli_command" execute workspace move-window 11 ;;
     workspace-current) "$rift_cli_command" query workspaces | jq -r 'first(.[] | select(.is_active) | .index)' ;;
     workspace-focus) "$rift_cli_command" execute workspace switch "$1" ;;
-    workspace-move) "$rift_cli_command" execute workspace move-window "$1" ;;
+    workspace-move)
+      "$rift_cli_command" execute workspace move-window "$1"
+      "$rift_cli_command" execute workspace switch "$1"
+      ;;
+    workspace-move-silent) "$rift_cli_command" execute workspace move-window "$1" ;;
+    workspace-next) "$rift_cli_command" execute workspace next ;;
+    workspace-previous) "$rift_cli_command" execute workspace previous ;;
     workspace-back) "$rift_cli_command" execute workspace last ;;
     workspace-next-monitor) "$rift_cli_command" execute display move-window --direction right ;;
+    workspace-move-monitor) "$rift_cli_command" execute display move-window --direction "$1" ;;
+    monitor-focus) "$rift_cli_command" execute display focus --direction "$1" ;;
+    focus-cycle) "$rift_cli_command" execute window "focus-$1" ;;
     resize-grow) "$rift_cli_command" execute window resize-grow --orientation smart ;;
     resize-shrink) "$rift_cli_command" execute window resize-shrink --orientation smart ;;
     focus) "$rift_cli_command" execute window focus "$1" ;;
@@ -290,9 +309,24 @@ run_yabai_action() {
     scratchpad-move) "$yabai_command" -m window --scratchpad omacos-scratchpad ;;
     workspace-current) "$yabai_command" -m query --spaces --space | jq -r '.index' ;;
     workspace-focus) "$yabai_command" -m space --focus "$1" ;;
-    workspace-move) "$yabai_command" -m window --space "$1" ;;
+    workspace-move)
+      "$yabai_command" -m window --space "$1"
+      "$yabai_command" -m space --focus "$1"
+      ;;
+    workspace-move-silent) "$yabai_command" -m window --space "$1" ;;
+    workspace-next) "$yabai_command" -m space --focus next ;;
+    workspace-previous) "$yabai_command" -m space --focus prev ;;
     workspace-back) "$yabai_command" -m space --focus recent ;;
     workspace-next-monitor) "$yabai_command" -m space --display next ;;
+    workspace-move-monitor)
+      direction=$(direction_for_yabai "$1")
+      "$yabai_command" -m space --display "$direction"
+      ;;
+    monitor-focus)
+      direction=$(direction_for_yabai "$1")
+      "$yabai_command" -m display --focus "$direction"
+      ;;
+    focus-cycle) "$yabai_command" -m window --focus "$1" ;;
     resize-grow) "$yabai_command" -m window --ratio rel:0.05 ;;
     resize-shrink) "$yabai_command" -m window --ratio rel:-0.05 ;;
     focus)
@@ -312,7 +346,12 @@ run_action() {
   shift || true
   require_argument "$action" "omacos wm ACTION" || return 1
   case $action in
-    workspace-focus|workspace-move|focus|move|join)
+    close-all) "$shell_binary" --close-all-windows; return ;;
+    window-width-save) "$shell_binary" --window-width save; return ;;
+    window-width-restore) "$shell_binary" --window-width restore; return ;;
+  esac
+  case $action in
+    workspace-focus|workspace-move|workspace-move-silent|workspace-move-monitor|monitor-focus|focus-cycle|move|join)
       require_argument "${1:-}" "omacos wm $action VALUE" || return 1
       ;;
   esac
@@ -380,7 +419,7 @@ case ${1:-status} in
     stop_profile "$(current_profile)"
     restore_optional_configs
     ;;
-  close|toggle-floating|toggle-fullscreen|toggle-split|toggle-workspace-layout|scratchpad-toggle|scratchpad-move|workspace-current|workspace-focus|workspace-move|workspace-back|workspace-next-monitor|resize-grow|resize-shrink|focus|move|join)
+  close|close-all|window-width-save|window-width-restore|toggle-floating|toggle-fullscreen|toggle-split|toggle-workspace-layout|scratchpad-toggle|scratchpad-move|workspace-current|workspace-focus|workspace-move|workspace-move-silent|workspace-next|workspace-previous|workspace-back|workspace-next-monitor|workspace-move-monitor|monitor-focus|focus-cycle|resize-grow|resize-shrink|focus|move|join)
     run_action "$@"
     ;;
   *)

@@ -6,6 +6,7 @@ enum OMacOSShellMessage {
     static let panelKey = "panel"
     static let valueKey = "value"
     static let togglePanelAction = "toggle-panel"
+    static let toggleMenuAction = "toggle-menu"
     static let setBarHiddenAction = "set-bar-hidden"
     static let toggleDictationAction = "toggle-dictation"
 
@@ -18,6 +19,19 @@ enum OMacOSShellMessage {
                 actionKey: togglePanelAction,
                 panelKey: panelID.rawValue
             ],
+            deliverImmediately: true
+        )
+    }
+
+    static func postToggleMenu(_ menuID: String?) {
+        var userInfo: [String: Any] = [actionKey: toggleMenuAction]
+        if let menuID {
+            userInfo[valueKey] = menuID
+        }
+        DistributedNotificationCenter.default().postNotificationName(
+            notificationName,
+            object: nil,
+            userInfo: userInfo,
             deliverImmediately: true
         )
     }

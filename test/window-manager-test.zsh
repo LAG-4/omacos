@@ -44,7 +44,12 @@ if [[ $* == *"query --spaces --space"* ]]; then
 fi
 EOF
 
-chmod +x "$fake_bin/aerospace" "$fake_bin/rift" "$fake_bin/rift-cli" "$fake_bin/yabai"
+cat > "$fake_bin/omacos-shell" <<'EOF'
+#!/bin/zsh
+print -r -- "omacos-shell $*" >> "$OMACOS_WM_TEST_LOG"
+EOF
+
+chmod +x "$fake_bin/aerospace" "$fake_bin/rift" "$fake_bin/rift-cli" "$fake_bin/yabai" "$fake_bin/omacos-shell"
 
 export OMACOS_ROOT="$project_root"
 export OMACOS_TEST_HOME="$temporary_home"
@@ -53,6 +58,7 @@ export OMACOS_AEROSPACE="$fake_bin/aerospace"
 export OMACOS_RIFT="$fake_bin/rift"
 export OMACOS_RIFT_CLI="$fake_bin/rift-cli"
 export OMACOS_YABAI="$fake_bin/yabai"
+export OMACOS_SHELL_BINARY="$fake_bin/omacos-shell"
 export OMACOS_WM_TEST_LOG="$command_log"
 
 wm="$project_root/scripts/window-manager.zsh"
@@ -61,8 +67,26 @@ wm="$project_root/scripts/window-manager.zsh"
 [[ $("$wm" workspace-current) == "4" ]]
 "$wm" focus left
 "$wm" workspace-move 7
+"$wm" workspace-move-silent 8
+"$wm" workspace-next
+"$wm" workspace-previous
+"$wm" workspace-move-monitor left
+"$wm" monitor-focus right
+"$wm" focus-cycle next
+"$wm" close-all
+"$wm" window-width-save
+"$wm" window-width-restore
 rg -Fq 'aerospace focus left' "$command_log"
-rg -Fq 'aerospace move-node-to-workspace 7' "$command_log"
+rg -Fq 'aerospace move-node-to-workspace --focus-follows-window 7' "$command_log"
+rg -Fq 'aerospace move-node-to-workspace 8' "$command_log"
+rg -Fq 'aerospace workspace --wrap-around next' "$command_log"
+rg -Fq 'aerospace workspace --wrap-around prev' "$command_log"
+rg -Fq 'aerospace move-workspace-to-monitor --wrap-around left' "$command_log"
+rg -Fq 'aerospace focus-monitor --wrap-around right' "$command_log"
+rg -Fq 'aerospace focus --wrap-around dfs-next' "$command_log"
+rg -Fq 'omacos-shell --close-all-windows' "$command_log"
+rg -Fq 'omacos-shell --window-width save' "$command_log"
+rg -Fq 'omacos-shell --window-width restore' "$command_log"
 
 "$wm" profile rift >/dev/null
 [[ $("$wm" profile) == "rift" ]]

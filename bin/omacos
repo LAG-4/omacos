@@ -37,6 +37,18 @@ Commands:
   share ACTION              Share clipboard text, files, or folders with AirDrop
   transcode ACTION          Convert images, video, GIF, and audio locally
   font ACTION               List, install, or remove the Quattro font choices
+  parity ACTION             Audit every frozen Quattro capability and limitation
+  osd                       Show the native themed status overlay
+  ascii [TEXT]              Draw text as terminal ASCII art
+  branch ACTION             Inspect the installed source branch
+  channel ACTION            Inspect the OMacOS release channel
+  file ACTION               Choose a file or folder with native macOS UI
+  hook ACTION               List or run user-owned OMacOS hooks
+  installed ID              Check an optional application
+  mise ARGS                 Run the bundled development runtime manager
+  restart shell             Restart an OMacOS component
+  screensaver               Start the configured macOS screensaver
+  version                   Print the installed OMacOS version
   reminder ACTION           Add, list, or clear local reminders
   webapp ACTION             Install, list, or remove URL app bundles
   theme apply [name]        Generate configs from a semantic theme
@@ -130,12 +142,16 @@ run_shell_command() {
       fi
       ;;
     toggle-menu)
-      "$shell_binary" --toggle-menu
+      if [[ -n ${2:-} ]]; then
+        "$shell_binary" --toggle-menu "$2"
+      else
+        "$shell_binary" --toggle-menu
+      fi
       ;;
     toggle-panel)
       local panel_name=${2:-}
       case $panel_name in
-        menu|keybindings|clipboard|emojis|capture|reminders|notifications|themes|wallpapers|defaults|agents|weather|media|dictation|wifi-qr|speedtest|disk-speedtest|tailscale|dropbox|packages|plugins|notice-datetime|notice-battery|notice-weather|system|audio|bluetooth|network|display|clock|power|activity)
+        menu|keybindings|clipboard|emojis|capture|reminders|notifications|themes|wallpapers|defaults|agents|weather|media|dictation|wifi-qr|speedtest|disk-speedtest|tailscale|dropbox|packages|plugins|dev-gallery|osd|notice-datetime|notice-battery|notice-weather|system|audio|bluetooth|network|display|clock|power|activity)
           "$shell_binary" --toggle-panel "$panel_name"
           ;;
         *)
@@ -301,9 +317,10 @@ case ${1:-help} in
         "$shell_binary" --notification-add "$3" "$4"
         ;;
       list) "$shell_binary" --notification-list ;;
+      dismiss-one) "$shell_binary" --notification-dismiss-one ;;
       clear) "$shell_binary" --notification-clear ;;
       show) run_shell_command toggle-panel notifications ;;
-      *) print -u2 'Usage: omacos notification <add TITLE BODY|list|clear|show>'; exit 1 ;;
+      *) print -u2 'Usage: omacos notification <add TITLE BODY|list|dismiss-one|clear|show>'; exit 1 ;;
     esac
     ;;
   speedtest)
@@ -344,6 +361,18 @@ case ${1:-help} in
   font)
     "$installed_root/scripts/fonts.zsh" "${@:2}"
     ;;
+  parity)
+    "$installed_root/scripts/parity.zsh" "${@:2}"
+    ;;
+  osd)
+    run_shell_command toggle-panel osd
+    ;;
+  ascii|branch|channel|file|hook|installed|mise|restart|screensaver|version)
+    "$installed_root/scripts/utilities.zsh" "$@"
+    ;;
+  pkg)
+    "$installed_root/scripts/packages.zsh" "${@:2}"
+    ;;
   weather)
     "$installed_root/scripts/weather.zsh" "${@:2}"
     ;;
@@ -362,7 +391,7 @@ case ${1:-help} in
     "$installed_root/scripts/defaults.zsh" "${2:-}" "${3:-}" "${4:-}"
     ;;
   launch)
-    "$installed_root/scripts/launch.zsh" "${2:-}" "${3:-}"
+    "$installed_root/scripts/launch.zsh" "${2:-}" "${3:-}" "${4:-}"
     ;;
   webapp)
     "$installed_root/scripts/webapps.zsh" "${2:-}" "${3:-}" "${4:-}"

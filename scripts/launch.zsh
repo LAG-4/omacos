@@ -32,6 +32,13 @@ case $action in
       "$open_binary" -na Terminal
     fi
     ;;
+  herdr)
+    if ! command -v herdr >/dev/null 2>&1; then
+      print -u2 "Herdr is not installed. Install it before using this shortcut."
+      exit 1
+    fi
+    "$open_binary" -na Ghostty --args -e /bin/zsh -lc herdr
+    ;;
   browser)
     target=${2:-}
     case $(default_value browser) in
@@ -81,8 +88,47 @@ case $action in
     fi
     "$project_root/scripts/launch.zsh" browser "$2"
     ;;
+  app)
+    case ${2:-} in
+      music) open_application Music ;;
+      spotify) open_application Spotify ;;
+      signal) open_application Signal ;;
+      obsidian) open_application Obsidian ;;
+      passwords) open_application "1Password" ;;
+      docker) open_application Docker ;;
+      omawrite) open_application TextEdit ;;
+      calculator) open_application Calculator ;;
+      *) print -u2 "Unknown application shortcut: ${2:-}"; exit 1 ;;
+    esac
+    ;;
+  web)
+    case ${2:-} in
+      chatgpt) url="https://chatgpt.com" ;;
+      grok) url="https://grok.com" ;;
+      calendar) url="https://app.hey.com/calendar/weeks/" ;;
+      email) url="https://app.hey.com" ;;
+      email-new) url="https://app.hey.com/messages/new?display=standalone&new_window=true" ;;
+      youtube) url="https://youtube.com/" ;;
+      whatsapp) url="https://web.whatsapp.com/" ;;
+      messages) url="https://messages.google.com/web/conversations" ;;
+      photos) url="https://photos.google.com/" ;;
+      maps) url="https://maps.google.com/" ;;
+      x) url="https://x.com/" ;;
+      x-post) url="https://x.com/compose/post" ;;
+      *) print -u2 "Unknown web shortcut: ${2:-}"; exit 1 ;;
+    esac
+    "$project_root/scripts/launch.zsh" browser "$url"
+    ;;
+  docs)
+    case ${2:-} in
+      tmux) url="https://github.com/tmux/tmux/wiki/Getting-Started" ;;
+      herdr) url="https://github.com/LAG-4/herdr" ;;
+      *) print -u2 "Unknown documentation shortcut: ${2:-}"; exit 1 ;;
+    esac
+    "$project_root/scripts/launch.zsh" browser "$url"
+    ;;
   *)
-    print -u2 "Usage: omacos launch <terminal|tmux|browser|browser-private|editor|files|webapp> [TARGET]"
+    print -u2 "Usage: omacos launch <terminal|tmux|herdr|browser|browser-private|editor|files|webapp|app|web|docs> [TARGET]"
     exit 1
     ;;
 esac

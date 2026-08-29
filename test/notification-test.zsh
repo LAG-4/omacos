@@ -18,6 +18,12 @@ OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --reminder-deliver
 notification_output=$(OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --notification-list)
 [[ $notification_output == *$'OMacOS Reminder\tsilent reminder'* ]]
 
+dismissed_output=$(OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --notification-dismiss-one)
+[[ $dismissed_output == *$'OMacOS Reminder\tsilent reminder'* ]]
+notification_output=$(OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --notification-list)
+[[ $notification_output != *$'OMacOS Reminder\tsilent reminder'* ]]
+[[ $notification_output == *$'Build\tThe build completed.'* ]]
+
 OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --notification-clear
 [[ -z $(OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --notification-list) ]]
 

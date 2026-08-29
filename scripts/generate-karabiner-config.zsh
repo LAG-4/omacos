@@ -47,19 +47,36 @@ jq '
       conditions: [
         { type: "variable_if", name: "omacos_super_key", value: 1 }
       ],
-      to: [
-        { shell_command: ("/bin/zsh -lc " + (.command | @sh)) }
-      ]
+      to: (
+        if has("output") then
+          [{ key_code: .output.key, modifiers: (.output.modifiers // []) }]
+        else
+          [{ shell_command: ("/bin/zsh -lc " + (.command | @sh)) }]
+        end
+      )
     };
 
   def global_binding_manipulator:
-    {
-      type: "basic",
-      description: .description,
-      from: { key_code: .key, modifiers: { optional: ["any"] } },
-      to: [{ shell_command: ("/bin/zsh -lc " + (.keyDownCommand | @sh)) }],
-      to_after_key_up: [{ shell_command: ("/bin/zsh -lc " + (.keyUpCommand | @sh)) }]
-    };
+    (
+      {
+        type: "basic",
+        description: .description,
+        from: (
+          { key_code: .key }
+          + if has("modifiers")
+            then { modifiers: { mandatory: .modifiers } }
+            else { modifiers: { optional: ["any"] } }
+            end
+        ),
+        to: [
+          { shell_command: ("/bin/zsh -lc " + ((.keyDownCommand // .command) | @sh)) }
+        ]
+      }
+      + if has("keyUpCommand") then
+          { to_after_key_up: [{ shell_command: ("/bin/zsh -lc " + (.keyUpCommand | @sh)) }] }
+        else {}
+        end
+    );
 
   {
     title: "OMacOS Super key",

@@ -6,7 +6,7 @@ This project is independent from Omarchy and 37signals. It does not distribute o
 
 ## Status
 
-OMacOS is at its first prototype milestone. The current build includes:
+OMacOS is an implementation preview. The frozen Quattro reference has no unclassified or portable-pending entries, while physical Mac hardware validation and production signing still block a stable release. The current build includes:
 
 - replaceable window-manager adapters: AeroSpace by default, experimental Rift, and optional yabai
 - Right Option as the default physical Super key while Left Option and Command stay native
@@ -21,6 +21,8 @@ OMacOS is at its first prototype milestone. The current build includes:
 - locally generated Wi-Fi sharing QR codes, network and disk benchmarks, optional Tailscale and Dropbox panels, and an explicit optional-app catalog
 - QR capture with on-device Vision recognition, system-audio screen recording, native AirDrop handoff, local media transcoding, and Homebrew-backed font choices
 - a complete 29-plugin Quattro parity catalog plus an isolated out-of-process provider contract
+- a machine-checked 879-item parity ledger with explicit macOS limitations and no portable-pending entries
+- native themed OSD and developer-gallery panels, native focused-window width save/restore, and a safe Accessibility-backed close-all action
 - a readable installer with dry-run, doctor, backup, and uninstall commands
 - macOS 26 compatibility checks and macOS 27 beta test coverage
 
@@ -52,13 +54,14 @@ Hold Right Option and press:
 | `Super + W` or `Super + Q` | Close the focused window |
 | `Super + Arrow` | Focus in a direction |
 | `Super + Shift + Arrow` | Move a window in a direction |
-| `Super + 1...9` | Switch workspace |
-| `Super + Shift + 1...9` | Move a window to workspace |
+| `Super + 1...0` | Switch among workspaces 1–10 |
+| `Super + Shift + 1...0` | Move a window to workspace and follow it |
+| `Super + Shift + Option + 1...0` | Move a window silently to workspace |
 | `Super + T` | Toggle floating and tiling |
 | `Super + F` | Toggle fullscreen |
 | `Super + J` | Toggle split orientation |
 | `Super + S` | Summon the scratchpad workspace |
-| `Super + Shift + S` | Move a window to the scratchpad |
+| `Super + Option + S` | Move a window to the scratchpad |
 
 Karabiner-Elements treats Right Option as a dedicated OMacOS layer while held with another key. It does not turn it into the usual four-modifier Hyper chord, so `Super+Shift`, `Super+Control`, and `Super+Option` remain distinct. Pressing Right Option by itself still produces Right Option. Enable the supplied "OMacOS Super key" rule after installation.
 
@@ -89,6 +92,10 @@ omacos package list gaming
 omacos package install utm
 omacos plugin show
 omacos wm status
+omacos parity summary
+omacos parity list unavailable
+omacos shell toggle-panel dev-gallery
+omacos osd
 omacos uninstall
 ```
 
@@ -139,7 +146,7 @@ To stop a shell launched locally with `swift run omacos-shell`, run this from th
 
 The local command stops the debug shell. It leaves `.build` in the repository because that directory is only a Swift compilation cache and does not change macOS.
 
-See [the implementation roadmap](docs/roadmap.md) and [the research report](docs/research.md) for the intended scope and known macOS limits. The source-complete [frozen Quattro inventory](docs/quattro-inventory.json) tracks every manual chapter, plugin manifest, CLI group, default binding declaration, menu entry, and package from the reference commit.
+See [the implementation roadmap](docs/roadmap.md) and [the research report](docs/research.md) for the intended scope and known macOS limits. The source-complete [frozen Quattro inventory](docs/quattro-inventory.json) tracks every manual chapter, plugin manifest, CLI group, default binding declaration, menu entry, and package from the reference commit. The generated [Quattro parity ledger](docs/quattro-parity.md) gives every one of those 879 items an executable route, deliberate limitation, explicit impossibility, or not-applicable decision.
 
 ## License
 

@@ -7,7 +7,7 @@ struct OMacOSKeybinding: Codable, Identifiable {
     let key: String
     let modifiers: [String]
     let description: String
-    let command: String
+    let command: String?
 
     var id: String { "\(modifiers.joined(separator: "+"))+\(key)+\(description)" }
 

@@ -23,6 +23,8 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
     case dropbox
     case packages
     case plugins
+    case devGallery = "dev-gallery"
+    case osd
     case noticeDateTime = "notice-datetime"
     case noticeBattery = "notice-battery"
     case noticeWeather = "notice-weather"
@@ -60,6 +62,8 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .dropbox: "Dropbox"
         case .packages: "Optional Apps"
         case .plugins: "Quattro Plugins"
+        case .devGallery: "Developer Gallery"
+        case .osd: "On-screen Display"
         case .noticeDateTime: "Date & Time"
         case .noticeBattery: "Battery"
         case .noticeWeather: "Weather"
@@ -97,6 +101,8 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .dropbox: "shippingbox"
         case .packages: "shippingbox.and.arrow.backward"
         case .plugins: "puzzlepiece.extension"
+        case .devGallery: "paintbrush.pointed"
+        case .osd: "speaker.wave.2.circle"
         case .noticeDateTime: "clock"
         case .noticeBattery: "battery.75percent"
         case .system: "power"

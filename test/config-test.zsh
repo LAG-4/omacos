@@ -37,13 +37,21 @@ if (( generated_manipulator_count != expected_binding_count + 1 )); then
   exit 1
 fi
 jq -e '.rules[1].manipulators[0].from.key_code == "f9" and (.rules[1].manipulators[0].to_after_key_up | length) == 1' "$generated_karabiner" >/dev/null
+jq -e '.rules[1].manipulators[] | select(.description == "Focus on next window") | .from.modifiers.mandatory == ["left_option"]' "$generated_karabiner" >/dev/null
+jq -e '.rules[0].manipulators[] | select(.description == "Universal copy") | .to[0].key_code == "c" and .to[0].modifiers == ["command"]' "$generated_karabiner" >/dev/null
 
-if jq -e '.bindings[].command | select(test("/aerospace( |$)"))' "$project_root/config/keybindings.json" >/dev/null; then
+duplicate_bindings=$(jq -r '.bindings[] | ((.modifiers | sort | join("+")) + ":" + .key)' "$project_root/config/keybindings.json" | sort | uniq -d)
+if [[ -n $duplicate_bindings ]]; then
+  print -u2 "Keybinding config test failed: duplicate chords: $duplicate_bindings"
+  exit 1
+fi
+
+if jq -e '.bindings[] | select(has("command")) | .command | select(test("/aerospace( |$)"))' "$project_root/config/keybindings.json" >/dev/null; then
   print -u2 "Keybinding config test failed: a window-manager command bypasses the OMacOS adapter"
   exit 1
 fi
 
-jq -e '[.bindings[].command | select(contains("omacos wm"))] | length >= 40' "$project_root/config/keybindings.json" >/dev/null
+jq -e '[.bindings[] | select(has("command")) | .command | select(contains("omacos wm"))] | length >= 40' "$project_root/config/keybindings.json" >/dev/null
 
 OMACOS_TEST_HOME="$temporary_home" "$project_root/scripts/render-theme.zsh" tokyo-night >/dev/null
 

@@ -27,7 +27,11 @@ final class OMacOSMenuStore: ObservableObject {
 
     private let omacosCLI: String
 
-    init(environment: [String: String] = ProcessInfo.processInfo.environment) {
+    init(
+        initialMenuID: String? = nil,
+        environment: [String: String] = ProcessInfo.processInfo.environment
+    ) {
+        currentMenuID = initialMenuID
         let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
         let installedRoot = homeDirectory + "/.local/share/omacos/current"
         let projectRoot = FileManager.default.fileExists(atPath: installedRoot)

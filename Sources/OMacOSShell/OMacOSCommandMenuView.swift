@@ -3,9 +3,14 @@ import SwiftUI
 struct OMacOSCommandMenuView: View {
     let theme: OMacOSTheme
     let dismissMenu: () -> Void
-    let openPanel: (OMacOSPanelID) -> Void
 
-    @StateObject private var store = OMacOSMenuStore()
+    @StateObject private var store: OMacOSMenuStore
+
+    init(theme: OMacOSTheme, initialMenuID: String? = nil, dismissMenu: @escaping () -> Void) {
+        self.theme = theme
+        self.dismissMenu = dismissMenu
+        _store = StateObject(wrappedValue: OMacOSMenuStore(initialMenuID: initialMenuID))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
