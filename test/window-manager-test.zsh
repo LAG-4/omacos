@@ -80,6 +80,7 @@ rg -q '^gaps.outer.bottom = 42$' "$temporary_home/.config/aerospace/aerospace.to
 "$wm" window-width-save
 "$wm" window-width-restore
 "$wm" full-width-toggle
+"$wm" square-aspect-toggle
 "$wm" tiled-fullscreen
 "$wm" pop-window
 rg -Fq 'aerospace focus left' "$command_log"
@@ -94,6 +95,7 @@ rg -Fq 'omacos-shell --close-all-windows' "$command_log"
 rg -Fq 'omacos-shell --window-width save' "$command_log"
 rg -Fq 'omacos-shell --window-width restore' "$command_log"
 rg -Fq 'omacos-shell --window-full-width' "$command_log"
+rg -Fq 'omacos-shell --window-square-aspect' "$command_log"
 rg -Fq 'aerospace fullscreen' "$command_log"
 rg -Fq 'aerospace layout floating tiling' "$command_log"
 

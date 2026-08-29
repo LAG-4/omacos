@@ -8,6 +8,7 @@ enum OMacOSWindowActionError: LocalizedError {
     case windowSizeUnavailable
     case noSavedWidth
     case noSavedFullWidthFrame
+    case noSavedSquareFrame
     case operationFailed(AXError)
 
     var errorDescription: String? {
@@ -22,6 +23,8 @@ enum OMacOSWindowActionError: LocalizedError {
             "No saved window width exists. Use the save shortcut first."
         case .noSavedFullWidthFrame:
             "No saved window frame exists for restoring full width."
+        case .noSavedSquareFrame:
+            "No saved window frame exists for restoring the square-aspect toggle."
         case let .operationFailed(error):
             "The macOS Accessibility operation failed with code \(error.rawValue)."
         }
@@ -136,6 +139,41 @@ enum OMacOSWindowActions {
 
         try setFocusedWindowFrame(targetFrame, window: window)
         return targetFrame.width
+    }
+
+    static func toggleFocusedWindowSquareAspect(
+        environment: [String: String] = ProcessInfo.processInfo.environment
+    ) throws -> CGSize {
+        let window = try focusedWindow()
+        let currentFrame = try focusedWindowFrame(window: window)
+        let savedFramePath = savedSquareFrameURL(environment: environment)
+        let isSquare = abs(currentFrame.width - currentFrame.height) < 2
+
+        let targetFrame: CGRect
+        if isSquare {
+            guard let data = try? Data(contentsOf: savedFramePath),
+                  let savedFrame = try? JSONDecoder().decode(SavedWindowFrame.self, from: data) else {
+                throw OMacOSWindowActionError.noSavedSquareFrame
+            }
+            targetFrame = savedFrame.cgRect
+        } else {
+            try FileManager.default.createDirectory(
+                at: savedFramePath.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            try JSONEncoder().encode(SavedWindowFrame(currentFrame))
+                .write(to: savedFramePath, options: .atomic)
+            let side = min(currentFrame.width, currentFrame.height)
+            targetFrame = CGRect(
+                x: currentFrame.midX - side / 2,
+                y: currentFrame.midY - side / 2,
+                width: side,
+                height: side
+            )
+        }
+
+        try setFocusedWindowFrame(targetFrame, window: window)
+        return targetFrame.size
     }
 
     private static func focusedWindowSize(window: AXUIElement? = nil) throws -> CGSize {
@@ -260,9 +298,33 @@ enum OMacOSWindowActions {
         return URL(fileURLWithPath: homeDirectory)
             .appendingPathComponent(".local/state/omacos/window-full-width.json")
     }
+
+    private static func savedSquareFrameURL(environment: [String: String]) -> URL {
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        return URL(fileURLWithPath: homeDirectory)
+            .appendingPathComponent(".local/state/omacos/window-square-frame.json")
+    }
 }
 
 private struct SavedHorizontalFrame: Codable {
     let x: CGFloat
     let width: CGFloat
+}
+
+private struct SavedWindowFrame: Codable {
+    let x: CGFloat
+    let y: CGFloat
+    let width: CGFloat
+    let height: CGFloat
+
+    init(_ frame: CGRect) {
+        x = frame.minX
+        y = frame.minY
+        width = frame.width
+        height = frame.height
+    }
+
+    var cgRect: CGRect {
+        CGRect(x: x, y: y, width: width, height: height)
+    }
 }

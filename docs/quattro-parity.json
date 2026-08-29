@@ -3023,10 +3023,10 @@
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:21",
         "title": "Toggle single-window square aspect",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "implemented",
+        "grade": "native-replacement",
+        "route": "omacos wm square-aspect-toggle",
+        "notes": "Accessibility resizes the focused window to a centered square and restores its saved frame on the next invocation.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
@@ -4157,10 +4157,10 @@
         "kind": "menu-entry",
         "id": "trigger.toggle.one-window-ratio",
         "title": "1-Window Ratio",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
         "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "notes": "The entry routes to an OMacOS workflow, native panel, application, or System Settings.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -8829,10 +8829,10 @@
   },
   "summary": {
     "total": 879,
-    "implemented": 631,
+    "implemented": 633,
     "limited": 132,
     "pending": 0,
-    "unavailable": 35,
+    "unavailable": 33,
     "notApplicable": 81
   }
 }

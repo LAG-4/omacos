@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 631 | 132 | 0 | 35 | 81 |
+| 879 | 633 | 132 | 0 | 33 | 81 |
 
 ## Remaining portable work
 
@@ -35,7 +35,6 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | binding | `default/hypr/bindings/utilities.lua:117` | Zoom in | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:122` | Reset zoom | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:19` | Toggle window transparency | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| binding | `default/hypr/bindings/utilities.lua:21` | Toggle single-window square aspect | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:27` | Invoke last notification | The focused terminal working directory, third-party notification action, or Super+mouse compositor gesture has no safe cross-application public macOS adapter. |
 | binding | `default/hypr/bindings/utilities.lua:39` | Make webcam overlay smaller | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:40` | Make webcam overlay larger | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
@@ -48,7 +47,6 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | menu-entry | `trigger.hardware.hybrid-gpu` | Hybrid GPU | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `trigger.hardware.touchscreen` | Touchscreen | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `trigger.toggle.crash-capture` | Crash Capture | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `trigger.toggle.one-window-ratio` | 1-Window Ratio | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.channel.dev` | Dev | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.channel.rc` | RC | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `update.process.hyprsunset` | Hyprsunset | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |

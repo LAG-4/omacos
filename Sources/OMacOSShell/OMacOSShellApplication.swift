@@ -468,6 +468,17 @@ enum OMacOSShellMain {
             }
         }
 
+        if arguments.contains("--window-square-aspect") {
+            do {
+                let size = try OMacOSWindowActions.toggleFocusedWindowSquareAspect()
+                print("\(Int(size.width.rounded()))x\(Int(size.height.rounded()))")
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
         if arguments.contains("--close-all-windows") {
             do {
                 print(try OMacOSWindowActions.closeAllApplicationWindows())

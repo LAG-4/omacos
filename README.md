@@ -66,6 +66,7 @@ Hold Right Option and press:
 | `Super + /` | Open native display scaling controls |
 | `Super + J` | Toggle split orientation |
 | `Super + Shift + Backspace` | Toggle window gaps |
+| `Super + Control + Backspace` | Toggle a centered square aspect for the focused window |
 | `Super + S` | Summon the scratchpad workspace |
 | `Super + Option + S` | Move a window to the scratchpad |
 

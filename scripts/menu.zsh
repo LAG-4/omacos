@@ -86,7 +86,7 @@ run_menu_action() {
     trigger.toggle.top-bar) "$omacos_command" toggle toggle bar ;;
     trigger.toggle.workspace-layout) "$omacos_command" wm toggle-workspace-layout ;;
     trigger.toggle.window-gaps) "$omacos_command" wm gaps toggle ;;
-    trigger.toggle.one-window-ratio) unsupported "macOS window managers do not share Hyprland's single-window aspect rule" ;;
+    trigger.toggle.one-window-ratio) "$omacos_command" wm square-aspect-toggle ;;
     trigger.toggle.battery-percentage) open_settings "x-apple.systempreferences:com.apple.ControlCenter-Settings.extension" ;;
     trigger.toggle.screensaver) open_settings "x-apple.systempreferences:com.apple.ScreenSaver-Settings.extension" ;;
     trigger.toggle.crash-capture) unsupported "macOS DiagnosticReports are system-managed" ;;
