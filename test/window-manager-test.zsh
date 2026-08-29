@@ -149,6 +149,20 @@ rg -q '^top = 42.0$' "$temporary_home/.config/rift/config.toml"
 rg -q '^yabai -m config top_padding 42$' "$temporary_home/.config/yabai/yabairc"
 rg -Fq 'yabai -m config bottom_padding 8' "$command_log"
 
+"$wm" bar-position left
+rg -q '^gaps.outer.left = 56$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^left = 56.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config left_padding 56$' "$temporary_home/.config/yabai/yabairc"
+rg -Fq 'yabai -m config left_padding 56' "$command_log"
+
+"$wm" bar-position right
+rg -q '^gaps.outer.right = 56$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^right = 56.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config right_padding 56$' "$temporary_home/.config/yabai/yabairc"
+rg -Fq 'yabai -m config right_padding 56' "$command_log"
+
+"$wm" bar-position top
+
 "$wm" gaps disable
 [[ $("$wm" gaps status) == 'window-gaps=false' ]]
 rg -q '^gaps.inner.horizontal = 0$' "$temporary_home/.config/aerospace/aerospace.toml"

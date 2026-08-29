@@ -103,7 +103,8 @@ run_menu_action() {
     style.bar|style.bar.position) "$omacos_command" bar status ;;
     style.bar.position.top) "$omacos_command" bar position top ;;
     style.bar.position.bottom) "$omacos_command" bar position bottom ;;
-    style.bar.position.left|style.bar.position.right) unsupported "the horizontal native bar does not have a vertical layout" ;;
+    style.bar.position.left) "$omacos_command" bar position left ;;
+    style.bar.position.right) "$omacos_command" bar position right ;;
     style.bar.transparency) "$omacos_command" bar transparency toggle ;;
     style.hyprland) "$omacos_command" wm status ;;
     style.unlock) unsupported "Apple owns the secure login and FileVault unlock interface" ;;

@@ -55,7 +55,7 @@ case $group in
       status) "$shell_binary" --bar-status ;;
       position)
         position=${3:-}
-        [[ $position == "top" || $position == "bottom" ]] || { print -u2 'Usage: omacos bar position <top|bottom>'; exit 1; }
+        [[ $position == "top" || $position == "bottom" || $position == "left" || $position == "right" ]] || { print -u2 'Usage: omacos bar position <top|bottom|left|right>'; exit 1; }
         "$shell_binary" --bar-position "$position"
         "$omacos_root/scripts/window-manager.zsh" bar-position "$position"
         print "OMacOS bar position: $position"
@@ -72,7 +72,7 @@ case $group in
         "$shell_binary" --bar-transparency "$transparent"
         print "OMacOS bar transparency: $transparent"
         ;;
-      *) print -u2 'Usage: omacos bar <show|hide|toggle|status|position top|bottom|transparency toggle|enable|disable>'; exit 1 ;;
+      *) print -u2 'Usage: omacos bar <show|hide|toggle|status|position top|bottom|left|right|transparency toggle|enable|disable>'; exit 1 ;;
     esac
     ;;
   battery)

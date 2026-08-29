@@ -130,6 +130,7 @@ omacos monitor show
 omacos power show
 omacos snapshot list
 omacos bar position bottom
+omacos bar position left
 omacos bar transparency toggle
 omacos uninstall
 ```
@@ -149,7 +150,7 @@ Focused-window transparency is available only after selecting yabai and manually
 
 The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, application defaults, agent usage, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
 
-The horizontal bar can be placed at the top or bottom and switched between opaque and translucent rendering at runtime. OMacOS updates the active AeroSpace, Rift, or yabai reserved edge when its position changes so tiled windows continue to avoid it. Left and right bar positions remain explicit limitations because they require a separate vertical widget layout rather than rotating the Quattro design.
+The bar has purpose-built horizontal and vertical layouts, can be placed on any screen edge, and can switch between opaque and translucent rendering at runtime. OMacOS updates the AeroSpace, Rift, and yabai reserved edge when its position changes so tiled windows continue to avoid it. Panels open beside the selected edge rather than covering the bar.
 
 Window gaps can be toggled with the original Quattro shortcut, through the command menu, or with `omacos wm gaps toggle`. The setting rewrites each managed profile consistently and preserves the 34-point bar reservation on the selected edge even when all other spacing is zero.
 

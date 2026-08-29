@@ -72,7 +72,7 @@ configured_bar_position() {
   if [[ -f $bar_configuration ]]; then
     local position
     position=$(jq -r '.position // "top"' "$bar_configuration" 2>/dev/null || print top)
-    [[ $position == "top" || $position == "bottom" ]] && print -r -- "$position" || print top
+    [[ $position == "top" || $position == "bottom" || $position == "left" || $position == "right" ]] && print -r -- "$position" || print top
   else
     print top
   fi
@@ -132,16 +132,19 @@ set_rift_layout_gaps() {
   local target=$1
   local top_gap=$2
   local bottom_gap=$3
-  local spacing=$4
+  local left_gap=$4
+  local right_gap=$5
+  local spacing=$6
   local temporary_config
   temporary_config=$(mktemp -t omacos-rift-gaps.XXXXXX)
-  awk -v top_gap="$top_gap.0" -v bottom_gap="$bottom_gap.0" -v spacing="$spacing.0" '
+  awk -v top_gap="$top_gap.0" -v bottom_gap="$bottom_gap.0" -v left_gap="$left_gap.0" -v right_gap="$right_gap.0" -v spacing="$spacing.0" '
     /^\[settings\.layout\.gaps\.outer\]$/ { in_outer=1; in_inner=0; print; next }
     /^\[settings\.layout\.gaps\.inner\]$/ { in_outer=0; in_inner=1; print; next }
     /^\[/ { in_outer=0; in_inner=0 }
     in_outer && /^top = / { print "top = " top_gap; next }
     in_outer && /^bottom = / { print "bottom = " bottom_gap; next }
-    in_outer && /^(left|right) = / { split($0, parts, " = "); print parts[1] " = " spacing; next }
+    in_outer && /^left = / { print "left = " left_gap; next }
+    in_outer && /^right = / { print "right = " right_gap; next }
     in_inner && /^(horizontal|vertical) = / { split($0, parts, " = "); print parts[1] " = " spacing; next }
     { print }
   ' "$target" > "$temporary_config"
@@ -153,17 +156,27 @@ set_profile_bar_position() {
   local position=$2
   local spacing=8
   local reserved_gap=42
+  if [[ $position == "left" || $position == "right" ]]; then
+    reserved_gap=56
+  fi
   if [[ $(configured_window_gaps) == "false" ]]; then
     spacing=0
-    reserved_gap=34
+    if [[ $position == "left" || $position == "right" ]]; then
+      reserved_gap=48
+    else
+      reserved_gap=34
+    fi
   fi
   local top_gap=$spacing
   local bottom_gap=$spacing
-  if [[ $position == "top" ]]; then
-    top_gap=$reserved_gap
-  else
-    bottom_gap=$reserved_gap
-  fi
+  local left_gap=$spacing
+  local right_gap=$spacing
+  case $position in
+    top) top_gap=$reserved_gap ;;
+    bottom) bottom_gap=$reserved_gap ;;
+    left) left_gap=$reserved_gap ;;
+    right) right_gap=$reserved_gap ;;
+  esac
 
   case $profile in
     aerospace)
@@ -171,21 +184,21 @@ set_profile_bar_position() {
       if [[ -f $aerospace_config ]]; then
         /usr/bin/sed -i '' -E "s/^gaps\\.inner\\.horizontal = .*/gaps.inner.horizontal = $spacing/" "$aerospace_config"
         /usr/bin/sed -i '' -E "s/^gaps\\.inner\\.vertical = .*/gaps.inner.vertical = $spacing/" "$aerospace_config"
-        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.left = .*/gaps.outer.left = $spacing/" "$aerospace_config"
-        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.right = .*/gaps.outer.right = $spacing/" "$aerospace_config"
+        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.left = .*/gaps.outer.left = $left_gap/" "$aerospace_config"
+        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.right = .*/gaps.outer.right = $right_gap/" "$aerospace_config"
         /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.top = .*/gaps.outer.top = $top_gap/" "$aerospace_config"
         /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.bottom = .*/gaps.outer.bottom = $bottom_gap/" "$aerospace_config"
       fi
       ;;
     rift)
       local rift_config="$omacos_home/.config/rift/config.toml"
-      [[ -f $rift_config ]] && set_rift_layout_gaps "$rift_config" "$top_gap" "$bottom_gap" "$spacing"
+      [[ -f $rift_config ]] && set_rift_layout_gaps "$rift_config" "$top_gap" "$bottom_gap" "$left_gap" "$right_gap" "$spacing"
       ;;
     yabai)
       local yabai_config="$omacos_home/.config/yabai/yabairc"
       if [[ -f $yabai_config ]]; then
-        /usr/bin/sed -i '' -E "s/^yabai -m config left_padding .*/yabai -m config left_padding $spacing/" "$yabai_config"
-        /usr/bin/sed -i '' -E "s/^yabai -m config right_padding .*/yabai -m config right_padding $spacing/" "$yabai_config"
+        /usr/bin/sed -i '' -E "s/^yabai -m config left_padding .*/yabai -m config left_padding $left_gap/" "$yabai_config"
+        /usr/bin/sed -i '' -E "s/^yabai -m config right_padding .*/yabai -m config right_padding $right_gap/" "$yabai_config"
         /usr/bin/sed -i '' -E "s/^yabai -m config window_gap .*/yabai -m config window_gap $spacing/" "$yabai_config"
         /usr/bin/sed -i '' -E "s/^yabai -m config top_padding .*/yabai -m config top_padding $top_gap/" "$yabai_config"
         /usr/bin/sed -i '' -E "s/^yabai -m config bottom_padding .*/yabai -m config bottom_padding $bottom_gap/" "$yabai_config"
@@ -196,8 +209,8 @@ set_profile_bar_position() {
 
 apply_bar_position() {
   local position=$1
-  [[ $position == "top" || $position == "bottom" ]] || {
-    print -u2 'Bar position must be top or bottom.'
+  [[ $position == "top" || $position == "bottom" || $position == "left" || $position == "right" ]] || {
+    print -u2 'Bar position must be top, bottom, left, or right.'
     return 1
   }
   local profile
@@ -210,14 +223,25 @@ apply_bar_position() {
     yabai)
       local spacing=8
       local reserved_gap=42
-      if [[ $(configured_window_gaps) == "false" ]]; then spacing=0; reserved_gap=34; fi
+      if [[ $position == "left" || $position == "right" ]]; then reserved_gap=56; fi
+      if [[ $(configured_window_gaps) == "false" ]]; then
+        spacing=0
+        if [[ $position == "left" || $position == "right" ]]; then reserved_gap=48; else reserved_gap=34; fi
+      fi
       local top_gap=$spacing
       local bottom_gap=$spacing
-      if [[ $position == "top" ]]; then top_gap=$reserved_gap; else bottom_gap=$reserved_gap; fi
+      local left_gap=$spacing
+      local right_gap=$spacing
+      case $position in
+        top) top_gap=$reserved_gap ;;
+        bottom) bottom_gap=$reserved_gap ;;
+        left) left_gap=$reserved_gap ;;
+        right) right_gap=$reserved_gap ;;
+      esac
       "$yabai_command" -m config top_padding "$top_gap"
       "$yabai_command" -m config bottom_padding "$bottom_gap"
-      "$yabai_command" -m config left_padding "$spacing"
-      "$yabai_command" -m config right_padding "$spacing"
+      "$yabai_command" -m config left_padding "$left_gap"
+      "$yabai_command" -m config right_padding "$right_gap"
       "$yabai_command" -m config window_gap "$spacing"
       ;;
   esac
@@ -591,7 +615,11 @@ case ${1:-status} in
     esac
     ;;
   bar-position)
-    require_argument "${2:-}" "omacos wm bar-position <top|bottom>"
+    require_argument "${2:-}" "omacos wm bar-position <top|bottom|left|right>"
+    [[ $2 == "top" || $2 == "bottom" || $2 == "left" || $2 == "right" ]] || {
+      print -u2 'Bar position must be top, bottom, left, or right.'
+      exit 1
+    }
     persist_bar_position "$2"
     apply_bar_position "$2"
     ;;

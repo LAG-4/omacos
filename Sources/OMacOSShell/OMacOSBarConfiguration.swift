@@ -3,6 +3,12 @@ import Foundation
 enum OMacOSBarPosition: String, Codable, CaseIterable {
     case top
     case bottom
+    case left
+    case right
+
+    var isVertical: Bool {
+        self == .left || self == .right
+    }
 }
 
 struct OMacOSBarConfiguration: Codable, Equatable {

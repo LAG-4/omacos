@@ -61,16 +61,19 @@ final class OMacOSBarWindowCoordinator {
     }
 
     private func makeBarPanel(for screen: NSScreen) -> NSPanel {
-        let barHeight: CGFloat = 34
-        let originY = configuration.position == .top
-            ? screen.frame.maxY - barHeight
-            : screen.frame.minY
-        let panelFrame = NSRect(
-            x: screen.frame.minX,
-            y: originY,
-            width: screen.frame.width,
-            height: barHeight
-        )
+        let horizontalBarHeight: CGFloat = 34
+        let verticalBarWidth: CGFloat = 48
+        let panelFrame: NSRect
+        switch configuration.position {
+        case .top:
+            panelFrame = NSRect(x: screen.frame.minX, y: screen.frame.maxY - horizontalBarHeight, width: screen.frame.width, height: horizontalBarHeight)
+        case .bottom:
+            panelFrame = NSRect(x: screen.frame.minX, y: screen.frame.minY, width: screen.frame.width, height: horizontalBarHeight)
+        case .left:
+            panelFrame = NSRect(x: screen.frame.minX, y: screen.frame.minY, width: verticalBarWidth, height: screen.frame.height)
+        case .right:
+            panelFrame = NSRect(x: screen.frame.maxX - verticalBarWidth, y: screen.frame.minY, width: verticalBarWidth, height: screen.frame.height)
+        }
         let panel = NSPanel(
             contentRect: panelFrame,
             styleMask: [.borderless, .nonactivatingPanel],
@@ -181,13 +184,17 @@ final class OMacOSPanelCoordinator: NSObject {
         systemPanelState.resetPanelSearch()
         let panelSize = size(for: panelID)
         let barConfiguration = OMacOSBarConfiguration.load()
-        let panelY = barConfiguration.position == .top
-            ? targetScreen.frame.maxY - panelSize.height - 44
-            : targetScreen.frame.minY + 44
-        let panelOrigin = NSPoint(
-            x: targetScreen.frame.midX - panelSize.width / 2,
-            y: panelY
-        )
+        let panelOrigin: NSPoint
+        switch barConfiguration.position {
+        case .top:
+            panelOrigin = NSPoint(x: targetScreen.frame.midX - panelSize.width / 2, y: targetScreen.frame.maxY - panelSize.height - 44)
+        case .bottom:
+            panelOrigin = NSPoint(x: targetScreen.frame.midX - panelSize.width / 2, y: targetScreen.frame.minY + 44)
+        case .left:
+            panelOrigin = NSPoint(x: targetScreen.frame.minX + 58, y: targetScreen.frame.midY - panelSize.height / 2)
+        case .right:
+            panelOrigin = NSPoint(x: targetScreen.frame.maxX - panelSize.width - 58, y: targetScreen.frame.midY - panelSize.height / 2)
+        }
         let panel = makePanel(panelID, size: panelSize)
         panel.setFrameOrigin(panelOrigin)
         if panelID != .osd {
@@ -540,7 +547,7 @@ enum OMacOSShellMain {
            arguments.indices.contains(barPositionIndex + 1) {
             let rawPosition = arguments[barPositionIndex + 1]
             guard let position = OMacOSBarPosition(rawValue: rawPosition) else {
-                FileHandle.standardError.write(Data("Bar position must be top or bottom.\n".utf8))
+                FileHandle.standardError.write(Data("Bar position must be top, bottom, left, or right.\n".utf8))
                 Foundation.exit(2)
             }
             do {
