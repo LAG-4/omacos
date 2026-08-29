@@ -6,7 +6,7 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 623 | 131 | 0 | 44 | 81 |
+| 879 | 625 | 131 | 0 | 42 | 81 |
 
 ## Remaining portable work
 
@@ -46,10 +46,8 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 | binding | `default/hypr/bindings/utilities.lua:39` | Make webcam overlay smaller | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | binding | `default/hypr/bindings/utilities.lua:40` | Make webcam overlay larger | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
 | dynamic-binding-family | `group-windows` | group windows 1 through 5 | Hyprland window groups do not have a common AeroSpace, Rift, and SIP-on yabai abstraction. |
-| menu-entry | `style.bar.position.bottom` | Bottom | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `style.bar.position.left` | Left | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `style.bar.position.right` | Right | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
-| menu-entry | `style.bar.transparency` | Transparency | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `style.unlock` | Unlock | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `system.hibernate` | Hibernate | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
 | menu-entry | `trigger.capture.screenrecord.webcam` | With desktop + microphone audio + webcam | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |

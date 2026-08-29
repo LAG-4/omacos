@@ -63,10 +63,14 @@ export OMACOS_FAKE_OSASCRIPT_LOG="$temporary_directory/osascript.log"
 "$project_root/scripts/menu.zsh" run style.font
 "$project_root/scripts/menu.zsh" run update.channel.stable
 "$project_root/scripts/menu.zsh" run update.channel.edge
+"$project_root/scripts/menu.zsh" run style.bar.position.bottom
+"$project_root/scripts/menu.zsh" run style.bar.transparency
 rg -Fq 'shell toggle-panel keybindings' "$temporary_directory/cli.log"
 rg -Fq 'toggle toggle idle' "$temporary_directory/cli.log"
 rg -Fq 'channel set stable' "$temporary_directory/cli.log"
 rg -Fq 'channel set edge' "$temporary_directory/cli.log"
+rg -Fq 'bar position bottom' "$temporary_directory/cli.log"
+rg -Fq 'bar transparency toggle' "$temporary_directory/cli.log"
 rg -Fq -- '-a Font Book' "$temporary_directory/open.log"
 
 set +e

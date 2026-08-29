@@ -8,7 +8,8 @@ temporary_home=$(mktemp -d -t omacos-window-manager-test.XXXXXX)
 trap 'rm -rf "$temporary_home"' EXIT
 command_log="$temporary_home/window-manager.log"
 fake_bin="$temporary_home/bin"
-mkdir -p "$fake_bin" "$temporary_home/.config/rift" "$temporary_home/.config/yabai"
+mkdir -p "$fake_bin" "$temporary_home/.config/omacos" "$temporary_home/.config/rift" "$temporary_home/.config/yabai"
+print '{"position":"bottom","transparent":false}' > "$temporary_home/.config/omacos/bar.json"
 
 print "original rift config" > "$temporary_home/.config/rift/config.toml"
 print "original yabai config" > "$temporary_home/.config/yabai/yabairc"
@@ -64,6 +65,8 @@ export OMACOS_WM_TEST_LOG="$command_log"
 wm="$project_root/scripts/window-manager.zsh"
 "$wm" init
 [[ $("$wm" profile) == "aerospace" ]]
+rg -q '^gaps.outer.top = 8$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^gaps.outer.bottom = 42$' "$temporary_home/.config/aerospace/aerospace.toml"
 [[ $("$wm" workspace-current) == "4" ]]
 "$wm" focus left
 "$wm" workspace-move 7
@@ -90,6 +93,8 @@ rg -Fq 'omacos-shell --window-width restore' "$command_log"
 
 "$wm" profile rift >/dev/null
 [[ $("$wm" profile) == "rift" ]]
+rg -q '^top = 8.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^bottom = 42.0$' "$temporary_home/.config/rift/config.toml"
 [[ $("$wm" workspace-current) == "3" ]]
 "$wm" toggle-floating
 "$wm" toggle-workspace-layout
@@ -107,6 +112,8 @@ rg -Fq 'rift-cli execute layout join-window right' "$command_log"
 
 "$wm" profile yabai >/dev/null
 [[ $("$wm" profile) == "yabai" ]]
+rg -q '^yabai -m config top_padding 8$' "$temporary_home/.config/yabai/yabairc"
+rg -q '^yabai -m config bottom_padding 42$' "$temporary_home/.config/yabai/yabairc"
 [[ $("$wm" workspace-current) == "5" ]]
 "$wm" focus left
 "$wm" move down
@@ -116,6 +123,12 @@ rg -Fq 'yabai -m window --focus west' "$command_log"
 rg -Fq 'yabai -m window --warp south' "$command_log"
 rg -Fq 'yabai -m space --layout stack' "$command_log"
 rg -Fq 'yabai -m window --scratchpad omacos-scratchpad' "$command_log"
+
+"$wm" bar-position top
+rg -q '^gaps.outer.top = 42$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^top = 42.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config top_padding 42$' "$temporary_home/.config/yabai/yabairc"
+rg -Fq 'yabai -m config bottom_padding 8' "$command_log"
 
 "$wm" restore
 [[ $(<"$temporary_home/.config/rift/config.toml") == "original rift config" ]]

@@ -10,6 +10,7 @@ final class OMacOSBarWindowCoordinator {
     private let togglePanel: (OMacOSPanelID) -> Void
     private var barPanels: [NSPanel] = []
     private var barsHidden: Bool
+    private var configuration: OMacOSBarConfiguration
 
     init(
         barState: OMacOSBarState,
@@ -28,6 +29,7 @@ final class OMacOSBarWindowCoordinator {
         barsHidden = FileManager.default.fileExists(
             atPath: homeDirectory + "/.local/state/omacos/toggles/bar-hidden.enabled"
         )
+        configuration = OMacOSBarConfiguration.load(environment: environment)
     }
 
     /// Rebuilds one non-activating bar panel for every connected display.
@@ -48,11 +50,24 @@ final class OMacOSBarWindowCoordinator {
         }
     }
 
+    func setBarPosition(_ position: OMacOSBarPosition) {
+        configuration.position = position
+        rebuildDisplayBars()
+    }
+
+    func setBarTransparency(_ transparent: Bool) {
+        configuration.transparent = transparent
+        rebuildDisplayBars()
+    }
+
     private func makeBarPanel(for screen: NSScreen) -> NSPanel {
         let barHeight: CGFloat = 34
+        let originY = configuration.position == .top
+            ? screen.frame.maxY - barHeight
+            : screen.frame.minY
         let panelFrame = NSRect(
             x: screen.frame.minX,
-            y: screen.frame.maxY - barHeight,
+            y: originY,
             width: screen.frame.width,
             height: barHeight
         )
@@ -75,6 +90,7 @@ final class OMacOSBarWindowCoordinator {
                 systemState: systemState,
                 agentStore: agentStore,
                 dictationController: dictationController,
+                configuration: configuration,
                 togglePanel: togglePanel
             )
         )
@@ -164,9 +180,13 @@ final class OMacOSPanelCoordinator: NSObject {
         activePanel?.close()
         systemPanelState.resetPanelSearch()
         let panelSize = size(for: panelID)
+        let barConfiguration = OMacOSBarConfiguration.load()
+        let panelY = barConfiguration.position == .top
+            ? targetScreen.frame.maxY - panelSize.height - 44
+            : targetScreen.frame.minY + 44
         let panelOrigin = NSPoint(
             x: targetScreen.frame.midX - panelSize.width / 2,
-            y: targetScreen.frame.maxY - panelSize.height - 44
+            y: panelY
         )
         let panel = makePanel(panelID, size: panelSize)
         panel.setFrameOrigin(panelOrigin)
@@ -343,6 +363,15 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
             if let hidden = notification.userInfo?[OMacOSShellMessage.valueKey] as? Bool {
                 barCoordinator?.setBarsHidden(hidden)
             }
+        case OMacOSShellMessage.setBarPositionAction:
+            if let rawPosition = notification.userInfo?[OMacOSShellMessage.valueKey] as? String,
+               let position = OMacOSBarPosition(rawValue: rawPosition) {
+                barCoordinator?.setBarPosition(position)
+            }
+        case OMacOSShellMessage.setBarTransparencyAction:
+            if let transparent = notification.userInfo?[OMacOSShellMessage.valueKey] as? Bool {
+                barCoordinator?.setBarTransparency(transparent)
+            }
         case OMacOSShellMessage.toggleDictationAction:
             switch notification.userInfo?[OMacOSShellMessage.valueKey] as? String {
             case "start": dictationController?.start()
@@ -458,6 +487,57 @@ enum OMacOSShellMain {
             }
             print("\(reminder.id.uuidString)\t\(reminder.dueAt.ISO8601Format())\t\(reminder.text)")
             return
+        }
+
+        if arguments.contains("--bar-status") {
+            do {
+                let data = try JSONEncoder().encode(OMacOSBarConfiguration.load())
+                print(String(decoding: data, as: UTF8.self))
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
+        if let barPositionIndex = arguments.firstIndex(of: "--bar-position"),
+           arguments.indices.contains(barPositionIndex + 1) {
+            let rawPosition = arguments[barPositionIndex + 1]
+            guard let position = OMacOSBarPosition(rawValue: rawPosition) else {
+                FileHandle.standardError.write(Data("Bar position must be top or bottom.\n".utf8))
+                Foundation.exit(2)
+            }
+            do {
+                var configuration = OMacOSBarConfiguration.load()
+                configuration.position = position
+                try configuration.save()
+                OMacOSShellMessage.postSetBarPosition(position)
+                RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
+        if let transparencyIndex = arguments.firstIndex(of: "--bar-transparency"),
+           arguments.indices.contains(transparencyIndex + 1) {
+            let rawTransparency = arguments[transparencyIndex + 1]
+            guard rawTransparency == "true" || rawTransparency == "false" else {
+                FileHandle.standardError.write(Data("Bar transparency must be true or false.\n".utf8))
+                Foundation.exit(2)
+            }
+            do {
+                var configuration = OMacOSBarConfiguration.load()
+                configuration.transparent = rawTransparency == "true"
+                try configuration.save()
+                OMacOSShellMessage.postSetBarTransparency(configuration.transparent)
+                RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
+                return
+            } catch {
+                FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
         }
 
         if let barHiddenIndex = arguments.firstIndex(of: "--set-bar-hidden"),

@@ -4247,10 +4247,10 @@
         "kind": "menu-entry",
         "id": "style.bar.transparency",
         "title": "Transparency",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
         "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "notes": "The entry routes to an OMacOS workflow, native panel, application, or System Settings.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -4297,10 +4297,10 @@
         "kind": "menu-entry",
         "id": "style.bar.position.bottom",
         "title": "Bottom",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
         "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "notes": "The entry routes to an OMacOS workflow, native panel, application, or System Settings.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -8829,10 +8829,10 @@
   },
   "summary": {
     "total": 879,
-    "implemented": 623,
+    "implemented": 625,
     "limited": 131,
     "pending": 0,
-    "unavailable": 44,
+    "unavailable": 42,
     "notApplicable": 81
   }
 }

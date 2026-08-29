@@ -8,6 +8,8 @@ enum OMacOSShellMessage {
     static let togglePanelAction = "toggle-panel"
     static let toggleMenuAction = "toggle-menu"
     static let setBarHiddenAction = "set-bar-hidden"
+    static let setBarPositionAction = "set-bar-position"
+    static let setBarTransparencyAction = "set-bar-transparency"
     static let clearClipboardAction = "clear-clipboard"
     static let toggleDictationAction = "toggle-dictation"
 
@@ -54,6 +56,24 @@ enum OMacOSShellMessage {
             notificationName,
             object: nil,
             userInfo: [actionKey: clearClipboardAction],
+            deliverImmediately: true
+        )
+    }
+
+    static func postSetBarPosition(_ position: OMacOSBarPosition) {
+        DistributedNotificationCenter.default().postNotificationName(
+            notificationName,
+            object: nil,
+            userInfo: [actionKey: setBarPositionAction, valueKey: position.rawValue],
+            deliverImmediately: true
+        )
+    }
+
+    static func postSetBarTransparency(_ transparent: Bool) {
+        DistributedNotificationCenter.default().postNotificationName(
+            notificationName,
+            object: nil,
+            userInfo: [actionKey: setBarTransparencyAction, valueKey: transparent],
             deliverImmediately: true
         )
     }

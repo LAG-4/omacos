@@ -19,6 +19,10 @@ OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-menu
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" dictation toggle
 OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --clipboard-clear
+OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" bar position bottom >/dev/null
+OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" bar transparency enable >/dev/null
+bar_status=$(OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" bar status)
+jq -e '.position == "bottom" and .transparent == true' <<< "$bar_status" >/dev/null
 
 set +e
 invalid_output=$(OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel missing 2>&1)

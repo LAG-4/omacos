@@ -108,6 +108,8 @@ omacos clipboard list
 omacos monitor show
 omacos power show
 omacos snapshot list
+omacos bar position bottom
+omacos bar transparency toggle
 omacos uninstall
 ```
 
@@ -123,6 +125,8 @@ omacos wm profile aerospace
 OMacOS does not weaken SIP, edit sudoers, or load yabai's scripting addition. `omacos wm power-mode guide` explains the separate upstream process and its security tradeoff. Uninstall restores Rift and yabai configuration files that existed before OMacOS first managed them.
 
 The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, application defaults, agent usage, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
+
+The horizontal bar can be placed at the top or bottom and switched between opaque and translucent rendering at runtime. OMacOS updates the active AeroSpace, Rift, or yabai reserved edge when its position changes so tiled windows continue to avoid it. Left and right bar positions remain explicit limitations because they require a separate vertical widget layout rather than rotating the Quattro design.
 
 Legacy Quattro command-group names remain valid where the underlying outcome is portable. For example, `omacos audio`, `omacos battery`, `omacos bluetooth`, `omacos clipboard`, `omacos monitor`, `omacos power`, `omacos snapshot`, `omacos tailscale`, and `omacos wifi` route into the same native panels and service adapters instead of existing only as documentation aliases.
 

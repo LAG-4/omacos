@@ -100,9 +100,11 @@ run_menu_action() {
     style.theme) open_panel themes ;;
     style.background) open_panel wallpapers ;;
     style.font) open_application "Font Book" ;;
-    style.bar|style.bar.position|style.bar.position.top) "$omacos_command" toggle disable bar ;;
-    style.bar.position.bottom|style.bar.position.left|style.bar.position.right) unsupported "the current native bar is top-positioned" ;;
-    style.bar.transparency) unsupported "native bar transparency is theme-controlled in the current release" ;;
+    style.bar|style.bar.position) "$omacos_command" bar status ;;
+    style.bar.position.top) "$omacos_command" bar position top ;;
+    style.bar.position.bottom) "$omacos_command" bar position bottom ;;
+    style.bar.position.left|style.bar.position.right) unsupported "the horizontal native bar does not have a vertical layout" ;;
+    style.bar.transparency) "$omacos_command" bar transparency toggle ;;
     style.hyprland) "$omacos_command" wm status ;;
     style.unlock) unsupported "Apple owns the secure login and FileVault unlock interface" ;;
     style.screensaver|style.screensaver.text|style.screensaver.image|style.screensaver.default) open_settings "x-apple.systempreferences:com.apple.ScreenSaver-Settings.extension" ;;

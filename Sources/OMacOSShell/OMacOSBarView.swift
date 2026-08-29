@@ -5,6 +5,7 @@ struct OMacOSBarView: View {
     @ObservedObject var systemState: OMacOSSystemPanelState
     @ObservedObject var agentStore: OMacOSAgentUsageStore
     @ObservedObject var dictationController: OMacOSDictationController
+    let configuration: OMacOSBarConfiguration
     let togglePanel: (OMacOSPanelID) -> Void
 
     private var colors: OMacOSThemeColors { barState.theme.colors }
@@ -80,8 +81,11 @@ struct OMacOSBarView: View {
         .foregroundStyle(Color(omacosHex: colors.foreground))
         .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(omacosHex: colors.background))
-        .overlay(alignment: .bottom) {
+        .background(
+            Color(omacosHex: colors.background)
+                .opacity(configuration.transparent ? 0.76 : 1)
+        )
+        .overlay(alignment: configuration.position == .top ? .bottom : .top) {
             Rectangle()
                 .fill(Color(omacosHex: colors.selection))
                 .frame(height: 1)

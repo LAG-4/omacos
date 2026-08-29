@@ -52,8 +52,27 @@ case $group in
       show|enable) "$omacos_root/scripts/toggles.zsh" disable bar ;;
       hide|disable) "$omacos_root/scripts/toggles.zsh" enable bar ;;
       toggle) "$omacos_root/scripts/toggles.zsh" toggle bar ;;
-      status) "$omacos_root/scripts/toggles.zsh" status bar ;;
-      *) print -u2 'Usage: omacos bar <show|hide|toggle|status>'; exit 1 ;;
+      status) "$shell_binary" --bar-status ;;
+      position)
+        position=${3:-}
+        [[ $position == "top" || $position == "bottom" ]] || { print -u2 'Usage: omacos bar position <top|bottom>'; exit 1; }
+        "$shell_binary" --bar-position "$position"
+        "$omacos_root/scripts/window-manager.zsh" bar-position "$position"
+        print "OMacOS bar position: $position"
+        ;;
+      transparency)
+        transparency_action=${3:-toggle}
+        current_transparency=$("$shell_binary" --bar-status | jq -r '.transparent')
+        case $transparency_action in
+          enable) transparent=true ;;
+          disable) transparent=false ;;
+          toggle) [[ $current_transparency == "true" ]] && transparent=false || transparent=true ;;
+          *) print -u2 'Usage: omacos bar transparency <toggle|enable|disable>'; exit 1 ;;
+        esac
+        "$shell_binary" --bar-transparency "$transparent"
+        print "OMacOS bar transparency: $transparent"
+        ;;
+      *) print -u2 'Usage: omacos bar <show|hide|toggle|status|position top|bottom|transparency toggle|enable|disable>'; exit 1 ;;
     esac
     ;;
   battery)

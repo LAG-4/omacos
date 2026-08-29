@@ -67,6 +67,89 @@ record_optional_config_backup() {
   fi
 }
 
+configured_bar_position() {
+  local bar_configuration="$omacos_home/.config/omacos/bar.json"
+  if [[ -f $bar_configuration ]]; then
+    local position
+    position=$(jq -r '.position // "top"' "$bar_configuration" 2>/dev/null || print top)
+    [[ $position == "top" || $position == "bottom" ]] && print -r -- "$position" || print top
+  else
+    print top
+  fi
+}
+
+set_rift_bar_gaps() {
+  local target=$1
+  local top_gap=$2
+  local bottom_gap=$3
+  local temporary_config
+  temporary_config=$(mktemp -t omacos-rift-gaps.XXXXXX)
+  awk -v top_gap="$top_gap.0" -v bottom_gap="$bottom_gap.0" '
+    /^\[settings\.layout\.gaps\.outer\]$/ { in_outer=1; print; next }
+    /^\[/ { in_outer=0 }
+    in_outer && /^top = / { print "top = " top_gap; next }
+    in_outer && /^bottom = / { print "bottom = " bottom_gap; next }
+    { print }
+  ' "$target" > "$temporary_config"
+  mv "$temporary_config" "$target"
+}
+
+set_profile_bar_position() {
+  local profile=$1
+  local position=$2
+  local top_gap=8
+  local bottom_gap=8
+  if [[ $position == "top" ]]; then
+    top_gap=42
+  else
+    bottom_gap=42
+  fi
+
+  case $profile in
+    aerospace)
+      local aerospace_config="$omacos_home/.config/aerospace/aerospace.toml"
+      if [[ -f $aerospace_config ]]; then
+        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.top = .*/gaps.outer.top = $top_gap/" "$aerospace_config"
+        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.bottom = .*/gaps.outer.bottom = $bottom_gap/" "$aerospace_config"
+      fi
+      ;;
+    rift)
+      local rift_config="$omacos_home/.config/rift/config.toml"
+      [[ -f $rift_config ]] && set_rift_bar_gaps "$rift_config" "$top_gap" "$bottom_gap"
+      ;;
+    yabai)
+      local yabai_config="$omacos_home/.config/yabai/yabairc"
+      if [[ -f $yabai_config ]]; then
+        /usr/bin/sed -i '' -E "s/^yabai -m config top_padding .*/yabai -m config top_padding $top_gap/" "$yabai_config"
+        /usr/bin/sed -i '' -E "s/^yabai -m config bottom_padding .*/yabai -m config bottom_padding $bottom_gap/" "$yabai_config"
+      fi
+      ;;
+  esac
+}
+
+apply_bar_position() {
+  local position=$1
+  [[ $position == "top" || $position == "bottom" ]] || {
+    print -u2 'Bar position must be top or bottom.'
+    return 1
+  }
+  local profile
+  for profile in aerospace rift yabai; do
+    set_profile_bar_position "$profile" "$position"
+  done
+  case $(current_profile) in
+    aerospace) "$aerospace_command" reload-config >/dev/null 2>&1 || true ;;
+    rift) : ;;
+    yabai)
+      local top_gap=8
+      local bottom_gap=8
+      if [[ $position == "top" ]]; then top_gap=42; else bottom_gap=42; fi
+      "$yabai_command" -m config top_padding "$top_gap"
+      "$yabai_command" -m config bottom_padding "$bottom_gap"
+      ;;
+  esac
+}
+
 install_profile() {
   local profile=$1
   local target
@@ -76,6 +159,7 @@ install_profile() {
       target="$omacos_home/.config/aerospace/aerospace.toml"
       mkdir -p "${target:h}"
       cp "$omacos_root/config/aerospace/aerospace.toml" "$target"
+      set_profile_bar_position aerospace "$(configured_bar_position)"
       ;;
     rift)
       if ! $test_mode && ! command -v "$rift_command" >/dev/null 2>&1; then
@@ -85,6 +169,7 @@ install_profile() {
       record_optional_config_backup rift "$target"
       mkdir -p "${target:h}"
       cp "$omacos_root/config/rift/config.toml" "$target"
+      set_profile_bar_position rift "$(configured_bar_position)"
       ;;
     yabai)
       if ! $test_mode && ! command -v "$yabai_command" >/dev/null 2>&1; then
@@ -95,6 +180,7 @@ install_profile() {
       mkdir -p "${target:h}"
       cp "$omacos_root/config/yabai/yabairc" "$target"
       chmod +x "$target"
+      set_profile_bar_position yabai "$(configured_bar_position)"
       ;;
     *)
       print -u2 "Unknown window-manager profile: $profile"
@@ -415,6 +501,10 @@ case ${1:-status} in
       *) print -u2 "Usage: omacos wm power-mode <guide|status>"; exit 1 ;;
     esac
     ;;
+  bar-position)
+    require_argument "${2:-}" "omacos wm bar-position <top|bottom>"
+    apply_bar_position "$2"
+    ;;
   restore)
     stop_profile "$(current_profile)"
     restore_optional_configs
@@ -423,7 +513,7 @@ case ${1:-status} in
     run_action "$@"
     ;;
   *)
-    print -u2 "Usage: omacos wm <profile|status|install|power-mode|ACTION>"
+    print -u2 "Usage: omacos wm <profile|status|install|power-mode|bar-position|ACTION>"
     exit 1
     ;;
 esac
