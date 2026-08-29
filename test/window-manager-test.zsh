@@ -130,6 +130,17 @@ rg -q '^top = 42.0$' "$temporary_home/.config/rift/config.toml"
 rg -q '^yabai -m config top_padding 42$' "$temporary_home/.config/yabai/yabairc"
 rg -Fq 'yabai -m config bottom_padding 8' "$command_log"
 
+"$wm" gaps disable
+[[ $("$wm" gaps status) == 'window-gaps=false' ]]
+rg -q '^gaps.inner.horizontal = 0$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^gaps.outer.top = 34$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^horizontal = 0.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^top = 34.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config window_gap 0$' "$temporary_home/.config/yabai/yabairc"
+rg -Fq 'yabai -m config window_gap 0' "$command_log"
+"$wm" gaps toggle
+[[ $("$wm" gaps status) == 'window-gaps=true' ]]
+
 "$wm" restore
 [[ $(<"$temporary_home/.config/rift/config.toml") == "original rift config" ]]
 [[ $(<"$temporary_home/.config/yabai/yabairc") == "original yabai config" ]]

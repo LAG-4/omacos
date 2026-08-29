@@ -85,7 +85,7 @@ run_menu_action() {
     trigger.toggle.nightlight) "$omacos_command" toggle toggle night-light ;;
     trigger.toggle.top-bar) "$omacos_command" toggle toggle bar ;;
     trigger.toggle.workspace-layout) "$omacos_command" wm toggle-workspace-layout ;;
-    trigger.toggle.window-gaps) unsupported "window gap mutation is not consistent across all three window-manager profiles yet" ;;
+    trigger.toggle.window-gaps) "$omacos_command" wm gaps toggle ;;
     trigger.toggle.one-window-ratio) unsupported "macOS window managers do not share Hyprland's single-window aspect rule" ;;
     trigger.toggle.battery-percentage) open_settings "x-apple.systempreferences:com.apple.ControlCenter-Settings.extension" ;;
     trigger.toggle.screensaver) open_settings "x-apple.systempreferences:com.apple.ScreenSaver-Settings.extension" ;;

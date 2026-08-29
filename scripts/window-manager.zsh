@@ -78,17 +78,44 @@ configured_bar_position() {
   fi
 }
 
-set_rift_bar_gaps() {
+persist_bar_position() {
+  local position=$1
+  local bar_configuration="$omacos_home/.config/omacos/bar.json"
+  mkdir -p "${bar_configuration:h}"
+  if [[ -f $bar_configuration ]]; then
+    local temporary_configuration
+    temporary_configuration=$(mktemp -t omacos-bar-configuration.XXXXXX)
+    jq --arg position "$position" '.position = $position' "$bar_configuration" > "$temporary_configuration"
+    mv "$temporary_configuration" "$bar_configuration"
+  else
+    jq -nc --arg position "$position" '{position:$position,transparent:false}' > "$bar_configuration"
+  fi
+}
+
+configured_window_gaps() {
+  local gap_state="$omacos_home/.config/omacos/window-gaps"
+  if [[ -f $gap_state && $(<"$gap_state") == "false" ]]; then
+    print false
+  else
+    print true
+  fi
+}
+
+set_rift_layout_gaps() {
   local target=$1
   local top_gap=$2
   local bottom_gap=$3
+  local spacing=$4
   local temporary_config
   temporary_config=$(mktemp -t omacos-rift-gaps.XXXXXX)
-  awk -v top_gap="$top_gap.0" -v bottom_gap="$bottom_gap.0" '
-    /^\[settings\.layout\.gaps\.outer\]$/ { in_outer=1; print; next }
-    /^\[/ { in_outer=0 }
+  awk -v top_gap="$top_gap.0" -v bottom_gap="$bottom_gap.0" -v spacing="$spacing.0" '
+    /^\[settings\.layout\.gaps\.outer\]$/ { in_outer=1; in_inner=0; print; next }
+    /^\[settings\.layout\.gaps\.inner\]$/ { in_outer=0; in_inner=1; print; next }
+    /^\[/ { in_outer=0; in_inner=0 }
     in_outer && /^top = / { print "top = " top_gap; next }
     in_outer && /^bottom = / { print "bottom = " bottom_gap; next }
+    in_outer && /^(left|right) = / { split($0, parts, " = "); print parts[1] " = " spacing; next }
+    in_inner && /^(horizontal|vertical) = / { split($0, parts, " = "); print parts[1] " = " spacing; next }
     { print }
   ' "$target" > "$temporary_config"
   mv "$temporary_config" "$target"
@@ -97,29 +124,42 @@ set_rift_bar_gaps() {
 set_profile_bar_position() {
   local profile=$1
   local position=$2
-  local top_gap=8
-  local bottom_gap=8
+  local spacing=8
+  local reserved_gap=42
+  if [[ $(configured_window_gaps) == "false" ]]; then
+    spacing=0
+    reserved_gap=34
+  fi
+  local top_gap=$spacing
+  local bottom_gap=$spacing
   if [[ $position == "top" ]]; then
-    top_gap=42
+    top_gap=$reserved_gap
   else
-    bottom_gap=42
+    bottom_gap=$reserved_gap
   fi
 
   case $profile in
     aerospace)
       local aerospace_config="$omacos_home/.config/aerospace/aerospace.toml"
       if [[ -f $aerospace_config ]]; then
+        /usr/bin/sed -i '' -E "s/^gaps\\.inner\\.horizontal = .*/gaps.inner.horizontal = $spacing/" "$aerospace_config"
+        /usr/bin/sed -i '' -E "s/^gaps\\.inner\\.vertical = .*/gaps.inner.vertical = $spacing/" "$aerospace_config"
+        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.left = .*/gaps.outer.left = $spacing/" "$aerospace_config"
+        /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.right = .*/gaps.outer.right = $spacing/" "$aerospace_config"
         /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.top = .*/gaps.outer.top = $top_gap/" "$aerospace_config"
         /usr/bin/sed -i '' -E "s/^gaps\\.outer\\.bottom = .*/gaps.outer.bottom = $bottom_gap/" "$aerospace_config"
       fi
       ;;
     rift)
       local rift_config="$omacos_home/.config/rift/config.toml"
-      [[ -f $rift_config ]] && set_rift_bar_gaps "$rift_config" "$top_gap" "$bottom_gap"
+      [[ -f $rift_config ]] && set_rift_layout_gaps "$rift_config" "$top_gap" "$bottom_gap" "$spacing"
       ;;
     yabai)
       local yabai_config="$omacos_home/.config/yabai/yabairc"
       if [[ -f $yabai_config ]]; then
+        /usr/bin/sed -i '' -E "s/^yabai -m config left_padding .*/yabai -m config left_padding $spacing/" "$yabai_config"
+        /usr/bin/sed -i '' -E "s/^yabai -m config right_padding .*/yabai -m config right_padding $spacing/" "$yabai_config"
+        /usr/bin/sed -i '' -E "s/^yabai -m config window_gap .*/yabai -m config window_gap $spacing/" "$yabai_config"
         /usr/bin/sed -i '' -E "s/^yabai -m config top_padding .*/yabai -m config top_padding $top_gap/" "$yabai_config"
         /usr/bin/sed -i '' -E "s/^yabai -m config bottom_padding .*/yabai -m config bottom_padding $bottom_gap/" "$yabai_config"
       fi
@@ -141,13 +181,30 @@ apply_bar_position() {
     aerospace) "$aerospace_command" reload-config >/dev/null 2>&1 || true ;;
     rift) : ;;
     yabai)
-      local top_gap=8
-      local bottom_gap=8
-      if [[ $position == "top" ]]; then top_gap=42; else bottom_gap=42; fi
+      local spacing=8
+      local reserved_gap=42
+      if [[ $(configured_window_gaps) == "false" ]]; then spacing=0; reserved_gap=34; fi
+      local top_gap=$spacing
+      local bottom_gap=$spacing
+      if [[ $position == "top" ]]; then top_gap=$reserved_gap; else bottom_gap=$reserved_gap; fi
       "$yabai_command" -m config top_padding "$top_gap"
       "$yabai_command" -m config bottom_padding "$bottom_gap"
+      "$yabai_command" -m config left_padding "$spacing"
+      "$yabai_command" -m config right_padding "$spacing"
+      "$yabai_command" -m config window_gap "$spacing"
       ;;
   esac
+}
+
+apply_window_gaps() {
+  local enabled=$1
+  [[ $enabled == "true" || $enabled == "false" ]] || {
+    print -u2 'Window gaps must be true or false.'
+    return 1
+  }
+  mkdir -p "$omacos_home/.config/omacos"
+  print -r -- "$enabled" > "$omacos_home/.config/omacos/window-gaps"
+  apply_bar_position "$(configured_bar_position)"
 }
 
 install_profile() {
@@ -503,7 +560,23 @@ case ${1:-status} in
     ;;
   bar-position)
     require_argument "${2:-}" "omacos wm bar-position <top|bottom>"
+    persist_bar_position "$2"
     apply_bar_position "$2"
+    ;;
+  gaps)
+    case ${2:-status} in
+      status) print "window-gaps=$(configured_window_gaps)" ;;
+      enable) apply_window_gaps true ;;
+      disable) apply_window_gaps false ;;
+      toggle)
+        if [[ $(configured_window_gaps) == "true" ]]; then
+          apply_window_gaps false
+        else
+          apply_window_gaps true
+        fi
+        ;;
+      *) print -u2 'Usage: omacos wm gaps <status|enable|disable|toggle>'; exit 1 ;;
+    esac
     ;;
   restore)
     stop_profile "$(current_profile)"
@@ -513,7 +586,7 @@ case ${1:-status} in
     run_action "$@"
     ;;
   *)
-    print -u2 "Usage: omacos wm <profile|status|install|power-mode|bar-position|ACTION>"
+    print -u2 "Usage: omacos wm <profile|status|install|power-mode|bar-position|gaps|ACTION>"
     exit 1
     ;;
 esac

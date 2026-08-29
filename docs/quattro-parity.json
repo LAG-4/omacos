@@ -3013,10 +3013,10 @@
         "kind": "binding",
         "id": "default/hypr/bindings/utilities.lua:20",
         "title": "Toggle window gaps",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
+        "route": "config/keybindings.json",
+        "notes": "Right Option dispatches the matching outcome through Karabiner and an OMacOS adapter.",
         "source": "default/hypr/bindings/utilities.lua"
       },
       {
@@ -4147,10 +4147,10 @@
         "kind": "menu-entry",
         "id": "trigger.toggle.window-gaps",
         "title": "Window Gaps",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
+        "implementationStatus": "implemented",
+        "grade": "close-substitute",
         "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "notes": "The entry routes to an OMacOS workflow, native panel, application, or System Settings.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -8829,10 +8829,10 @@
   },
   "summary": {
     "total": 879,
-    "implemented": 625,
+    "implemented": 627,
     "limited": 131,
     "pending": 0,
-    "unavailable": 42,
+    "unavailable": 40,
     "notApplicable": 81
   }
 }

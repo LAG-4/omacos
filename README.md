@@ -61,6 +61,7 @@ Hold Right Option and press:
 | `Super + T` | Toggle floating and tiling |
 | `Super + F` | Toggle fullscreen |
 | `Super + J` | Toggle split orientation |
+| `Super + Shift + Backspace` | Toggle window gaps |
 | `Super + S` | Summon the scratchpad workspace |
 | `Super + Option + S` | Move a window to the scratchpad |
 
@@ -127,6 +128,8 @@ OMacOS does not weaken SIP, edit sudoers, or load yabai's scripting addition. `o
 The native shell exposes command menu, keybindings, clipboard, emoji, capture, reminders, themes, backgrounds, application defaults, agent usage, system, audio, Bluetooth, network, display, calendar, power, and activity panels. The right-side bar icons and the corresponding Super shortcuts open the same panel through one stable command boundary.
 
 The horizontal bar can be placed at the top or bottom and switched between opaque and translucent rendering at runtime. OMacOS updates the active AeroSpace, Rift, or yabai reserved edge when its position changes so tiled windows continue to avoid it. Left and right bar positions remain explicit limitations because they require a separate vertical widget layout rather than rotating the Quattro design.
+
+Window gaps can be toggled with the original Quattro shortcut, through the command menu, or with `omacos wm gaps toggle`. The setting rewrites each managed profile consistently and preserves the 34-point bar reservation on the selected edge even when all other spacing is zero.
 
 Legacy Quattro command-group names remain valid where the underlying outcome is portable. For example, `omacos audio`, `omacos battery`, `omacos bluetooth`, `omacos clipboard`, `omacos monitor`, `omacos power`, `omacos snapshot`, `omacos tailscale`, and `omacos wifi` route into the same native panels and service adapters instead of existing only as documentation aliases.
 

@@ -89,6 +89,7 @@
     { "key": "print_screen", "modifiers": ["option"], "description": "Color picker", "command": "$HOME/.local/bin/omacos capture color" },
     { "key": "print_screen", "modifiers": ["control"], "description": "Extract text (OCR) from screenshot", "command": "$HOME/.local/bin/omacos capture text" },
     { "key": "spacebar", "modifiers": ["shift"], "description": "Toggle top bar", "command": "$HOME/.local/bin/omacos toggle toggle bar" },
+    { "key": "delete_or_backspace", "modifiers": ["shift"], "description": "Toggle window gaps", "command": "$HOME/.local/bin/omacos wm gaps toggle" },
     { "key": "t", "modifiers": ["control", "option"], "description": "Show time", "command": "$HOME/.local/bin/omacos notice datetime" },
     { "key": "w", "modifiers": ["control", "option"], "description": "Toggle weather", "command": "$HOME/.local/bin/omacos notice weather" },
     { "key": "b", "modifiers": ["control", "option"], "description": "Show battery remaining", "command": "$HOME/.local/bin/omacos notice battery" },
