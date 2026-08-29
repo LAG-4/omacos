@@ -87,6 +87,8 @@ jq --slurpfile keys "$keybindings_path" '
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "optional-unsafe"; "omacos wm transparency toggle"; "The original shortcut controls focused-window opacity in manually enabled yabai power mode; AeroSpace and Rift have no equivalent compositor-opacity API."; $item.source)
       elif $isBound and $title == "Toggle single-window square aspect" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "implemented"; "native-replacement"; "omacos wm square-aspect-toggle"; "Accessibility resizes the focused window to a centered square and restores its saved frame on the next invocation."; $item.source)
+      elif $isBound and $title == "Pseudo window" then
+        parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos wm pseudo-toggle"; "The original chord floats the focused window, shrinks it to a retained centered size, and restores it on the next toggle. macOS cannot keep a reduced client surface inside a compositor-owned tile."; $item.source)
       elif $isBound and ($title == "Zoom in" or $title == "Reset zoom") then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "native-replacement"; ("omacos zoom " + (if $title == "Zoom in" then "in" else "reset" end)); "The original chord drives the supported macOS accessibility zoom shortcuts. The user must enable keyboard zoom in System Settings; OMacOS does not silently change accessibility preferences."; $item.source)
       elif $isBound and ($title | test("^Make webcam overlay")) then
@@ -151,7 +153,7 @@ jq --slurpfile keys "$keybindings_path" '
       elif $item.id == "trigger.capture.screenrecord.webcam" then
         parity("menu-entry"; $item.id; $item.label; "implemented"; "native-replacement"; "omacos capture recording --webcam"; "The native camera preview is captured visibly with the selected desktop region plus system and microphone audio."; "default/omarchy/omarchy-menu.jsonc")
       elif $item.id == "style.unlock" then
-        parity("menu-entry"; $item.id; $item.label; "unavailable"; "impossible"; "omacos menu run"; "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing."; "default/omarchy/omarchy-menu.jsonc")
+        parity("menu-entry"; $item.id; $item.label; "not-applicable"; "not-applicable"; "Apple FileVault preboot UI"; "Quattro themes the Plymouth boot-decryption prompt. Apple owns the authenticated FileVault preboot surface, which is outside a user-space macOS rice."; "default/omarchy/omarchy-menu.jsonc")
       elif ($item.id | test("^(apps$|about$|system\\.|learn\\.|trigger\\.(emoji|reminder|capture\\.(screenshot|text|color|qr|screenrecord\\.(no-audio|desktop-audio|microphone|stop))|transcode|share($|\\.)|toggle\\.(idle-lock|notifications|nightlight|top-bar|window-gaps|one-window-ratio|workspace-layout|battery-percentage|screensaver)|hardware($|\\.(laptop-display|mirror-display|touchpad($|\\.)|touchpad-haptics($|\\.)))|tests\\.(network-speedtest|disk-speedtest))|style\\.(theme|background|font|bar($|\\.(position\\.(top|bottom|left|right)|transparency))|hyprland|screensaver($|\\.)|about($|\\.))|setup\\.(monitors|keybindings|input|network($|\\.)|default($|\\.)|plugin($|\\.)|security($|\\.)|config($|\\.)|direct-boot|reset)|install($|\\.)|remove($|\\.)|update($|\\.(omarchy|channel($|\\.(stable|rc|edge|dev))|config($|\\.)|themes|process\\.(shell|hyprsunset)|hardware($|\\.)|firmware|password($|\\.)|timezone|time)))")) then
         parity("menu-entry"; $item.id; $item.label; "implemented"; "close-substitute"; "omacos menu run"; "The entry routes to an OMacOS workflow, native panel, application, or System Settings."; "default/omarchy/omarchy-menu.jsonc")
       else
@@ -215,15 +217,23 @@ trap - EXIT
   print
   print '## Remaining portable work'
   print
-  print '| Kind | Reference | Outcome | Route |'
-  print '| --- | --- | --- | --- |'
-  jq -r '[.items[][] | select(.implementationStatus == "pending")] | sort_by(.kind, .id)[] | "| \(.kind) | `\(.id)` | \(.title | gsub("\\|"; "\\\\|")) | `\(.route)` |"' "$output_path"
+  if jq -e '.summary.pending == 0' "$output_path" >/dev/null; then
+    print 'None. Every frozen item has an implementation, explicit limited substitute, or not-applicable platform classification.'
+  else
+    print '| Kind | Reference | Outcome | Route |'
+    print '| --- | --- | --- | --- |'
+    jq -r '[.items[][] | select(.implementationStatus == "pending")] | sort_by(.kind, .id)[] | "| \(.kind) | `\(.id)` | \(.title | gsub("\\|"; "\\\\|")) | `\(.route)` |"' "$output_path"
+  fi
   print
   print '## Explicit platform limits'
   print
-  print '| Kind | Reference | Outcome | Reason |'
-  print '| --- | --- | --- | --- |'
-  jq -r '[.items[][] | select(.implementationStatus == "unavailable")] | sort_by(.kind, .id)[] | "| \(.kind) | `\(.id)` | \(.title | gsub("\\|"; "\\\\|")) | \(.notes | gsub("\\|"; "\\\\|")) |"' "$output_path"
+  if jq -e '.summary.unavailable == 0' "$output_path" >/dev/null; then
+    print 'None are left unclassified or without a route. Platform-owned behavior is recorded as limited or not applicable in the complete ledger.'
+  else
+    print '| Kind | Reference | Outcome | Reason |'
+    print '| --- | --- | --- | --- |'
+    jq -r '[.items[][] | select(.implementationStatus == "unavailable")] | sort_by(.kind, .id)[] | "| \(.kind) | `\(.id)` | \(.title | gsub("\\|"; "\\\\|")) | \(.notes | gsub("\\|"; "\\\\|")) |"' "$output_path"
+  fi
   print
   print 'The complete machine-readable ledger, including all implemented, limited, and not-applicable items, is in [`docs/quattro-parity.json`](quattro-parity.json).'
 } > "$markdown_path"

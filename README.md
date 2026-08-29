@@ -70,6 +70,7 @@ Hold Right Option and press:
 | `Super + Control + F` | Toggle tiled fullscreen |
 | `Super + Option + F` | Toggle full-width geometry |
 | `Super + O` | Float the focused window; pinning needs optional yabai power mode |
+| `Super + P` | Toggle the centered pseudotile substitute |
 | `Super + /` | Open native display scaling controls |
 | `Super + J` | Toggle split orientation |
 | `Super + Shift + Backspace` | Toggle window gaps |
@@ -176,6 +177,8 @@ Webcam recording uses a native always-on-top camera preview rather than a heavyw
 Pointer gestures stay inside the same Right Option ownership model as keyboard shortcuts. Karabiner consumes only Super+left/right button presses and tells the native shell when a drag starts; the shell event tap performs the Accessibility move or resize and handles Super+wheel workspace navigation. Accessibility and Input Monitoring must be approved. A tiled window may be retiled by the active manager, so floating windows provide the closest Hyprland drag behavior.
 
 Window grouping is manager-independent. OMacOS records live Accessibility window references, aligns group members to one frame, and exposes the original toggle, directional join, remove, cycle, scroll, and index 1–5 shortcuts. Raising another member behaves like selecting a tab. Apple does not permit OMacOS to replace WindowServer decorations, so groups have no compositor-drawn tab strip and are reset when the shell restarts.
+
+Pseudotiling uses the closest cross-manager result macOS permits: `Super + P` floats the focused window, retains its original frame, shrinks it to a centered 72% surface, and restores it on the next toggle. Unlike Hyprland, the reduced client cannot reserve an invisible compositor tile. Quattro's Style > Unlock entry is explicitly not applicable because it themes the Linux Plymouth boot-decryption prompt; Apple owns the FileVault preboot UI.
 
 Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. The default `stable` channel installs the latest signed and notarized GitHub release; `rc` installs the newest signed prerelease. `edge` tracks current public `main`, while `dev` tracks the explicitly experimental public `dev` branch. Switching channels does not require reinstalling. Source-channel builds are ad-hoc signed. The tag workflow marks `-rc.` tags as prereleases, produces a Hardened Runtime archive, signs it with a stable Developer ID, notarizes and staples it, and publishes its checksum; the required Apple credentials are not part of the repository.
 

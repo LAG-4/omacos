@@ -116,6 +116,7 @@
     { "key": "f", "modifiers": ["control"], "description": "Tiled full screen", "command": "$HOME/.local/bin/omacos wm tiled-fullscreen" },
     { "key": "f", "modifiers": ["option"], "description": "Full width", "command": "$HOME/.local/bin/omacos wm full-width-toggle" },
     { "key": "o", "modifiers": [], "description": "Pop window out (float & pin)", "command": "$HOME/.local/bin/omacos wm pop-window" },
+    { "key": "p", "modifiers": [], "description": "Pseudo window", "command": "$HOME/.local/bin/omacos wm pseudo-toggle" },
     { "key": "j", "modifiers": [], "description": "Toggle window split", "command": "$HOME/.local/bin/omacos wm toggle-split" },
     { "key": "g", "modifiers": [], "description": "Toggle window grouping", "command": "$HOME/.local/bin/omacos group toggle" },
     { "key": "g", "modifiers": ["option"], "description": "Move active window out of group", "command": "$HOME/.local/bin/omacos group out" },

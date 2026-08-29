@@ -99,6 +99,7 @@ run_menu_action() {
 
     style.theme) open_panel themes ;;
     style.background) open_panel wallpapers ;;
+    style.unlock) print 'macOS owns the FileVault preboot unlock screen; a user-space rice cannot replace or theme it.' ;;
     style.font) open_application "Font Book" ;;
     style.bar|style.bar.position) "$omacos_command" bar status ;;
     style.bar.position.top) "$omacos_command" bar position top ;;
@@ -107,7 +108,6 @@ run_menu_action() {
     style.bar.position.right) "$omacos_command" bar position right ;;
     style.bar.transparency) "$omacos_command" bar transparency toggle ;;
     style.hyprland) "$omacos_command" wm status ;;
-    style.unlock) unsupported "Apple owns the secure login and FileVault unlock interface" ;;
     style.screensaver|style.screensaver.text|style.screensaver.image|style.screensaver.default) open_settings "x-apple.systempreferences:com.apple.ScreenSaver-Settings.extension" ;;
     style.about|style.about.text|style.about.image|style.about.default) open_url "https://github.com/LAG-4/omacos" ;;
 

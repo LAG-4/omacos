@@ -83,6 +83,7 @@ rg -q '^gaps.outer.bottom = 42$' "$temporary_home/.config/aerospace/aerospace.to
 "$wm" square-aspect-toggle
 "$wm" tiled-fullscreen
 "$wm" pop-window
+"$wm" pseudo-toggle
 if "$wm" transparency-toggle >/dev/null 2>&1; then
   print -u2 "Transparency unexpectedly succeeded outside yabai power mode"
   exit 1
@@ -102,6 +103,7 @@ rg -Fq 'omacos-shell --window-full-width' "$command_log"
 rg -Fq 'omacos-shell --window-square-aspect' "$command_log"
 rg -Fq 'aerospace fullscreen' "$command_log"
 rg -Fq 'aerospace layout floating tiling' "$command_log"
+rg -Fq 'omacos-shell --window-pseudo' "$command_log"
 
 "$wm" profile rift >/dev/null
 [[ $("$wm" profile) == "rift" ]]

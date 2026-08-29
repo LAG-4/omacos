@@ -2153,10 +2153,10 @@
         "kind": "binding",
         "id": "default/hypr/bindings/tiling.lua:6",
         "title": "Pseudo window",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "docs/quattro-parity.md",
-        "notes": "This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent.",
+        "implementationStatus": "limited",
+        "grade": "close-substitute",
+        "route": "omacos wm pseudo-toggle",
+        "notes": "The original chord floats the focused window, shrinks it to a retained centered size, and restores it on the next toggle. macOS cannot keep a reduced client surface inside a compositor-owned tile.",
         "source": "default/hypr/bindings/tiling.lua"
       },
       {
@@ -4207,10 +4207,10 @@
         "kind": "menu-entry",
         "id": "style.unlock",
         "title": "Unlock",
-        "implementationStatus": "unavailable",
-        "grade": "impossible",
-        "route": "omacos menu run",
-        "notes": "The command returns an explicit macOS platform limitation instead of silently doing the wrong thing.",
+        "implementationStatus": "not-applicable",
+        "grade": "not-applicable",
+        "route": "Apple FileVault preboot UI",
+        "notes": "Quattro themes the Plymouth boot-decryption prompt. Apple owns the authenticated FileVault preboot surface, which is outside a user-space macOS rice.",
         "source": "default/omarchy/omarchy-menu.jsonc"
       },
       {
@@ -8830,9 +8830,9 @@
   "summary": {
     "total": 879,
     "implemented": 637,
-    "limited": 156,
+    "limited": 157,
     "pending": 0,
-    "unavailable": 2,
-    "notApplicable": 84
+    "unavailable": 0,
+    "notApplicable": 85
   }
 }

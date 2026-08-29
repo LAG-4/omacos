@@ -176,6 +176,44 @@ enum OMacOSWindowActions {
         return targetFrame.size
     }
 
+    static func toggleFocusedWindowPseudo(
+        environment: [String: String] = ProcessInfo.processInfo.environment
+    ) throws -> Bool {
+        let window = try focusedWindowElement()
+        let currentFrame = try windowFrame(window)
+        let savedFramePath = savedPseudoFrameURL(environment: environment)
+        var processIdentifier: pid_t = 0
+        AXUIElementGetPid(window, &processIdentifier)
+
+        if let data = try? Data(contentsOf: savedFramePath),
+           let savedFrame = try? JSONDecoder().decode(SavedPseudoFrame.self, from: data),
+           savedFrame.processIdentifier == processIdentifier {
+            try setWindowFrame(savedFrame.frame.cgRect, window: window)
+            try? FileManager.default.removeItem(at: savedFramePath)
+            return false
+        }
+
+        try FileManager.default.createDirectory(
+            at: savedFramePath.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        let savedFrame = SavedPseudoFrame(
+            processIdentifier: processIdentifier,
+            frame: SavedWindowFrame(currentFrame)
+        )
+        try JSONEncoder().encode(savedFrame).write(to: savedFramePath, options: .atomic)
+        let targetWidth = min(currentFrame.width, max(320, currentFrame.width * 0.72))
+        let targetHeight = min(currentFrame.height, max(220, currentFrame.height * 0.72))
+        let targetFrame = CGRect(
+            x: currentFrame.midX - targetWidth / 2,
+            y: currentFrame.midY - targetHeight / 2,
+            width: targetWidth,
+            height: targetHeight
+        )
+        try setWindowFrame(targetFrame, window: window)
+        return true
+    }
+
     private static func focusedWindowSize(window: AXUIElement? = nil) throws -> CGSize {
         let targetWindow = try window ?? focusedWindowElement()
         var sizeValue: CFTypeRef?
@@ -331,6 +369,12 @@ enum OMacOSWindowActions {
         return URL(fileURLWithPath: homeDirectory)
             .appendingPathComponent(".local/state/omacos/window-square-frame.json")
     }
+
+    private static func savedPseudoFrameURL(environment: [String: String]) -> URL {
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        return URL(fileURLWithPath: homeDirectory)
+            .appendingPathComponent(".local/state/omacos/window-pseudo-frame.json")
+    }
 }
 
 private struct SavedHorizontalFrame: Codable {
@@ -354,4 +398,9 @@ private struct SavedWindowFrame: Codable {
     var cgRect: CGRect {
         CGRect(x: x, y: y, width: width, height: height)
     }
+}
+
+private struct SavedPseudoFrame: Codable {
+    let processIdentifier: pid_t
+    let frame: SavedWindowFrame
 }

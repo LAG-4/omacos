@@ -6,18 +6,14 @@ Generated from the frozen Omarchy Quattro inventory. `implemented` means the out
 
 | Total | Implemented | Limited | Pending | Unavailable | Not applicable |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 879 | 637 | 156 | 0 | 2 | 84 |
+| 879 | 637 | 157 | 0 | 0 | 85 |
 
 ## Remaining portable work
 
-| Kind | Reference | Outcome | Route |
-| --- | --- | --- | --- |
+None. Every frozen item has an implementation, explicit limited substitute, or not-applicable platform classification.
 
 ## Explicit platform limits
 
-| Kind | Reference | Outcome | Reason |
-| --- | --- | --- | --- |
-| binding | `default/hypr/bindings/tiling.lua:6` | Pseudo window | This outcome depends on Hyprland compositor or grouping behavior with no common SIP-on macOS equivalent. |
-| menu-entry | `style.unlock` | Unlock | The command returns an explicit macOS platform limitation instead of silently doing the wrong thing. |
+None are left unclassified or without a route. Platform-owned behavior is recorded as limited or not applicable in the complete ledger.
 
 The complete machine-readable ledger, including all implemented, limited, and not-applicable items, is in [`docs/quattro-parity.json`](quattro-parity.json).
