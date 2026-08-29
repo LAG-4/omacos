@@ -88,6 +88,7 @@ Packages
 
 Files
   $omacos_home/.local/share/omacos/current
+  $omacos_home/.local/share/omacos/OMacOSShell.app
   $omacos_home/.local/bin/omacos
   $omacos_home/.local/bin/omacos-shell
   $omacos_home/.config/aerospace/aerospace.toml
@@ -99,6 +100,7 @@ Files
 Existing AeroSpace configuration will be backed up before replacement.
 macOS will ask you to approve Accessibility for AeroSpace and input monitoring for Karabiner-Elements.
 Clipboard paste automation needs Accessibility for the OMacOS shell. Capture and OCR need Screen Recording when first used.
+Dictation asks for Microphone and Speech Recognition access only when first invoked.
 System Integrity Protection stays enabled.
 EOF
 
@@ -137,6 +139,7 @@ state_directory="$omacos_home/.local/state/omacos"
 backup_directory="$state_directory/backups"
 install_directory="$omacos_home/.local/share/omacos/current"
 binary_directory="$omacos_home/.local/bin"
+shell_app="$omacos_home/.local/share/omacos/OMacOSShell.app"
 aerospace_directory="$omacos_home/.config/aerospace"
 karabiner_rule_directory="$omacos_home/.config/karabiner/assets/complex_modifications"
 launch_agent_directory="$omacos_home/Library/LaunchAgents"
@@ -169,7 +172,19 @@ fi
 mkdir -p "${install_directory:h}"
 mv "$staging_directory/current" "$install_directory"
 
-cp "$source_root/.build/release/omacos-shell" "$binary_directory/omacos-shell"
+mkdir -p "$shell_app/Contents/MacOS" "$shell_app/Contents/Resources"
+cp "$source_root/.build/release/omacos-shell" "$shell_app/Contents/MacOS/omacos-shell"
+cp "$source_root/app/Info.plist" "$shell_app/Contents/Info.plist"
+resource_bundles=("$source_root"/.build/release/*.resources(N))
+if (( ${#resource_bundles[@]} > 0 )); then
+  cp -R "$resource_bundles[1]" "$shell_app/Contents/MacOS/"
+fi
+chmod +x "$shell_app/Contents/MacOS/omacos-shell"
+codesign --force --deep --sign - "$shell_app" >/dev/null
+cat > "$binary_directory/omacos-shell" <<EOF
+#!/bin/zsh
+exec "$shell_app/Contents/MacOS/omacos-shell" "\$@"
+EOF
 chmod +x "$binary_directory/omacos-shell"
 ln -sfn "$install_directory/bin/omacos" "$binary_directory/omacos"
 
@@ -182,6 +197,8 @@ cp "$install_directory/config/aerospace/aerospace.toml" "$aerospace_directory/ae
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/render-theme.zsh" tokyo-night
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/defaults.zsh" init >/dev/null
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/shell-integration.zsh" install
+OMACOS_ROOT="$install_directory" "$install_directory/scripts/migrations.zsh" run
+print -r -- "$(<$install_directory/VERSION)" > "$state_directory/installed-version"
 
 cat > "$launch_agent_directory/dev.omacos.shell.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -192,7 +209,7 @@ cat > "$launch_agent_directory/dev.omacos.shell.plist" <<EOF
   <string>dev.omacos.shell</string>
   <key>ProgramArguments</key>
   <array>
-    <string>$binary_directory/omacos-shell</string>
+    <string>$shell_app/Contents/MacOS/omacos-shell</string>
   </array>
   <key>RunAtLoad</key>
   <true/>

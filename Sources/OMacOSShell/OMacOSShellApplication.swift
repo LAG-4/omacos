@@ -4,24 +4,48 @@ import SwiftUI
 @MainActor
 final class OMacOSBarWindowCoordinator {
     private let barState: OMacOSBarState
+    private let systemState: OMacOSSystemPanelState
     private let agentStore: OMacOSAgentUsageStore
+    private let dictationController: OMacOSDictationController
     private let togglePanel: (OMacOSPanelID) -> Void
     private var barPanels: [NSPanel] = []
+    private var barsHidden: Bool
 
     init(
         barState: OMacOSBarState,
+        systemState: OMacOSSystemPanelState,
         agentStore: OMacOSAgentUsageStore,
+        dictationController: OMacOSDictationController,
         togglePanel: @escaping (OMacOSPanelID) -> Void
     ) {
         self.barState = barState
+        self.systemState = systemState
         self.agentStore = agentStore
+        self.dictationController = dictationController
         self.togglePanel = togglePanel
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        barsHidden = FileManager.default.fileExists(
+            atPath: homeDirectory + "/.local/state/omacos/toggles/bar-hidden.enabled"
+        )
     }
 
     /// Rebuilds one non-activating bar panel for every connected display.
     func rebuildDisplayBars() {
         barPanels.forEach { $0.close() }
         barPanels = NSScreen.screens.map(makeBarPanel)
+        if barsHidden {
+            barPanels.forEach { $0.orderOut(nil) }
+        }
+    }
+
+    func setBarsHidden(_ hidden: Bool) {
+        barsHidden = hidden
+        if hidden {
+            barPanels.forEach { $0.orderOut(nil) }
+        } else {
+            barPanels.forEach { $0.orderFrontRegardless() }
+        }
     }
 
     private func makeBarPanel(for screen: NSScreen) -> NSPanel {
@@ -46,7 +70,13 @@ final class OMacOSBarWindowCoordinator {
         panel.hasShadow = false
         panel.hidesOnDeactivate = false
         panel.contentView = NSHostingView(
-            rootView: OMacOSBarView(barState: barState, agentStore: agentStore, togglePanel: togglePanel)
+            rootView: OMacOSBarView(
+                barState: barState,
+                systemState: systemState,
+                agentStore: agentStore,
+                dictationController: dictationController,
+                togglePanel: togglePanel
+            )
         )
         panel.orderFrontRegardless()
         return panel
@@ -60,6 +90,7 @@ final class OMacOSPanelCoordinator: NSObject {
     private let clipboardStore: OMacOSClipboardStore
     private let reminderStore: OMacOSReminderStore
     private let agentStore: OMacOSAgentUsageStore
+    private let dictationController: OMacOSDictationController
     private var activePanel: NSPanel?
     private var activePanelID: OMacOSPanelID?
 
@@ -68,13 +99,15 @@ final class OMacOSPanelCoordinator: NSObject {
         systemPanelState: OMacOSSystemPanelState,
         clipboardStore: OMacOSClipboardStore,
         reminderStore: OMacOSReminderStore,
-        agentStore: OMacOSAgentUsageStore
+        agentStore: OMacOSAgentUsageStore,
+        dictationController: OMacOSDictationController
     ) {
         self.theme = theme
         self.systemPanelState = systemPanelState
         self.clipboardStore = clipboardStore
         self.reminderStore = reminderStore
         self.agentStore = agentStore
+        self.dictationController = dictationController
         super.init()
         DistributedNotificationCenter.default().addObserver(
             self,
@@ -157,7 +190,8 @@ final class OMacOSPanelCoordinator: NSObject {
                     state: systemPanelState,
                     clipboardStore: clipboardStore,
                     reminderStore: reminderStore,
-                    agentStore: agentStore
+                    agentStore: agentStore,
+                    dictationController: dictationController
                 ) { [weak self] in
                     self?.dismissPanel()
                 }
@@ -177,6 +211,9 @@ final class OMacOSPanelCoordinator: NSObject {
         case .keybindings, .clipboard, .emojis, .themes, .agents: NSSize(width: 620, height: 620)
         case .defaults: NSSize(width: 540, height: 540)
         case .clock: NSSize(width: 430, height: 520)
+        case .system: NSSize(width: 430, height: 430)
+        case .weather: NSSize(width: 430, height: 440)
+        case .noticeDateTime, .noticeBattery, .noticeWeather: NSSize(width: 430, height: 280)
         default: NSSize(width: 430, height: 360)
         }
     }
@@ -189,6 +226,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
     private var clipboardStore: OMacOSClipboardStore?
     private var reminderStore: OMacOSReminderStore?
     private var agentStore: OMacOSAgentUsageStore?
+    private var dictationController: OMacOSDictationController?
     private var barCoordinator: OMacOSBarWindowCoordinator?
     private var panelCoordinator: OMacOSPanelCoordinator?
 
@@ -200,14 +238,21 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         let clipboard = OMacOSClipboardStore()
         let reminders = OMacOSReminderStore()
         let agents = OMacOSAgentUsageStore()
+        let dictation = OMacOSDictationController()
         let panels = OMacOSPanelCoordinator(
             theme: state.theme,
             systemPanelState: panelState,
             clipboardStore: clipboard,
             reminderStore: reminders,
-            agentStore: agents
+            agentStore: agents,
+            dictationController: dictation
         )
-        let bars = OMacOSBarWindowCoordinator(barState: state, agentStore: agents) { [weak panels] panelID in
+        let bars = OMacOSBarWindowCoordinator(
+            barState: state,
+            systemState: panelState,
+            agentStore: agents,
+            dictationController: dictation
+        ) { [weak panels] panelID in
             panels?.togglePanel(panelID)
         }
 
@@ -216,6 +261,7 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
         clipboardStore = clipboard
         reminderStore = reminders
         agentStore = agents
+        dictationController = dictation
         barCoordinator = bars
         panelCoordinator = panels
 
@@ -235,10 +281,33 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
             name: NSApplication.didChangeScreenParametersNotification,
             object: nil
         )
+        DistributedNotificationCenter.default().addObserver(
+            self,
+            selector: #selector(receiveShellCommand(_:)),
+            name: OMacOSShellMessage.notificationName,
+            object: nil
+        )
     }
 
     @objc private func rebuildBarsAfterDisplayChange() {
         barCoordinator?.rebuildDisplayBars()
+    }
+
+    @objc private func receiveShellCommand(_ notification: Notification) {
+        switch notification.userInfo?[OMacOSShellMessage.actionKey] as? String {
+        case OMacOSShellMessage.setBarHiddenAction:
+            if let hidden = notification.userInfo?[OMacOSShellMessage.valueKey] as? Bool {
+                barCoordinator?.setBarsHidden(hidden)
+            }
+        case OMacOSShellMessage.toggleDictationAction:
+            switch notification.userInfo?[OMacOSShellMessage.valueKey] as? String {
+            case "start": dictationController?.start()
+            case "stop": dictationController?.stopAndInsert()
+            default: dictationController?.toggle()
+            }
+        default:
+            break
+        }
     }
 }
 
@@ -273,6 +342,36 @@ enum OMacOSShellMain {
                 Foundation.exit(1)
             }
             print("\(reminder.id.uuidString)\t\(reminder.dueAt.ISO8601Format())\t\(reminder.text)")
+            return
+        }
+
+        if let barHiddenIndex = arguments.firstIndex(of: "--set-bar-hidden"),
+           arguments.indices.contains(barHiddenIndex + 1) {
+            let hiddenValue = arguments[barHiddenIndex + 1]
+            guard hiddenValue == "true" || hiddenValue == "false" else {
+                FileHandle.standardError.write(Data("Bar visibility must be true or false.\n".utf8))
+                Foundation.exit(2)
+            }
+            OMacOSShellMessage.postSetBarHidden(hiddenValue == "true")
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
+            return
+        }
+
+        if let dictationIndex = arguments.firstIndex(of: "--dictation"),
+           arguments.indices.contains(dictationIndex + 1) {
+            let action = arguments[dictationIndex + 1]
+            guard ["start", "stop", "toggle"].contains(action) else {
+                FileHandle.standardError.write(Data("Dictation action must be start, stop, or toggle.\n".utf8))
+                Foundation.exit(2)
+            }
+            OMacOSShellMessage.postDictationAction(action)
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
+            return
+        }
+
+        if arguments.contains("--toggle-dictation") {
+            OMacOSShellMessage.postDictationAction("toggle")
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.15))
             return
         }
 

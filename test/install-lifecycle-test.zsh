@@ -23,6 +23,16 @@ if [[ ! -x $temporary_home/.local/bin/omacos-shell ]]; then
   exit 1
 fi
 
+shell_app="$temporary_home/.local/share/omacos/OMacOSShell.app"
+if [[ ! -x $shell_app/Contents/MacOS/omacos-shell ]]; then
+  print -u2 "Install lifecycle test failed: native app bundle was not installed"
+  exit 1
+fi
+if [[ $(/usr/libexec/PlistBuddy -c 'Print :NSMicrophoneUsageDescription' "$shell_app/Contents/Info.plist") != *dictation* ]]; then
+  print -u2 "Install lifecycle test failed: native app permission descriptions are missing"
+  exit 1
+fi
+
 if [[ ! -L $temporary_home/.local/bin/omacos ]]; then
   print -u2 "Install lifecycle test failed: CLI link was not installed"
   exit 1
@@ -34,6 +44,7 @@ if [[ -f $temporary_home/.aerospace.toml ]]; then
 fi
 
 installed_root="$temporary_home/.local/share/omacos/current"
+OMACOS_TEST_HOME="$temporary_home" OMACOS_TEST_MODE=true "$installed_root/scripts/toggles.zsh" enable idle
 mkdir -p "$temporary_home/test-bin"
 cat > "$temporary_home/test-bin/aerospace" <<'EOF'
 #!/bin/zsh
@@ -61,6 +72,11 @@ fi
 
 if [[ -e $temporary_home/.local/share/omacos/current || -e $temporary_home/.local/bin/omacos-shell ]]; then
   print -u2 "Install lifecycle test failed: installed files remain after uninstall"
+  exit 1
+fi
+
+if [[ -e $temporary_home/Library/LaunchAgents/dev.omacos.stay-awake.plist ]]; then
+  print -u2 "Install lifecycle test failed: stay-awake LaunchAgent remains after uninstall"
   exit 1
 fi
 

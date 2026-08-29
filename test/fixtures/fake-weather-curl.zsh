@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+print -r -- '{"current_condition":[{"temp_C":"21","FeelsLikeC":"20","humidity":"61","windspeedKmph":"14","weatherDesc":[{"value":"Partly cloudy"}]}],"nearest_area":[{"areaName":[{"value":"Cupertino"}],"region":[{"value":"California"}]}],"weather":[{"date":"2026-08-30","mintempC":"15","maxtempC":"24","hourly":[{},{},{},{},{"weatherDesc":[{"value":"Sunny"}]}]},{"date":"2026-08-31","mintempC":"14","maxtempC":"23","hourly":[{},{},{},{},{"weatherDesc":[{"value":"Cloudy"}]}]},{"date":"2026-09-01","mintempC":"13","maxtempC":"22","hourly":[{},{},{},{},{"weatherDesc":[{"value":"Light rain"}]}]}]}'

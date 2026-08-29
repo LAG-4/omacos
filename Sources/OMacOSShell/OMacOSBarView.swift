@@ -2,7 +2,9 @@ import SwiftUI
 
 struct OMacOSBarView: View {
     @ObservedObject var barState: OMacOSBarState
+    @ObservedObject var systemState: OMacOSSystemPanelState
     @ObservedObject var agentStore: OMacOSAgentUsageStore
+    @ObservedObject var dictationController: OMacOSDictationController
     let togglePanel: (OMacOSPanelID) -> Void
 
     private var colors: OMacOSThemeColors { barState.theme.colors }
@@ -30,6 +32,23 @@ struct OMacOSBarView: View {
                 .lineLimit(1)
 
             Spacer(minLength: 12)
+
+            modeIndicators
+
+            if let weather = systemState.weatherStatus {
+                Button { togglePanel(.weather) } label: {
+                    Label("\(weather.temperatureC)°", systemImage: "cloud.sun")
+                }
+                .buttonStyle(.plain)
+            }
+
+            if systemState.mediaStatus?.hasTrack == true {
+                Button { systemState.controlMedia("play-pause") } label: {
+                    Image(systemName: systemState.mediaStatus?.isPlaying == true ? "pause.fill" : "play.fill")
+                }
+                .buttonStyle(.plain)
+                .help(systemState.mediaStatus?.title ?? "Now Playing")
+            }
 
             panelButton(.network)
             panelButton(.audio)
@@ -64,6 +83,35 @@ struct OMacOSBarView: View {
                 .fill(Color(omacosHex: colors.selection))
                 .frame(height: 1)
         }
+    }
+
+    @ViewBuilder private var modeIndicators: some View {
+        if dictationController.isRecording {
+            Button { dictationController.stopAndInsert() } label: {
+                Image(systemName: "waveform.and.mic")
+                    .foregroundStyle(Color(omacosHex: colors.red))
+            }
+            .buttonStyle(.plain)
+            .help("Stop dictation and insert")
+        }
+        if systemState.notificationSilencingEnabled {
+            modeButton("notification-silencing", systemImage: "bell.slash.fill", help: "Notification silencing")
+        }
+        if systemState.nightLightEnabled {
+            modeButton("night-light", systemImage: "moon.fill", help: "Night light reminder")
+        }
+        if systemState.stayAwakeEnabled {
+            modeButton("stay-awake", systemImage: "cup.and.saucer.fill", help: "Stay awake")
+        }
+    }
+
+    private func modeButton(_ mode: String, systemImage: String, help: String) -> some View {
+        Button { systemState.toggleMode(mode) } label: {
+            Image(systemName: systemImage)
+                .foregroundStyle(Color(omacosHex: colors.accent))
+        }
+        .buttonStyle(.plain)
+        .help(help)
     }
 
     private var workspaceButtons: some View {

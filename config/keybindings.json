@@ -2,6 +2,14 @@
   "schemaVersion": 1,
   "profile": "right-option",
   "leaderKey": "right_option",
+  "globalBindings": [
+    {
+      "key": "f9",
+      "description": "Hold for dictation",
+      "keyDownCommand": "$HOME/.local/bin/omacos dictation start",
+      "keyUpCommand": "$HOME/.local/bin/omacos dictation stop"
+    }
+  ],
   "bindings": [
     { "key": "w", "modifiers": [], "description": "Close window", "command": "/opt/homebrew/bin/aerospace close" },
     { "key": "q", "modifiers": [], "description": "Close window", "command": "/opt/homebrew/bin/aerospace close" },
@@ -29,6 +37,17 @@
     { "key": "w", "modifiers": ["control"], "description": "Network panel", "command": "$HOME/.local/bin/omacos shell toggle-panel network" },
     { "key": "p", "modifiers": ["control"], "description": "Power panel", "command": "$HOME/.local/bin/omacos shell toggle-panel power" },
     { "key": "t", "modifiers": ["control"], "description": "Activity panel", "command": "$HOME/.local/bin/omacos shell toggle-panel activity" },
+    { "key": "m", "modifiers": ["control"], "description": "Now playing", "command": "$HOME/.local/bin/omacos shell toggle-panel media" },
+    { "key": "o", "modifiers": ["control"], "description": "Weather forecast", "command": "$HOME/.local/bin/omacos shell toggle-panel weather" },
+    { "key": "i", "modifiers": ["control"], "description": "Toggle stay awake", "command": "$HOME/.local/bin/omacos toggle toggle idle" },
+    { "key": "l", "modifiers": ["control"], "description": "Lock Mac", "command": "$HOME/.local/bin/omacos toggle lock" },
+    { "key": "comma", "modifiers": ["control"], "description": "Toggle notification silencing indicator", "command": "$HOME/.local/bin/omacos toggle toggle notification-silencing" },
+    { "key": "n", "modifiers": ["control"], "description": "Toggle night light indicator", "command": "$HOME/.local/bin/omacos toggle toggle night-light" },
+    { "key": "x", "modifiers": ["control"], "description": "Toggle dictation", "command": "$HOME/.local/bin/omacos dictation toggle" },
+    { "key": "spacebar", "modifiers": ["shift"], "description": "Toggle menu bar", "command": "$HOME/.local/bin/omacos toggle toggle bar" },
+    { "key": "t", "modifiers": ["control", "option"], "description": "Date and time notice", "command": "$HOME/.local/bin/omacos notice datetime" },
+    { "key": "w", "modifiers": ["control", "option"], "description": "Weather notice", "command": "$HOME/.local/bin/omacos notice weather" },
+    { "key": "b", "modifiers": ["control", "option"], "description": "Battery notice", "command": "$HOME/.local/bin/omacos notice battery" },
     { "key": "t", "modifiers": [], "description": "Toggle floating and tiling", "command": "/opt/homebrew/bin/aerospace layout floating tiling" },
     { "key": "f", "modifiers": [], "description": "Fullscreen", "command": "/opt/homebrew/bin/aerospace fullscreen" },
     { "key": "j", "modifiers": [], "description": "Toggle window split", "command": "/opt/homebrew/bin/aerospace layout tiles horizontal vertical" },

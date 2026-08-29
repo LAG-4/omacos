@@ -52,16 +52,28 @@ jq '
       ]
     };
 
+  def global_binding_manipulator:
+    {
+      type: "basic",
+      description: .description,
+      from: { key_code: .key, modifiers: { optional: ["any"] } },
+      to: [{ shell_command: ("/bin/zsh -lc " + (.keyDownCommand | @sh)) }],
+      to_after_key_up: [{ shell_command: ("/bin/zsh -lc " + (.keyUpCommand | @sh)) }]
+    };
+
   {
     title: "OMacOS Super key",
     rules: [
       {
         description: "Use Right Option as the OMacOS Super layer",
         manipulators: ([leader_manipulator] + [.bindings[] | binding_manipulator])
+      },
+      {
+        description: "Hold F9 for OMacOS dictation",
+        manipulators: [(.globalBindings // [])[] | global_binding_manipulator]
       }
     ]
   }
 ' "$keybinding_ledger" > "$output_path"
 
 print "Generated Karabiner profile: $output_path"
-

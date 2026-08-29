@@ -15,6 +15,8 @@ OMacOS is at its first prototype milestone. The current build includes:
 - all 22 frozen Quattro semantic themes with generated shell, terminal, TUI, editor, tmux, and border targets
 - configurable terminal, browser, and editor defaults plus Omarchy-style shell tools, tmux layouts, and a self-contained Neovim profile
 - local web-app bundles and a native agent-usage panel backed by Claude, Codex, and Fireworks collectors
+- weather and media panels, Quattro-style date/battery/weather notices, reversible stay-awake and bar toggles, and native on-device dictation
+- managed snapshots, versioned migrations, tested updates, and one-command rollback
 - a readable installer with dry-run, doctor, backup, and uninstall commands
 - macOS 26 compatibility checks and macOS 27 beta test coverage
 
@@ -73,6 +75,12 @@ omacos default set editor nvim
 omacos launch tmux
 omacos webapp install Linear https://linear.app
 omacos agent usage-update
+omacos weather location --set Cupertino 37.3230,-122.0322
+omacos media play-pause
+omacos dictation toggle
+omacos toggle toggle idle
+omacos backup create before-experiment
+omacos update apply
 omacos uninstall
 ```
 
@@ -81,6 +89,10 @@ The native shell exposes command menu, keybindings, clipboard, emoji, capture, r
 Clipboard history is stored locally at `~/.local/state/omacos/clipboard-history.json`, capped at 100 text entries, and skips pasteboard entries marked concealed or auto-generated. It can be cleared from its panel. OMacOS does not upload clipboard or reminder data.
 
 The installer adds one clearly marked source block to `~/.zshrc`. That block loads the OMacOS aliases, fzf/zoxide/mise/Starship initialization, compression helpers, and tmux developer layouts. Uninstall removes only that block and preserves edits made before or after installation.
+
+Dictation uses Apple's Speech framework. Hold F9, or press `Super + Control + X` to toggle it; stopping inserts the recognized text into the focused application. The first use prompts for Microphone and Speech Recognition, and insertion needs Accessibility. When supported by the current language, recognition is required to run on-device.
+
+Updates take a managed snapshot before replacing files. `omacos update rollback` restores the latest one, while `omacos backup create NAME` lets you place an explicit checkpoint. Development builds are ad-hoc signed; stable releases still require a consistent Developer ID signature and notarization so privacy permissions survive upgrades reliably.
 
 For local visual development, run a panel directly without installing the project:
 

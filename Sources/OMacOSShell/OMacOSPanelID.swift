@@ -12,6 +12,12 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
     case wallpapers
     case defaults
     case agents
+    case weather
+    case media
+    case dictation
+    case noticeDateTime = "notice-datetime"
+    case noticeBattery = "notice-battery"
+    case noticeWeather = "notice-weather"
     case system
     case audio
     case bluetooth
@@ -35,6 +41,12 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .wallpapers: "Background"
         case .defaults: "Defaults"
         case .agents: "Agents"
+        case .weather: "Weather"
+        case .media: "Now Playing"
+        case .dictation: "Dictation"
+        case .noticeDateTime: "Date & Time"
+        case .noticeBattery: "Battery"
+        case .noticeWeather: "Weather"
         case .system: "System"
         case .audio: "Audio"
         case .bluetooth: "Bluetooth"
@@ -58,6 +70,11 @@ enum OMacOSPanelID: String, CaseIterable, Identifiable {
         case .wallpapers: "photo.on.rectangle"
         case .defaults: "star"
         case .agents: "brain.head.profile"
+        case .weather, .noticeWeather: "cloud.sun"
+        case .media: "play.circle"
+        case .dictation: "waveform.and.mic"
+        case .noticeDateTime: "clock"
+        case .noticeBattery: "battery.75percent"
         case .system: "power"
         case .audio: "speaker.wave.2"
         case .bluetooth: "bolt.horizontal.circle"

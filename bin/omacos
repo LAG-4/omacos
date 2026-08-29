@@ -18,6 +18,14 @@ Commands:
   default ACTION            View or set terminal, browser, and editor defaults
   launch TARGET             Launch a default app, file manager, or web app
   agent ACTION              Refresh or inspect AI agent usage records
+  media ACTION              Inspect or control Apple Music and Spotify
+  weather ACTION            Show a forecast or configure its location
+  toggle ACTION             Toggle stay-awake, bar, and shell indicators
+  notice NAME               Show date/time, battery, or weather notice
+  dictation ACTION          Start, stop, or toggle native dictation
+  update ACTION             Check, apply, or roll back OMacOS updates
+  backup ACTION             Snapshot or restore files managed by OMacOS
+  migrate ACTION            Run or inspect versioned migrations
   reminder ACTION           Add, list, or clear local reminders
   webapp ACTION             Install, list, or remove URL app bundles
   theme apply [name]        Generate configs from a semantic theme
@@ -59,6 +67,7 @@ run_doctor() {
   doctor_check "AeroSpace config" "$([[ -f $omacos_home/.config/aerospace/aerospace.toml ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Karabiner rule installed" "$([[ -f $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Native shell binary" "$([[ -x $shell_binary ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Native shell app bundle" "$([[ -x $omacos_home/.local/share/omacos/OMacOSShell.app/Contents/MacOS/omacos-shell ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Shell LaunchAgent" "$([[ -f $launch_agent ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Application defaults" "$([[ -f $omacos_home/.config/omacos/defaults.json ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Shell integration" "$(rg -Fq '# >>> OMacOS shell integration >>>' "$omacos_home/.zshrc" 2>/dev/null && print ok || print fail)" || (( failures += 1 ))
@@ -109,12 +118,12 @@ run_shell_command() {
     toggle-panel)
       local panel_name=${2:-}
       case $panel_name in
-        menu|keybindings|clipboard|emojis|capture|reminders|themes|wallpapers|defaults|agents|system|audio|bluetooth|network|display|clock|power|activity)
+        menu|keybindings|clipboard|emojis|capture|reminders|themes|wallpapers|defaults|agents|weather|media|notice-datetime|notice-battery|notice-weather|system|audio|bluetooth|network|display|clock|power|activity)
           "$shell_binary" --toggle-panel "$panel_name"
           ;;
         *)
           print -u2 "Unknown shell panel: $panel_name"
-          print -u2 "Available panels: menu, keybindings, clipboard, emojis, capture, reminders, themes, wallpapers, defaults, agents, system, audio, bluetooth, network, display, clock, power, activity"
+          print -u2 "Available panels: menu, keybindings, clipboard, emojis, capture, reminders, themes, wallpapers, defaults, agents, weather, media, system, audio, bluetooth, network, display, clock, power, activity"
           return 1
           ;;
       esac
@@ -184,6 +193,7 @@ run_uninstall() {
   local state_directory="$omacos_home/.local/state/omacos"
   local backup_directory="$state_directory/backups"
   local installed_directory="$omacos_home/.local/share/omacos"
+  local stay_awake_agent="$omacos_home/Library/LaunchAgents/dev.omacos.stay-awake.plist"
   local assume_yes=false
 
   if [[ $uninstall_option == "--yes" || $uninstall_option == "-y" ]]; then
@@ -204,6 +214,7 @@ run_uninstall() {
 
   pkill -x omacos-shell 2>/dev/null || true
   launchctl bootout "gui/$UID" "$launch_agent" >/dev/null 2>&1 || true
+  launchctl bootout "gui/$UID" "$stay_awake_agent" >/dev/null 2>&1 || true
 
   if [[ -x $installed_root/scripts/shell-integration.zsh ]]; then
     "$installed_root/scripts/shell-integration.zsh" remove
@@ -225,6 +236,7 @@ run_uninstall() {
   rm -f "$omacos_home/.config/ghostty/themes/OMacOS"
   rm -f "$omacos_home/.local/bin/omacos" "$omacos_home/.local/bin/omacos-shell"
   rm -f "$launch_agent"
+  rm -f "$stay_awake_agent"
   rm -rf "$omacos_home/Applications/OMacOS Web Apps"
   rm -rf "$omacos_home/.config/omacos" "$installed_directory"
   rm -rf "$state_directory"
@@ -242,6 +254,38 @@ case ${1:-help} in
     ;;
   capture)
     "$installed_root/scripts/capture.zsh" "${2:-}" "${3:-}"
+    ;;
+  media)
+    "$installed_root/scripts/media.zsh" "${2:-status}"
+    ;;
+  dictation)
+    case ${2:-} in
+      start|stop|toggle) "$shell_binary" --dictation "$2" ;;
+      *) print -u2 'Usage: omacos dictation <start|stop|toggle>'; exit 1 ;;
+    esac
+    ;;
+  update)
+    "$installed_root/scripts/update.zsh" "${@:2}"
+    ;;
+  backup)
+    "$installed_root/scripts/managed-snapshot.zsh" "${@:2}"
+    ;;
+  migrate)
+    "$installed_root/scripts/migrations.zsh" "${@:2}"
+    ;;
+  weather)
+    "$installed_root/scripts/weather.zsh" "${@:2}"
+    ;;
+  toggle)
+    "$installed_root/scripts/toggles.zsh" "${@:2}"
+    ;;
+  notice)
+    case ${2:-} in
+      datetime|date|time) run_shell_command toggle-panel notice-datetime ;;
+      battery|power) run_shell_command toggle-panel notice-battery ;;
+      weather) run_shell_command toggle-panel notice-weather ;;
+      *) print -u2 'Usage: omacos notice <datetime|battery|weather>'; exit 1 ;;
+    esac
     ;;
   default)
     "$installed_root/scripts/defaults.zsh" "${2:-}" "${3:-}" "${4:-}"

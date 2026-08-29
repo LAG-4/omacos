@@ -7,6 +7,7 @@ struct OMacOSSystemPanelView: View {
     @ObservedObject var clipboardStore: OMacOSClipboardStore
     @ObservedObject var reminderStore: OMacOSReminderStore
     @ObservedObject var agentStore: OMacOSAgentUsageStore
+    @ObservedObject var dictationController: OMacOSDictationController
     let dismissPanel: () -> Void
 
     private var colors: OMacOSThemeColors { theme.colors }
@@ -27,6 +28,15 @@ struct OMacOSSystemPanelView: View {
                 .stroke(Color(omacosHex: colors.selection), lineWidth: 1)
         }
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .onAppear {
+            if panelID == .media {
+                state.refreshMedia()
+            } else if panelID == .weather || panelID == .noticeWeather {
+                if state.weatherStatus == nil {
+                    state.refreshWeather()
+                }
+            }
+        }
     }
 
     private var panelHeader: some View {
@@ -71,6 +81,18 @@ struct OMacOSSystemPanelView: View {
             defaultsPanel
         case .agents:
             agentsPanel
+        case .weather:
+            weatherPanel
+        case .media:
+            mediaPanel
+        case .dictation:
+            dictationPanel
+        case .noticeDateTime:
+            dateTimeNotice
+        case .noticeBattery:
+            batteryNotice
+        case .noticeWeather:
+            weatherNotice
         case .system:
             systemPanel
         case .audio:
@@ -532,8 +554,146 @@ struct OMacOSSystemPanelView: View {
         VStack(spacing: 10) {
             panelAction("Lock", subtitle: "Show the macOS login window", systemImage: "lock") { state.lockMac() }
             panelAction("Sleep", subtitle: "Put this Mac to sleep", systemImage: "moon.zzz") { state.sleepMac() }
+            panelAction("Screensaver", subtitle: "Start the configured macOS screensaver", systemImage: "sparkles.tv") { state.runSystemAction("screensaver") }
+            panelAction(
+                state.stayAwakeEnabled ? "Disable Stay Awake" : "Stay Awake",
+                subtitle: "Prevent idle sleep and display dimming",
+                systemImage: "cup.and.saucer"
+            ) { state.toggleMode("stay-awake") }
             panelAction("System Settings", subtitle: "Open macOS settings", systemImage: "gearshape") { state.openSystemSettings() }
         }
+    }
+
+    private var weatherPanel: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if let weather = state.weatherStatus {
+                HStack(alignment: .center) {
+                    Image(systemName: "cloud.sun.fill")
+                        .font(.system(size: 42))
+                        .foregroundStyle(Color(omacosHex: colors.accent))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(weather.temperatureC)°C").font(.system(size: 30, weight: .bold, design: .rounded))
+                        Text(weather.description).fontWeight(.semibold)
+                        Text([weather.location, weather.region].filter { !$0.isEmpty }.joined(separator: ", "))
+                            .font(.caption)
+                            .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                    }
+                    Spacer()
+                    Button("Refresh") { state.refreshWeather() }
+                        .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                }
+                HStack {
+                    Text("Feels like \(weather.feelsLikeC)°")
+                    Spacer()
+                    Text("Humidity \(weather.humidity)%")
+                    Spacer()
+                    Text("Wind \(weather.windKmph) km/h")
+                }
+                .font(.caption)
+                .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                ForEach(weather.forecast) { day in
+                    HStack {
+                        Text(day.date).font(.system(size: 11, design: .monospaced)).frame(width: 84, alignment: .leading)
+                        Text(day.description).lineLimit(1)
+                        Spacer()
+                        Text("\(day.minimumC)° / \(day.maximumC)°").font(.system(size: 11, design: .monospaced))
+                    }
+                    .padding(9)
+                    .background(Color(omacosHex: colors.lighterBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            } else {
+                ContentUnavailableView("Weather unavailable", systemImage: "cloud.sun", description: Text(state.weatherMessage))
+                Button("Refresh forecast") { state.refreshWeather() }
+                    .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+                    .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private var mediaPanel: some View {
+        VStack(spacing: 18) {
+            if let media = state.mediaStatus, media.hasTrack {
+                Image(systemName: "music.note")
+                    .font(.system(size: 54, weight: .bold))
+                    .foregroundStyle(Color(omacosHex: colors.accent))
+                VStack(spacing: 4) {
+                    Text(media.title).font(.title3.bold()).lineLimit(2)
+                    Text(media.artist).foregroundStyle(Color(omacosHex: colors.darkForeground)).lineLimit(1)
+                    Text(media.application).font(.caption2).foregroundStyle(Color(omacosHex: colors.darkForeground))
+                }
+                HStack(spacing: 24) {
+                    Button { state.controlMedia("previous") } label: { Image(systemName: "backward.fill") }
+                    Button { state.controlMedia("play-pause") } label: {
+                        Image(systemName: media.isPlaying ? "pause.circle.fill" : "play.circle.fill").font(.system(size: 34))
+                    }
+                    Button { state.controlMedia("next") } label: { Image(systemName: "forward.fill") }
+                }
+                .buttonStyle(.plain)
+            } else {
+                ContentUnavailableView("Nothing playing", systemImage: "music.note", description: Text("Start playback in Apple Music or Spotify, then refresh."))
+            }
+            Button("Refresh") { state.refreshMedia() }
+                .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var dictationPanel: some View {
+        VStack(spacing: 16) {
+            Image(systemName: dictationController.isRecording ? "waveform.and.mic" : "mic")
+                .font(.system(size: 48))
+                .foregroundStyle(Color(omacosHex: dictationController.isRecording ? colors.red : colors.accent))
+            Text(dictationController.statusMessage)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Color(omacosHex: colors.darkForeground))
+            if !dictationController.transcript.isEmpty {
+                Text(dictationController.transcript)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(11)
+                    .background(Color(omacosHex: colors.lighterBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            Button(dictationController.isRecording ? "Stop and Insert" : "Start Dictation") {
+                dictationController.toggle()
+            }
+            .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var dateTimeNotice: some View {
+        VStack(spacing: 8) {
+            Text(Date(), format: .dateTime.weekday(.wide).month(.wide).day().year())
+                .font(.title3.weight(.semibold))
+            Text(Date(), format: .dateTime.hour().minute().second())
+                .font(.system(size: 42, weight: .bold, design: .rounded))
+                .foregroundStyle(Color(omacosHex: colors.accent))
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var batteryNotice: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "battery.75percent").font(.system(size: 42)).foregroundStyle(Color(omacosHex: colors.accent))
+            Text(state.batteryPercentage).font(.system(size: 38, weight: .bold, design: .rounded))
+            Text(state.batterySource).foregroundStyle(Color(omacosHex: colors.darkForeground))
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var weatherNotice: some View {
+        VStack(spacing: 9) {
+            if let weather = state.weatherStatus {
+                Image(systemName: "cloud.sun.fill").font(.system(size: 42)).foregroundStyle(Color(omacosHex: colors.accent))
+                Text("\(weather.temperatureC)°C").font(.system(size: 38, weight: .bold, design: .rounded))
+                Text(weather.description).fontWeight(.semibold)
+                Text(weather.location).foregroundStyle(Color(omacosHex: colors.darkForeground))
+            } else {
+                ContentUnavailableView("Weather unavailable", systemImage: "cloud.sun")
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private var audioPanel: some View {
@@ -676,6 +836,9 @@ struct OMacOSSystemPanelView: View {
         switch panelID {
         case .keybindings, .clipboard, .emojis, .themes, .agents: 620
         case .clock: 520
+        case .system: 430
+        case .weather: 440
+        case .noticeDateTime, .noticeBattery, .noticeWeather: 280
         default: 360
         }
     }

@@ -44,6 +44,38 @@ private struct OMacOSKeybindingDocument: Codable {
     let bindings: [OMacOSKeybinding]
 }
 
+struct OMacOSWeatherForecast: Codable, Identifiable {
+    let date: String
+    let minimumC: Int
+    let maximumC: Int
+    let description: String
+
+    var id: String { date }
+}
+
+struct OMacOSWeatherStatus: Codable {
+    let schemaVersion: Int
+    let location: String
+    let region: String
+    let temperatureC: Int
+    let feelsLikeC: Int
+    let description: String
+    let humidity: Int
+    let windKmph: Int
+    let forecast: [OMacOSWeatherForecast]
+}
+
+struct OMacOSMediaStatus: Codable {
+    let schemaVersion: Int
+    let state: String
+    let title: String
+    let artist: String
+    let application: String
+
+    var isPlaying: Bool { state == "playing" }
+    var hasTrack: Bool { !title.isEmpty }
+}
+
 @MainActor
 final class OMacOSSystemPanelState: NSObject, ObservableObject {
     @Published private(set) var batteryPercentage = "—"
@@ -63,6 +95,12 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
     @Published private(set) var defaultTerminal = "ghostty"
     @Published private(set) var defaultBrowser = "system"
     @Published private(set) var defaultEditor = "nvim"
+    @Published private(set) var weatherStatus: OMacOSWeatherStatus?
+    @Published private(set) var weatherMessage = "Select refresh to load the forecast."
+    @Published private(set) var mediaStatus: OMacOSMediaStatus?
+    @Published private(set) var stayAwakeEnabled = false
+    @Published private(set) var notificationSilencingEnabled = false
+    @Published private(set) var nightLightEnabled = false
 
     private var refreshTimer: Timer?
 
@@ -83,6 +121,55 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
 
     func refreshNow() {
         refreshStatusValues()
+    }
+
+    func refreshWeather() {
+        let result = OMacOSCommandRunner.run(
+            executable: "/usr/bin/env",
+            arguments: [projectScript(named: "weather.zsh"), "refresh"]
+        )
+        if result.exitCode == 0, decodeWeather(from: result.output) {
+            weatherMessage = "Forecast refreshed."
+        } else {
+            weatherMessage = "Weather is unavailable. Check the connection or set a location."
+        }
+    }
+
+    func refreshMedia() {
+        let result = OMacOSCommandRunner.run(
+            executable: "/usr/bin/env",
+            arguments: [projectScript(named: "media.zsh"), "status"]
+        )
+        guard result.exitCode == 0,
+              let data = result.output.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode(OMacOSMediaStatus.self, from: data) else {
+            mediaStatus = nil
+            return
+        }
+        mediaStatus = decoded
+    }
+
+    func controlMedia(_ action: String) {
+        _ = OMacOSCommandRunner.run(
+            executable: "/usr/bin/env",
+            arguments: [projectScript(named: "media.zsh"), action]
+        )
+        refreshMedia()
+    }
+
+    func toggleMode(_ mode: String) {
+        _ = OMacOSCommandRunner.run(
+            executable: "/usr/bin/env",
+            arguments: [projectScript(named: "toggles.zsh"), "toggle", mode]
+        )
+        refreshToggleStatus()
+    }
+
+    func runSystemAction(_ action: String) {
+        _ = OMacOSCommandRunner.run(
+            executable: "/usr/bin/env",
+            arguments: [projectScript(named: "toggles.zsh"), action]
+        )
     }
 
     func resetPanelSearch() {
@@ -198,6 +285,8 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
         refreshNetworkStatus()
         refreshBluetoothStatus()
         refreshActivityStatus()
+        loadCachedWeather()
+        refreshToggleStatus()
         lastRefresh = Date()
     }
 
@@ -269,6 +358,40 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
         let hours = Int(uptime) / 3600
         let days = hours / 24
         uptimeSummary = days > 0 ? "\(days)d \(hours % 24)h uptime" : "\(hours)h uptime"
+    }
+
+    private func loadCachedWeather() {
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        let cachePath = homeDirectory + "/.local/state/omacos/weather.json"
+        guard FileManager.default.fileExists(atPath: cachePath) else { return }
+        let result = OMacOSCommandRunner.run(
+            executable: "/usr/bin/env",
+            arguments: [projectScript(named: "weather.zsh"), "show"]
+        )
+        if result.exitCode == 0 {
+            _ = decodeWeather(from: result.output)
+        }
+    }
+
+    @discardableResult
+    private func decodeWeather(from output: String) -> Bool {
+        guard let data = output.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode(OMacOSWeatherStatus.self, from: data),
+              decoded.schemaVersion == 1 else {
+            return false
+        }
+        weatherStatus = decoded
+        return true
+    }
+
+    private func refreshToggleStatus() {
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["OMACOS_TEST_HOME"] ?? NSHomeDirectory()
+        let directory = homeDirectory + "/.local/state/omacos/toggles"
+        stayAwakeEnabled = FileManager.default.fileExists(atPath: directory + "/stay-awake.enabled")
+        notificationSilencingEnabled = FileManager.default.fileExists(atPath: directory + "/notification-silencing.enabled")
+        nightLightEnabled = FileManager.default.fileExists(atPath: directory + "/night-light.enabled")
     }
 
     private func loadKeybindings() {
