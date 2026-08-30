@@ -172,7 +172,9 @@ set_profile_bar_position() {
   local left_gap=$spacing
   local right_gap=$spacing
   case $position in
-    top) top_gap=$reserved_gap ;;
+    # macOS window managers already tile below the native menu-bar safe area.
+    # The OMacOS top bar replaces that visible area, so only the normal window gap remains.
+    top) top_gap=$spacing ;;
     bottom) bottom_gap=$reserved_gap ;;
     left) left_gap=$reserved_gap ;;
     right) right_gap=$reserved_gap ;;
@@ -233,7 +235,7 @@ apply_bar_position() {
       local left_gap=$spacing
       local right_gap=$spacing
       case $position in
-        top) top_gap=$reserved_gap ;;
+        top) top_gap=$spacing ;;
         bottom) bottom_gap=$reserved_gap ;;
         left) left_gap=$reserved_gap ;;
         right) right_gap=$reserved_gap ;;

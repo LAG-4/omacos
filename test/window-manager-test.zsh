@@ -148,9 +148,9 @@ rg -Fq 'yabai -m window --opacity 0.78' "$command_log"
 rg -Fq 'yabai -m window --opacity 1.0' "$command_log"
 
 "$wm" bar-position top
-rg -q '^gaps.outer.top = 42$' "$temporary_home/.config/aerospace/aerospace.toml"
-rg -q '^top = 42.0$' "$temporary_home/.config/rift/config.toml"
-rg -q '^yabai -m config top_padding 42$' "$temporary_home/.config/yabai/yabairc"
+rg -q '^gaps.outer.top = 8$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^top = 8.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config top_padding 8$' "$temporary_home/.config/yabai/yabairc"
 rg -Fq 'yabai -m config bottom_padding 8' "$command_log"
 
 "$wm" bar-position left
@@ -170,9 +170,9 @@ rg -Fq 'yabai -m config right_padding 56' "$command_log"
 "$wm" gaps disable
 [[ $("$wm" gaps status) == 'window-gaps=false' ]]
 rg -q '^gaps.inner.horizontal = 0$' "$temporary_home/.config/aerospace/aerospace.toml"
-rg -q '^gaps.outer.top = 34$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^gaps.outer.top = 0$' "$temporary_home/.config/aerospace/aerospace.toml"
 rg -q '^horizontal = 0.0$' "$temporary_home/.config/rift/config.toml"
-rg -q '^top = 34.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^top = 0.0$' "$temporary_home/.config/rift/config.toml"
 rg -q '^yabai -m config window_gap 0$' "$temporary_home/.config/yabai/yabairc"
 rg -Fq 'yabai -m config window_gap 0' "$command_log"
 "$wm" gaps toggle
