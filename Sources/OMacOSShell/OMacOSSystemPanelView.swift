@@ -36,7 +36,12 @@ struct OMacOSSystemPanelView: View {
         .focusSection()
         .onExitCommand(perform: dismissPanel)
         .onAppear {
-            searchFieldFocused = panelHasSearchField
+            if panelHasSearchField {
+                Task { @MainActor in
+                    await Task.yield()
+                    searchFieldFocused = true
+                }
+            }
             if panelID == .media {
                 state.refreshMedia()
             } else if panelID == .weather || panelID == .noticeWeather {

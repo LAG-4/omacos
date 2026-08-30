@@ -156,16 +156,14 @@ struct OMacOSCommandMenuView: View {
                     .stroke(Color(omacosHex: theme.colors.accent), lineWidth: 1)
             }
         }
-        .onHover { isHovering in
-            if isHovering {
-                keyboardState.selectedEntryID = entry.id
-            }
-        }
     }
 
     private func focusInitialMenuEntry() {
         keyboardState.selectedEntryID = store.visibleEntries.first?.id
-        focusedTarget = .search
+        Task { @MainActor in
+            await Task.yield()
+            focusedTarget = .search
+        }
     }
 
     private func synchronizeSelection(with entryIDs: [String]) {
