@@ -246,6 +246,8 @@ final class OMacOSPanelCoordinator: NSObject {
                 }
             )
         }
+        panel.autorecalculatesKeyViewLoop = true
+        panel.initialFirstResponder = panel.contentView
         return panel
     }
 
