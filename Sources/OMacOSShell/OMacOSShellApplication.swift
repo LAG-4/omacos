@@ -401,6 +401,10 @@ final class OMacOSShellApplicationDelegate: NSObject, NSApplicationDelegate {
                     value: notification.userInfo?[OMacOSShellMessage.valueKey] as? String
                 )
             }
+        case OMacOSShellMessage.workspaceChangedAction:
+            if let workspace = notification.userInfo?[OMacOSShellMessage.valueKey] as? String {
+                barState?.updateActiveWorkspace(workspace)
+            }
         default:
             break
         }
@@ -658,6 +662,13 @@ enum OMacOSShellMain {
             let value = arguments.indices.contains(groupIndex + 2) ? arguments[groupIndex + 2] : nil
             OMacOSShellMessage.postWindowGroupAction(action, value: value)
             RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
+            return
+        }
+
+        if let workspaceIndex = arguments.firstIndex(of: "--workspace-changed"),
+           arguments.indices.contains(workspaceIndex + 1) {
+            OMacOSShellMessage.postWorkspaceChanged(arguments[workspaceIndex + 1])
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.08))
             return
         }
 

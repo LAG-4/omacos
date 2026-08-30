@@ -43,6 +43,14 @@ OMACOS_TEST_HOME="$temporary_home" \
   "$project_root/scripts/launch.zsh" web chatgpt
 rg -Fxq -- "https://chatgpt.com" "$open_log"
 
+: > "$open_log"
+OMACOS_TEST_HOME="$temporary_home" \
+  OMACOS_FAKE_OPEN_LOG="$open_log" \
+  OMACOS_OPEN_BINARY="$test_directory/fixtures/fake-open.zsh" \
+  "$project_root/scripts/launch.zsh" terminal
+rg -Fxq -- "Ghostty" "$open_log"
+rg -Fxq -- "--command=/bin/zsh" "$open_log"
+
 set +e
 invalid_output=$(OMACOS_TEST_HOME="$temporary_home" "$project_root/scripts/defaults.zsh" set editor unknown 2>&1)
 invalid_status=$?

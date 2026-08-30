@@ -13,6 +13,7 @@ struct OMacOSSystemPanelView: View {
     @ObservedObject var packageStore: OMacOSPackageStore
     @ObservedObject var pluginStore: OMacOSPluginCatalogStore
     let dismissPanel: () -> Void
+    @FocusState private var searchFieldFocused: Bool
 
     private var colors: OMacOSThemeColors { theme.colors }
 
@@ -32,7 +33,10 @@ struct OMacOSSystemPanelView: View {
                 .stroke(Color(omacosHex: colors.selection), lineWidth: 1)
         }
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .focusSection()
+        .onExitCommand(perform: dismissPanel)
         .onAppear {
+            searchFieldFocused = panelHasSearchField
             if panelID == .media {
                 state.refreshMedia()
             } else if panelID == .weather || panelID == .noticeWeather {
@@ -69,6 +73,7 @@ struct OMacOSSystemPanelView: View {
                 Image(systemName: "xmark")
             }
             .buttonStyle(.plain)
+            .keyboardShortcut(.cancelAction)
             .foregroundStyle(Color(omacosHex: colors.darkForeground))
         }
     }
@@ -1289,10 +1294,20 @@ struct OMacOSSystemPanelView: View {
             )
         )
             .textFieldStyle(.plain)
+            .focused($searchFieldFocused)
             .padding(.horizontal, 11)
             .padding(.vertical, 8)
             .background(Color(omacosHex: colors.lighterBackground))
             .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private var panelHasSearchField: Bool {
+        switch panelID {
+        case .keybindings, .clipboard, .emojis, .themes:
+            true
+        default:
+            false
+        }
     }
 
     private var filteredKeybindings: [OMacOSKeybinding] {

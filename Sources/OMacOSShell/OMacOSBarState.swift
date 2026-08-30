@@ -43,6 +43,12 @@ final class OMacOSBarState: NSObject, ObservableObject {
         activeWorkspace = workspace
     }
 
+    /// Applies a workspace change reported by the active window-manager adapter.
+    func updateActiveWorkspace(_ workspace: String) {
+        guard !workspace.isEmpty else { return }
+        activeWorkspace = workspace
+    }
+
     @objc private func refreshStatusValues() {
         clockText = clockFormatter.string(from: Date())
         frontmostApplication = NSWorkspace.shared.frontmostApplication?.localizedName ?? "Desktop"

@@ -15,6 +15,7 @@ enum OMacOSShellMessage {
     static let webcamOverlayAction = "webcam-overlay"
     static let pointerGestureAction = "pointer-gesture"
     static let windowGroupAction = "window-group"
+    static let workspaceChangedAction = "workspace-changed"
 
     /// Posts one property-list-safe command to the already-running native shell.
     static func postTogglePanel(_ panelID: OMacOSPanelID) {
@@ -117,6 +118,16 @@ enum OMacOSShellMessage {
             notificationName,
             object: nil,
             userInfo: userInfo,
+            deliverImmediately: true
+        )
+    }
+
+    /// Delivers an event-driven active workspace update from a window-manager adapter.
+    static func postWorkspaceChanged(_ workspace: String) {
+        DistributedNotificationCenter.default().postNotificationName(
+            notificationName,
+            object: nil,
+            userInfo: [actionKey: workspaceChangedAction, valueKey: workspace],
             deliverImmediately: true
         )
     }

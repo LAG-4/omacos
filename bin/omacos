@@ -205,6 +205,14 @@ run_shell_command() {
           ;;
       esac
       ;;
+    workspace-changed)
+      local workspace=${2:-}
+      if [[ -z $workspace ]]; then
+        print -u2 "Usage: omacos shell workspace-changed WORKSPACE"
+        return 2
+      fi
+      "$shell_binary" --workspace-changed "$workspace"
+      ;;
     *)
       print -u2 "Unknown shell action: $action"
       return 1

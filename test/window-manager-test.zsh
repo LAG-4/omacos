@@ -11,6 +11,9 @@ fake_bin="$temporary_home/bin"
 mkdir -p "$fake_bin" "$temporary_home/.config/omacos" "$temporary_home/.config/rift" "$temporary_home/.config/yabai"
 print '{"position":"bottom","transparent":false}' > "$temporary_home/.config/omacos/bar.json"
 
+rg -Fq 'exec-on-workspace-change' "$project_root/config/aerospace/aerospace.toml"
+rg -Fq 'shell workspace-changed "$AEROSPACE_FOCUSED_WORKSPACE"' "$project_root/config/aerospace/aerospace.toml"
+
 print "original rift config" > "$temporary_home/.config/rift/config.toml"
 print "original yabai config" > "$temporary_home/.config/yabai/yabairc"
 

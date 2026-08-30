@@ -19,7 +19,7 @@ open_application() {
 case $action in
   terminal)
     case $(default_value terminal) in
-      ghostty) "$open_binary" -na Ghostty ;;
+      ghostty) "$open_binary" -na Ghostty --args --command=/bin/zsh ;;
       terminal) "$open_binary" -na Terminal ;;
       iterm2) "$open_binary" -na iTerm ;;
     esac

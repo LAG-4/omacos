@@ -17,6 +17,7 @@ OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" osd
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-panel permissions
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell toggle-menu
+OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" shell workspace-changed 7
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" dictation toggle
 OMACOS_TEST_HOME="$temporary_home" "$shell_binary" --clipboard-clear
 OMACOS_TEST_HOME="$temporary_home" "$project_root/bin/omacos" bar position bottom >/dev/null
