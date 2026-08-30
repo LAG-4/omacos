@@ -222,6 +222,7 @@ Files
   $omacos_home/.local/bin/omacos-shell
   $omacos_home/.config/aerospace/aerospace.toml
   $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json
+  $omacos_home/.config/karabiner/karabiner.json selected profile, with a reversible backup
   $omacos_home/.config/omacos
   one marked, reversible source block in $omacos_home/.zshrc
   $omacos_home/Library/LaunchAgents/dev.omacos.shell.plist
@@ -288,6 +289,8 @@ install_directory="$omacos_home/.local/share/omacos/current"
 binary_directory="$omacos_home/.local/bin"
 shell_app="$omacos_home/.local/share/omacos/OMacOSShell.app"
 aerospace_directory="$omacos_home/.config/aerospace"
+karabiner_config_directory="$omacos_home/.config/karabiner"
+karabiner_config="$karabiner_config_directory/karabiner.json"
 karabiner_rule_directory="$omacos_home/.config/karabiner/assets/complex_modifications"
 launch_agent_directory="$omacos_home/Library/LaunchAgents"
 
@@ -304,6 +307,14 @@ if [[ ! -f $state_directory/backup-recorded ]]; then
     touch "$state_directory/had-xdg-aerospace-config"
   fi
   touch "$state_directory/backup-recorded"
+fi
+
+if [[ ! -f $state_directory/karabiner-backup-recorded ]]; then
+  if [[ -f $karabiner_config ]]; then
+    cp "$karabiner_config" "$backup_directory/karabiner.json"
+    touch "$state_directory/had-karabiner-config"
+  fi
+  touch "$state_directory/karabiner-backup-recorded"
 fi
 finish_installer_step
 
@@ -358,6 +369,7 @@ cp "$install_directory/config/aerospace/aerospace.toml" "$aerospace_directory/ae
 "$install_directory/scripts/generate-karabiner-config.zsh" \
   "$install_directory/config/keybindings.json" \
   "$karabiner_rule_directory/omacos-super-key.json"
+OMACOS_ROOT="$install_directory" "$install_directory/scripts/karabiner-profile.zsh" enable
 
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/render-theme.zsh" tokyo-night
 mkdir -p "$omacos_home/.config/omacos"
@@ -421,9 +433,8 @@ cat <<'EOF'
 
 OMacOS installed.
 
-One manual step remains:
-  Open Karabiner-Elements > Complex Modifications > Add predefined rule,
-  then enable "Use Right Option as the OMacOS Super layer".
+The OMacOS rules are enabled in the selected Karabiner profile.
+Right Option is the Super key. Left Option keeps its normal macOS behavior.
 
 Run `omacos doctor` after approving the requested macOS permissions.
 EOF

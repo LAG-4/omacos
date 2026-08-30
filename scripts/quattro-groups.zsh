@@ -194,6 +194,11 @@ case $group in
     case $action in
       show|menu) show_menu setup ;;
       permissions) show_panel permissions ;;
+      keybindings)
+        OMACOS_ROOT="$omacos_root" "$omacos_root/scripts/karabiner-profile.zsh" enable
+        print "Right Option is the OMacOS Super key."
+        print "If it does not respond, verify Capture Input Events in Karabiner-Elements > Setup."
+        ;;
       *) "$omacos_root/scripts/menu.zsh" run "setup.$action" ;;
     esac
     ;;

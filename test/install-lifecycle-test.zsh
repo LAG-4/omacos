@@ -7,10 +7,29 @@ project_root=${test_directory:h}
 temporary_home=$(mktemp -d -t omacos-lifecycle-test.XXXXXX)
 trap 'rm -rf "$temporary_home"' EXIT
 
-mkdir -p "$temporary_home/.config/aerospace"
+mkdir -p "$temporary_home/.config/aerospace" "$temporary_home/.config/karabiner"
 print "original shell config" > "$temporary_home/.zshrc"
 print "original dot config" > "$temporary_home/.aerospace.toml"
 print "original xdg config" > "$temporary_home/.config/aerospace/aerospace.toml"
+cat > "$temporary_home/original-karabiner.json" <<'EOF'
+{
+  "profiles": [
+    {
+      "name": "User profile",
+      "selected": true,
+      "complex_modifications": {
+        "rules": [
+          {
+            "description": "Keep this user rule",
+            "manipulators": []
+          }
+        ]
+      }
+    }
+  ]
+}
+EOF
+cp "$temporary_home/original-karabiner.json" "$temporary_home/.config/karabiner/karabiner.json"
 print "y" > "$temporary_home/installer-confirmation"
 
 OMACOS_CONFIRMATION_DEVICE="$temporary_home/installer-confirmation" \
@@ -56,6 +75,22 @@ if [[ ! -L $temporary_home/.local/bin/omacos ]]; then
   exit 1
 fi
 
+if ! jq -e '
+  [.profiles[] | select(.selected == true) | .complex_modifications.rules[]?.description]
+  | index("Use Right Option as the OMacOS Super layer") != null
+' "$temporary_home/.config/karabiner/karabiner.json" >/dev/null; then
+  print -u2 "Install lifecycle test failed: the OMacOS Super rule was installed but not enabled"
+  exit 1
+fi
+
+if ! jq -e '
+  [.profiles[] | .complex_modifications.rules[]?.description]
+  | index("Keep this user rule") != null
+' "$temporary_home/.config/karabiner/karabiner.json" >/dev/null; then
+  print -u2 "Install lifecycle test failed: enabling OMacOS removed an existing Karabiner rule"
+  exit 1
+fi
+
 if [[ -f $temporary_home/.aerospace.toml ]]; then
   print -u2 "Install lifecycle test failed: ambiguous dot AeroSpace config remains"
   exit 1
@@ -70,7 +105,7 @@ exit 0
 EOF
 chmod +x "$temporary_home/test-bin/aerospace"
 ln -s "$temporary_home/test-bin/aerospace" "$temporary_home/test-bin/blueutil"
-PATH="$temporary_home/test-bin:$PATH" OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" doctor >/dev/null
+PATH="$temporary_home/test-bin:$PATH" OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" OMACOS_TEST_MODE=true "$temporary_home/.local/bin/omacos" doctor >/dev/null
 OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" permissions status | jq -e '.schemaVersion == 1' >/dev/null
 OMACOS_TEST_HOME="$temporary_home" OMACOS_ROOT="$installed_root" "$temporary_home/.local/bin/omacos" uninstall --yes >/dev/null
 
@@ -86,6 +121,11 @@ fi
 
 if [[ $(<"$temporary_home/.zshrc") != "original shell config" ]]; then
   print -u2 "Install lifecycle test failed: shell integration was not removed cleanly"
+  exit 1
+fi
+
+if ! cmp -s "$temporary_home/original-karabiner.json" "$temporary_home/.config/karabiner/karabiner.json"; then
+  print -u2 "Install lifecycle test failed: the original Karabiner profile was not restored"
   exit 1
 fi
 

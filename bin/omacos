@@ -8,6 +8,8 @@ omacos_home=${OMACOS_TEST_HOME:-$HOME}
 launch_agent="$omacos_home/Library/LaunchAgents/dev.omacos.shell.plist"
 shell_binary=${OMACOS_SHELL_BINARY:-$omacos_home/.local/bin/omacos-shell}
 open_command=${OMACOS_OPEN_BINARY:-/usr/bin/open}
+test_mode=${OMACOS_TEST_MODE:-false}
+doctor_permission_setup_steps=0
 
 print_usage() {
   cat <<'EOF'
@@ -89,12 +91,23 @@ print_permission_status() {
   local permission_json
   permission_json=$("$shell_binary" --permission-status 2>/dev/null || true)
   [[ -n $permission_json ]] || return
+  doctor_permission_setup_steps=$(jq '[to_entries[] | select(.key == "accessibility" or .key == "inputMonitoring") | select(.value != "granted")] | length' <<< "$permission_json")
   print "Permissions"
-  jq -r 'to_entries[] | select(.key != "schemaVersion") | "[\(if .value == "granted" then "ok" else "setup" end)] \(.key)=\(.value)"' <<< "$permission_json"
+  jq -r '
+    to_entries[]
+    | select(.key != "schemaVersion")
+    | "[\(
+        if .value == "granted" then "ok"
+        elif .key == "accessibility" or .key == "inputMonitoring" then "setup"
+        else "optional"
+        end
+      )] \(.key)=\(.value)"
+  ' <<< "$permission_json"
 }
 
 run_doctor() {
   local failures=0
+  local setup_steps=0
   local macos_major
   macos_major=$(sw_vers -productVersion | cut -d. -f1)
 
@@ -115,16 +128,26 @@ run_doctor() {
   doctor_check "Bluetooth helper" "$(command -v blueutil >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Window manager profile ($window_manager_profile)" "$([[ -s $omacos_home/.config/omacos/window-manager-profile ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Karabiner rule installed" "$([[ -f $omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json ]] && print ok || print fail)" || (( failures += 1 ))
+  doctor_check "Karabiner rule enabled" "$(OMACOS_ROOT="$installed_root" "$installed_root/scripts/karabiner-profile.zsh" status >/dev/null 2>&1 && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Native shell binary" "$([[ -x $shell_binary ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Native shell app bundle" "$([[ -x $omacos_home/.local/share/omacos/OMacOSShell.app/Contents/MacOS/omacos-shell ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Shell LaunchAgent" "$([[ -f $launch_agent ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Application defaults" "$([[ -f $omacos_home/.config/omacos/defaults.json ]] && print ok || print fail)" || (( failures += 1 ))
   doctor_check "Shell integration" "$(rg -Fq '# >>> OMacOS shell integration >>>' "$omacos_home/.zshrc" 2>/dev/null && print ok || print fail)" || (( failures += 1 ))
   print_permission_status
+  if ! $test_mode; then
+    setup_steps=$((setup_steps + doctor_permission_setup_steps))
+  fi
 
   if (( failures > 0 )); then
     print -u2 "OMacOS doctor found $failures problem(s)."
     return 1
+  fi
+
+  if (( setup_steps > 0 )); then
+    print -u2 "OMacOS is installed, but $setup_steps required permission step(s) remain."
+    print -u2 "Run 'omacos permissions guide' and approve Accessibility and Input Monitoring for OMacOS."
+    return 2
   fi
 
   print "OMacOS doctor found no installation problems."
@@ -252,7 +275,7 @@ run_uninstall() {
 
   if [[ $uninstall_option == "--help" || $uninstall_option == "-h" ]]; then
     print "Usage: omacos uninstall [--yes]"
-    print "Restores backed-up configuration and removes OMacOS-managed files. Homebrew packages are kept."
+    print "Restores backed-up AeroSpace and Karabiner configuration and removes OMacOS-managed files. Homebrew packages are kept."
     return 0
   elif [[ $uninstall_option == "--yes" || $uninstall_option == "-y" ]]; then
     assume_yes=true
@@ -261,7 +284,7 @@ run_uninstall() {
     return 1
   fi
 
-  print "OMacOS will stop its shell, restore backed-up AeroSpace config, and remove its own files."
+  print "OMacOS will stop its shell, restore backed-up AeroSpace and Karabiner config, and remove its own files."
   if ! $assume_yes; then
     print -n "Continue? [y/N] "
     if ! read -r answer </dev/tty || [[ $answer != [yY] && $answer != [yY][eE][sS] ]]; then
@@ -294,6 +317,11 @@ run_uninstall() {
     rm -f "$omacos_home/.aerospace.toml"
   fi
 
+  if [[ -f $state_directory/had-karabiner-config && -f $backup_directory/karabiner.json ]]; then
+    cp "$backup_directory/karabiner.json" "$omacos_home/.config/karabiner/karabiner.json"
+  elif [[ -x $installed_root/scripts/karabiner-profile.zsh ]]; then
+    "$installed_root/scripts/karabiner-profile.zsh" remove
+  fi
   rm -f "$omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json"
   rm -f "$omacos_home/.config/ghostty/themes/OMacOS"
   rm -f "$omacos_home/.local/bin/omacos" "$omacos_home/.local/bin/omacos-shell"

@@ -8,6 +8,7 @@ project_root=${test_directory:h}
 swift build --package-path "$project_root"
 "$test_directory/installer-test.zsh"
 "$test_directory/installer-package-trust-test.zsh"
+"$test_directory/karabiner-profile-test.zsh"
 "$test_directory/install-lifecycle-test.zsh"
 "$test_directory/config-test.zsh"
 "$test_directory/window-manager-test.zsh"

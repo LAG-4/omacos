@@ -46,6 +46,8 @@ The bootstrap prefers the latest signed, notarized release, verifies its checksu
 
 Installation reports eight numbered stages and identifies the active stage if a command fails. The same install command can resume a partial run because Homebrew and OMacOS setup are idempotent. Homebrew reuses installed bundle dependencies without upgrading them. JankyBorders requires Homebrew tap trust, so the installer temporarily trusts only `felixkratz/formulae/borders` and removes that formula trust after the bundle command succeeds or fails.
 
+The installer adds the generated OMacOS rules to the selected Karabiner profile and preserves unrelated rules. It records the original `karabiner.json` before the first managed edit. Uninstall restores that original profile.
+
 ## Default shortcuts
 
 Hold Right Option and press:
@@ -85,7 +87,7 @@ Hold Right Option and press:
 | `Super + S` | Summon the scratchpad workspace |
 | `Super + Option + S` | Move a window to the scratchpad |
 
-Karabiner-Elements treats Right Option as a dedicated OMacOS layer while held with another key. It does not turn it into the usual four-modifier Hyper chord, so `Super+Shift`, `Super+Control`, and `Super+Option` remain distinct. Pressing Right Option by itself still produces Right Option. Enable the supplied "OMacOS Super key" rule after installation.
+Karabiner-Elements treats Right Option as a dedicated OMacOS layer while held with another key. It does not turn it into the usual four-modifier Hyper chord, so `Super+Shift`, `Super+Control`, and `Super+Option` remain distinct. Pressing Right Option by itself still produces Right Option. The installer enables the supplied rules in the selected Karabiner profile automatically. `omacos setup keybindings` repairs that activation without replacing unrelated Karabiner rules.
 
 ## Commands
 
