@@ -13,6 +13,7 @@ final class OMacOSBarState: NSObject, ObservableObject {
     let theme: OMacOSTheme
 
     private var refreshTimer: Timer?
+    private var workspaceMonitor: OMacOSWorkspaceMonitor?
     private let clockFormatter: DateFormatter
 
     override init() {
@@ -20,11 +21,15 @@ final class OMacOSBarState: NSObject, ObservableObject {
         clockFormatter = DateFormatter()
         clockFormatter.dateFormat = "EEE d MMM  HH:mm"
         super.init()
+        workspaceMonitor = OMacOSWorkspaceMonitor { [weak self] workspace in
+            self?.updateActiveWorkspace(workspace)
+        }
     }
 
     /// Starts polling the small set of system values displayed by the native bar.
     func startStatusUpdates() {
         refreshStatusValues()
+        workspaceMonitor?.start()
         refreshTimer = Timer.scheduledTimer(
             timeInterval: 1,
             target: self,
