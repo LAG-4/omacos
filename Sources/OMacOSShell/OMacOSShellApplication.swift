@@ -195,6 +195,10 @@ final class OMacOSPanelCoordinator: NSObject {
         panel.orderFrontRegardless()
         activePanel = panel
         activePanelID = panelID
+        DispatchQueue.main.async { [weak self, weak panel] in
+            guard let self, let panel else { return }
+            self.focusInitialPanelControl(in: panel, panelID: panelID)
+        }
         if panelID == .osd {
             Task { [weak self] in
                 try? await Task.sleep(for: .seconds(1.6))
@@ -249,6 +253,34 @@ final class OMacOSPanelCoordinator: NSObject {
         panel.autorecalculatesKeyViewLoop = true
         panel.initialFirstResponder = panel.contentView
         return panel
+    }
+
+    private func focusInitialPanelControl(in panel: NSPanel, panelID: OMacOSPanelID) {
+        panel.contentView?.layoutSubtreeIfNeeded()
+        switch panelID {
+        case .menu, .keybindings, .clipboard, .emojis, .reminders, .themes:
+            if let textField = firstTextField(in: panel.contentView) {
+                panel.makeFirstResponder(textField)
+            } else {
+                panel.makeFirstResponder(panel.contentView)
+            }
+        default:
+            panel.makeFirstResponder(panel.contentView)
+        }
+        panel.recalculateKeyViewLoop()
+    }
+
+    private func firstTextField(in view: NSView?) -> NSTextField? {
+        guard let view else { return nil }
+        if let textField = view as? NSTextField, textField.isEditable {
+            return textField
+        }
+        for subview in view.subviews {
+            if let textField = firstTextField(in: subview) {
+                return textField
+            }
+        }
+        return nil
     }
 
     private func dismissPanel() {

@@ -17,3 +17,5 @@ swiftc \
 rg -Fq '.onMoveCommand(perform: handleMoveCommand)' "$project_root/Sources/OMacOSShell/OMacOSCommandMenuView.swift"
 rg -Fq '.onExitCommand(perform: handleEscapeCommand)' "$project_root/Sources/OMacOSShell/OMacOSCommandMenuView.swift"
 rg -Fq '.keyboardShortcut(.cancelAction)' "$project_root/Sources/OMacOSShell/OMacOSSystemPanelView.swift"
+rg -Fq 'focusInitialPanelControl' "$project_root/Sources/OMacOSShell/OMacOSShellApplication.swift"
+rg -Fq 'panel.makeFirstResponder(textField)' "$project_root/Sources/OMacOSShell/OMacOSShellApplication.swift"
