@@ -61,19 +61,10 @@ final class OMacOSBarWindowCoordinator {
     }
 
     private func makeBarPanel(for screen: NSScreen) -> NSPanel {
-        let horizontalBarHeight: CGFloat = 34
-        let verticalBarWidth: CGFloat = 48
-        let panelFrame: NSRect
-        switch configuration.position {
-        case .top:
-            panelFrame = NSRect(x: screen.frame.minX, y: screen.frame.maxY - horizontalBarHeight, width: screen.frame.width, height: horizontalBarHeight)
-        case .bottom:
-            panelFrame = NSRect(x: screen.frame.minX, y: screen.frame.minY, width: screen.frame.width, height: horizontalBarHeight)
-        case .left:
-            panelFrame = NSRect(x: screen.frame.minX, y: screen.frame.minY, width: verticalBarWidth, height: screen.frame.height)
-        case .right:
-            panelFrame = NSRect(x: screen.frame.maxX - verticalBarWidth, y: screen.frame.minY, width: verticalBarWidth, height: screen.frame.height)
-        }
+        let panelFrame = OMacOSBarGeometry.localPanelFrame(
+            screenSize: screen.frame.size,
+            position: configuration.position
+        )
         let panel = NSPanel(
             contentRect: panelFrame,
             styleMask: [.borderless, .nonactivatingPanel],
