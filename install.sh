@@ -9,6 +9,31 @@ requested_release_tag=${OMACOS_RELEASE_TAG:-}
 requested_selected_channel=${OMACOS_SELECTED_CHANNEL:-stable}
 script_path=${(%):-%N}
 script_directory=${script_path:A:h}
+installer_total_steps=8
+installer_current_step=0
+installer_step_label="Preparing"
+installation_in_progress=false
+
+begin_installer_step() {
+  installer_current_step=$((installer_current_step + 1))
+  installer_step_label=$1
+  print "\n[$installer_current_step/$installer_total_steps] $installer_step_label..."
+}
+
+finish_installer_step() {
+  print "[$installer_current_step/$installer_total_steps] Done"
+}
+
+TRAPZERR() {
+  local exit_status=$?
+  if $installation_in_progress; then
+    installation_in_progress=false
+    print -u2 "\nOMacOS installation stopped during step $installer_current_step/$installer_total_steps: $installer_step_label."
+    print -u2 "The command above reported the cause. It is safe to run the same install command again."
+    print -u2 "Homebrew will reuse packages already installed, and OMacOS records backups before replacing user configuration."
+  fi
+  return $exit_status
+}
 
 if [[ ! -f $script_directory/Package.swift ]]; then
   bootstrap_directory=$(mktemp -d -t omacos-bootstrap.XXXXXX)
@@ -91,6 +116,35 @@ test_mode=${OMACOS_TEST_MODE:-false}
 prebuilt_shell_app=${OMACOS_PREBUILT_SHELL_APP:-}
 selected_channel=${OMACOS_SELECTED_CHANNEL:-stable}
 confirmation_device=${OMACOS_CONFIRMATION_DEVICE:-/dev/tty}
+brew_command=${OMACOS_BREW:-brew}
+test_install_packages=${OMACOS_TEST_INSTALL_PACKAGES:-false}
+
+install_package_dependencies() {
+  local formula="felixkratz/formulae/borders"
+  local formula_was_trusted=false
+  local bundle_status=0
+  local untrust_status=0
+
+  if "$brew_command" trust --json=v1 | /usr/bin/grep -Fq "\"$formula\""; then
+    formula_was_trusted=true
+  else
+    print "  Temporarily trusting only $formula."
+    "$brew_command" trust --formula "$formula"
+  fi
+
+  HOMEBREW_NO_ENV_HINTS=1 "$brew_command" bundle install --no-upgrade --file "$source_root/Brewfile" || bundle_status=$?
+
+  if ! $formula_was_trusted; then
+    print "  Removing the temporary Homebrew formula trust."
+    "$brew_command" untrust --formula "$formula" || untrust_status=$?
+  fi
+
+  if (( bundle_status != 0 )); then
+    return $bundle_status
+  elif (( untrust_status != 0 )); then
+    return $untrust_status
+  fi
+}
 
 if [[ $selected_channel != "stable" && $selected_channel != "rc" && $selected_channel != "edge" && $selected_channel != "dev" ]]; then
   print -u2 "Unknown OMacOS update channel: $selected_channel"
@@ -173,6 +227,8 @@ Files
   $omacos_home/Library/LaunchAgents/dev.omacos.shell.plist
 
 Existing AeroSpace configuration will be backed up before replacement.
+Homebrew will temporarily trust only felixkratz/formulae/borders while installing JankyBorders, then remove that trust.
+Already installed Homebrew packages will be reused rather than upgraded.
 macOS will ask you to approve Accessibility for AeroSpace and input monitoring for Karabiner-Elements.
 Clipboard paste automation needs Accessibility for the OMacOS shell. Capture and OCR need Screen Recording when first used.
 Dictation asks for Microphone and Speech Recognition access only when first invoked.
@@ -199,16 +255,32 @@ if ! $assume_yes; then
   fi
 fi
 
-if ! $test_mode && ! command -v brew >/dev/null 2>&1; then
-  print "Installing Homebrew with its official installer..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+installation_in_progress=true
 
+begin_installer_step "Preparing Homebrew"
 if ! $test_mode; then
-  print "Installing OMacOS package dependencies..."
-  brew bundle --file "$source_root/Brewfile"
+  if ! command -v "$brew_command" >/dev/null 2>&1; then
+    print "  Homebrew is missing. Running its official installer."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    brew_command=/opt/homebrew/bin/brew
+  else
+    print "  Reusing $("$brew_command" --version | head -n 1)."
+  fi
+else
+  print "  Test mode is using the configured package runner."
 fi
+finish_installer_step
+
+begin_installer_step "Installing the Homebrew package bundle"
+if ! $test_mode || $test_install_packages; then
+  package_count=$(/usr/bin/awk '/^(brew|cask) "/ { count++ } END { print count }' "$source_root/Brewfile")
+  print "  Checking $package_count tools and applications. Existing packages will be reused."
+  install_package_dependencies
+else
+  print "  Package installation skipped in test mode."
+fi
+finish_installer_step
 
 state_directory="$omacos_home/.local/state/omacos"
 backup_directory="$state_directory/backups"
@@ -219,6 +291,7 @@ aerospace_directory="$omacos_home/.config/aerospace"
 karabiner_rule_directory="$omacos_home/.config/karabiner/assets/complex_modifications"
 launch_agent_directory="$omacos_home/Library/LaunchAgents"
 
+begin_installer_step "Backing up existing configuration"
 mkdir -p "$backup_directory" "$binary_directory" "$aerospace_directory" "$karabiner_rule_directory" "$launch_agent_directory"
 
 if [[ ! -f $state_directory/backup-recorded ]]; then
@@ -232,15 +305,18 @@ if [[ ! -f $state_directory/backup-recorded ]]; then
   fi
   touch "$state_directory/backup-recorded"
 fi
+finish_installer_step
 
+begin_installer_step "Preparing the native OMacOS shell"
 if [[ -n $prebuilt_shell_app ]]; then
   [[ -x $prebuilt_shell_app/Contents/MacOS/omacos-shell ]] || { print -u2 "Prebuilt OMacOS shell is invalid: $prebuilt_shell_app"; exit 1; }
-  print "Installing the signed native OMacOS shell..."
+  print "  Installing the signed native OMacOS shell."
 else
-  print "Building the native OMacOS shell..."
   swift build --package-path "$source_root" -c release
 fi
+finish_installer_step
 
+begin_installer_step "Installing the application and command-line tools"
 staging_directory=$(mktemp -d -t omacos-install.XXXXXX)
 trap 'rm -rf "$staging_directory"' EXIT
 mkdir -p "$staging_directory/current"
@@ -274,7 +350,9 @@ exec "$shell_app/Contents/MacOS/omacos-shell" "\$@"
 EOF
 chmod +x "$binary_directory/omacos-shell"
 ln -sfn "$install_directory/bin/omacos" "$binary_directory/omacos"
+finish_installer_step
 
+begin_installer_step "Generating themes and integrations"
 rm -f "$omacos_home/.aerospace.toml"
 cp "$install_directory/config/aerospace/aerospace.toml" "$aerospace_directory/aerospace.toml"
 "$install_directory/scripts/generate-karabiner-config.zsh" \
@@ -289,7 +367,9 @@ OMACOS_ROOT="$install_directory" "$install_directory/scripts/window-manager.zsh"
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/shell-integration.zsh" install
 OMACOS_ROOT="$install_directory" "$install_directory/scripts/migrations.zsh" run
 print -r -- "$(<$install_directory/VERSION)" > "$state_directory/installed-version"
+finish_installer_step
 
+begin_installer_step "Starting desktop services"
 cat > "$launch_agent_directory/dev.omacos.shell.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -331,6 +411,11 @@ if ! $test_mode; then
 
   open -a Karabiner-Elements
 fi
+finish_installer_step
+
+begin_installer_step "Finishing installation"
+installation_in_progress=false
+finish_installer_step
 
 cat <<'EOF'
 

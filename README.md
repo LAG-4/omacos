@@ -44,6 +44,8 @@ curl -fsSL https://raw.githubusercontent.com/LAG-4/omacos/main/install.sh | zsh
 
 The bootstrap prefers the latest signed, notarized release, verifies its checksum, bundle identity, code signature, and Gatekeeper acceptance, then pairs it with source from the same immutable tag. Before the first public tag, or when GitHub has no valid release, it falls back to building the current `main` source. Both paths print every planned change and request confirmation through the terminal even when the script itself arrived through a pipe. They do not bypass macOS permission dialogs.
 
+Installation reports eight numbered stages and identifies the active stage if a command fails. The same install command can resume a partial run because Homebrew and OMacOS setup are idempotent. Homebrew reuses installed bundle dependencies without upgrading them. JankyBorders requires Homebrew tap trust, so the installer temporarily trusts only `felixkratz/formulae/borders` and removes that formula trust after the bundle command succeeds or fails.
+
 ## Default shortcuts
 
 Hold Right Option and press:
