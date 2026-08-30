@@ -48,3 +48,14 @@ if [[ $undo_output != *"No installed or locally running OMacOS environment was f
 fi
 
 print "Local undo test passed"
+
+installed_uninstall_help=$(OMACOS_TEST_HOME="$temporary_undo_home" "$project_root/bin/omacos" uninstall --help)
+checkout_uninstall_help=$("$project_root/uninstall.sh" --help)
+
+if [[ $installed_uninstall_help != *"Usage: omacos uninstall [--yes]"* \
+  || $checkout_uninstall_help != *"Usage: ./uninstall.sh [--yes]"* ]]; then
+  print -u2 "Uninstall help test failed: an undo entry point did not explain its usage"
+  exit 1
+fi
+
+print "Uninstall help test passed"

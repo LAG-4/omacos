@@ -250,7 +250,11 @@ run_uninstall() {
   local stay_awake_agent="$omacos_home/Library/LaunchAgents/dev.omacos.stay-awake.plist"
   local assume_yes=false
 
-  if [[ $uninstall_option == "--yes" || $uninstall_option == "-y" ]]; then
+  if [[ $uninstall_option == "--help" || $uninstall_option == "-h" ]]; then
+    print "Usage: omacos uninstall [--yes]"
+    print "Restores backed-up configuration and removes OMacOS-managed files. Homebrew packages are kept."
+    return 0
+  elif [[ $uninstall_option == "--yes" || $uninstall_option == "-y" ]]; then
     assume_yes=true
   elif [[ -n $uninstall_option ]]; then
     print -u2 "Unknown uninstall option: $uninstall_option"

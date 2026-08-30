@@ -7,7 +7,11 @@ omacos_home=${OMACOS_TEST_HOME:-$HOME}
 installed_cli="$omacos_home/.local/bin/omacos"
 uninstall_option=${1:-}
 
-if [[ -n $uninstall_option && $uninstall_option != "--yes" && $uninstall_option != "-y" ]]; then
+if [[ $uninstall_option == "--help" || $uninstall_option == "-h" ]]; then
+  print "Usage: ./uninstall.sh [--yes]"
+  print "Stops a shell started from this checkout, or delegates to an installed OMacOS uninstaller."
+  exit 0
+elif [[ -n $uninstall_option && $uninstall_option != "--yes" && $uninstall_option != "-y" ]]; then
   print -u2 "Unknown uninstall option: $uninstall_option"
   exit 1
 fi
