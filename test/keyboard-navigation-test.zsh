@@ -19,3 +19,5 @@ rg -Fq '.onExitCommand(perform: handleEscapeCommand)' "$project_root/Sources/OMa
 rg -Fq '.keyboardShortcut(.cancelAction)' "$project_root/Sources/OMacOSShell/OMacOSSystemPanelView.swift"
 rg -Fq 'focusInitialPanelControl' "$project_root/Sources/OMacOSShell/OMacOSShellApplication.swift"
 rg -Fq 'panel.makeFirstResponder(textField)' "$project_root/Sources/OMacOSShell/OMacOSShellApplication.swift"
+rg -Fq 'NSEvent.addLocalMonitorForEvents(matching: .keyDown)' "$project_root/Sources/OMacOSShell/OMacOSShellApplication.swift"
+rg -Fq 'let isEscape = event.keyCode == 53' "$project_root/Sources/OMacOSShell/OMacOSShellApplication.swift"

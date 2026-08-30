@@ -107,6 +107,7 @@ final class OMacOSPanelCoordinator: NSObject {
     private var activePanel: NSPanel?
     private var activePanelID: OMacOSPanelID?
     private var requestedMenuID: String?
+    private var localKeyEventMonitor: Any?
 
     init(
         theme: OMacOSTheme,
@@ -135,6 +136,10 @@ final class OMacOSPanelCoordinator: NSObject {
             name: OMacOSShellMessage.notificationName,
             object: nil
         )
+        localKeyEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self else { return event }
+            return self.handlePanelKeyEvent(event)
+        }
     }
 
     deinit {
@@ -286,6 +291,20 @@ final class OMacOSPanelCoordinator: NSObject {
     private func dismissPanel() {
         activePanel?.orderOut(nil)
         activePanelID = nil
+    }
+
+    private func handlePanelKeyEvent(_ event: NSEvent) -> NSEvent? {
+        guard activePanel?.isKeyWindow == true, activePanelID != .menu else {
+            return event
+        }
+        let isEscape = event.keyCode == 53
+        let isCommandW = event.charactersIgnoringModifiers?.lowercased() == "w"
+            && event.modifierFlags.contains(.command)
+        if isEscape || isCommandW {
+            dismissPanel()
+            return nil
+        }
+        return event
     }
 
     private func size(for panelID: OMacOSPanelID) -> NSSize {
