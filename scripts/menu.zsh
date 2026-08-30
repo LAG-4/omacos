@@ -82,7 +82,7 @@ run_menu_action() {
     trigger.share|trigger.share.clipboard|trigger.share.file|trigger.share.folder|trigger.share.receive) "$omacos_command" share "${menu_id##*.}" ;;
     trigger.toggle.idle-lock) "$omacos_command" toggle toggle idle ;;
     trigger.toggle.notifications) "$omacos_command" toggle toggle notification-silencing ;;
-    trigger.toggle.nightlight) "$omacos_command" toggle toggle night-light ;;
+    trigger.toggle.nightlight) open_settings "x-apple.systempreferences:com.apple.Displays-Settings.extension" ;;
     trigger.toggle.top-bar) "$omacos_command" toggle toggle bar ;;
     trigger.toggle.workspace-layout) "$omacos_command" wm toggle-workspace-layout ;;
     trigger.toggle.window-gaps) "$omacos_command" wm gaps toggle ;;
@@ -135,7 +135,11 @@ run_menu_action() {
     update.config|update.config.*|update.themes) "$omacos_command" update check ;;
     update.process|update.process.shell) "$omacos_command" shell restart ;;
     update.process.hyprsunset) open_settings "x-apple.systempreferences:com.apple.Displays-Settings.extension" ;;
-    update.hardware|update.hardware.audio|update.hardware.wifi|update.hardware.bluetooth|update.hardware.trackpad) open_settings ;;
+    update.hardware) open_settings ;;
+    update.hardware.audio) open_settings "x-apple.systempreferences:com.apple.Sound-Settings.extension" ;;
+    update.hardware.wifi) open_settings "x-apple.systempreferences:com.apple.wifi-settings-extension" ;;
+    update.hardware.bluetooth) open_settings "x-apple.systempreferences:com.apple.BluetoothSettings" ;;
+    update.hardware.trackpad) open_settings "x-apple.systempreferences:com.apple.Trackpad-Settings.extension" ;;
     update.firmware) open_settings "x-apple.systempreferences:com.apple.Software-Update-Settings.extension" ;;
     update.password|update.password.user) open_settings "x-apple.systempreferences:com.apple.Users-Groups-Settings.extension" ;;
     update.password.drive) open_settings "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension" ;;

@@ -76,7 +76,7 @@ struct OMacOSCommandMenuView: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
-            TextField("Search all Quattro actions", text: $store.searchText)
+            TextField("Search OMacOS actions", text: $store.searchText)
                 .textFieldStyle(.plain)
                 .focused($focusedTarget, equals: .search)
                 .onSubmit(activateSelectedEntry)
@@ -124,11 +124,6 @@ struct OMacOSCommandMenuView: View {
                     .foregroundStyle(Color(omacosHex: theme.colors.accent))
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.label).fontWeight(.semibold)
-                    if !store.searchText.isEmpty {
-                        Text(entry.id)
-                            .font(.caption.monospaced())
-                            .foregroundStyle(Color(omacosHex: theme.colors.darkForeground))
-                    }
                 }
                 Spacer()
                 if store.actionRunning && !hasChildren {

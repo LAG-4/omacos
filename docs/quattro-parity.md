@@ -1,6 +1,6 @@
 # Quattro parity ledger
 
-Generated from the frozen Omarchy Quattro inventory. `implemented` means the outcome has an executable OMacOS or native macOS route; it does not claim that WindowServer behaves like Hyprland.
+Generated from the frozen Omarchy Quattro inventory. `implemented` means the outcome has an executable OMacOS or native macOS route; it does not claim that WindowServer behaves like Hyprland. This ledger remains exhaustive for engineering accountability. The product command menu separately projects this reference into macOS language and hides entries whose outcomes do not apply to a Mac.
 
 ## Summary
 

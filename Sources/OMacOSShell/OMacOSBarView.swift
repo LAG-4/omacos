@@ -175,10 +175,7 @@ struct OMacOSBarView: View {
             .help("Stop dictation and insert")
         }
         if systemState.notificationSilencingEnabled {
-            modeButton("notification-silencing", systemImage: "bell.slash.fill", help: "Notification silencing")
-        }
-        if systemState.nightLightEnabled {
-            modeButton("night-light", systemImage: "moon.fill", help: "Night light reminder")
+            modeButton("notification-silencing", systemImage: "bell.slash.fill", help: "OMacOS reminders paused")
         }
         if systemState.stayAwakeEnabled {
             modeButton("stay-awake", systemImage: "cup.and.saucer.fill", help: "Stay awake")

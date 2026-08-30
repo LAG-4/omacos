@@ -11,7 +11,7 @@ OMacOS is an implementation preview. The frozen Quattro reference has no unclass
 - replaceable window-manager adapters: AeroSpace by default, experimental Rift, and optional yabai
 - Right Option as the default physical Super key while Left Option and Command stay native
 - a native Swift/AppKit bar, command menu, keybinding reference, and first system panels
-- the complete frozen 328-entry Quattro menu hierarchy with global search, macOS action adapters, and explicit Linux-only limitations
+- a macOS-native command menu projected from the complete frozen 328-entry Quattro reference, with Linux-only entries kept in the parity ledger instead of shown as product actions
 - clipboard history, emoji, reminders, capture, on-device OCR, background, and system panels
 - all 22 frozen Quattro semantic themes with generated shell, terminal, TUI, editor, tmux, and border targets
 - configurable terminal, browser, and editor defaults plus Omarchy-style shell tools, tmux layouts, and a self-contained Neovim profile

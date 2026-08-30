@@ -78,7 +78,11 @@ jq --slurpfile keys "$keybindings_path" '
   def binding_parity:
     . as $item
     | (binding_title) as $title
-    | ([ $keys[0].bindings[].description, ($keys[0].globalBindings // [])[].description, ($keys[0].pointerBindings // [])[].description ] | index($title) != null) as $isBound
+    | ([
+        $keys[0].bindings[],
+        ($keys[0].globalBindings // [])[],
+        ($keys[0].pointerBindings // [])[]
+      ] | map(.quattroReferenceDescription // .description) | index($title) != null) as $isBound
     | if $isBound and $title == "Invoke last notification" then
         parity("binding"; ($item.source + ":" + ($item.line | tostring)); $title; "limited"; "close-substitute"; "omacos notification invoke-one"; "The shortcut invokes an action URL attached to the newest OMacOS notification; Apple does not expose actions owned by third-party Notification Center entries."; $item.source)
       elif $isBound and $title == "File manager (cwd)" then
@@ -207,7 +211,7 @@ trap - EXIT
 {
   print '# Quattro parity ledger'
   print
-  print 'Generated from the frozen Omarchy Quattro inventory. `implemented` means the outcome has an executable OMacOS or native macOS route; it does not claim that WindowServer behaves like Hyprland.'
+  print 'Generated from the frozen Omarchy Quattro inventory. `implemented` means the outcome has an executable OMacOS or native macOS route; it does not claim that WindowServer behaves like Hyprland. This ledger remains exhaustive for engineering accountability. The product command menu separately projects this reference into macOS language and hides entries whose outcomes do not apply to a Mac.'
   print
   print '## Summary'
   print

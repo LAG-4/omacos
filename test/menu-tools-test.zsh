@@ -73,6 +73,11 @@ export OMACOS_FAKE_OSASCRIPT_LOG="$temporary_directory/osascript.log"
 "$project_root/scripts/menu.zsh" run trigger.toggle.one-window-ratio
 "$project_root/scripts/menu.zsh" run trigger.toggle.crash-capture
 "$project_root/scripts/menu.zsh" run update.process.hyprsunset
+"$project_root/scripts/menu.zsh" run trigger.toggle.nightlight
+"$project_root/scripts/menu.zsh" run update.hardware.audio
+"$project_root/scripts/menu.zsh" run update.hardware.wifi
+"$project_root/scripts/menu.zsh" run update.hardware.bluetooth
+"$project_root/scripts/menu.zsh" run update.hardware.trackpad
 rg -Fq 'shell toggle-panel keybindings' "$temporary_directory/cli.log"
 rg -Fq 'toggle toggle idle' "$temporary_directory/cli.log"
 rg -Fq 'channel set stable' "$temporary_directory/cli.log"
@@ -87,6 +92,10 @@ rg -Fq 'wm gaps toggle' "$temporary_directory/cli.log"
 rg -Fq 'wm square-aspect-toggle' "$temporary_directory/cli.log"
 rg -Fq -- '-a Console' "$temporary_directory/open.log"
 rg -Fq 'com.apple.Displays-Settings.extension' "$temporary_directory/open.log"
+rg -Fq 'com.apple.Sound-Settings.extension' "$temporary_directory/open.log"
+rg -Fq 'com.apple.wifi-settings-extension' "$temporary_directory/open.log"
+rg -Fq 'com.apple.BluetoothSettings' "$temporary_directory/open.log"
+rg -Fq 'com.apple.Trackpad-Settings.extension' "$temporary_directory/open.log"
 rg -Fq -- '-a Font Book' "$temporary_directory/open.log"
 
 set +e

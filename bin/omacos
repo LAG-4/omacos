@@ -39,7 +39,7 @@ Commands:
   package ACTION            Browse, install, or remove optional applications
   plugin ACTION             Inspect built-ins or manage out-of-process providers
   wm ACTION                 Manage AeroSpace, Rift, or yabai through one interface
-  menu run ID               Execute an entry from the complete Quattro menu
+  menu run ID               Execute a native OMacOS command-menu action
   share ACTION              Share clipboard text, files, or folders with AirDrop
   transcode ACTION          Convert images, video, GIF, and audio locally
   font ACTION               List, install, or remove the Quattro font choices

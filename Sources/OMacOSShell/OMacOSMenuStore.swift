@@ -52,10 +52,7 @@ final class OMacOSMenuStore: ObservableObject {
     var visibleEntries: [OMacOSMenuEntry] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         if !query.isEmpty {
-            return entries.filter {
-                $0.label.localizedCaseInsensitiveContains(query)
-                    || $0.id.localizedCaseInsensitiveContains(query)
-            }
+            return entries.filter { $0.label.localizedCaseInsensitiveContains(query) }
         }
         return entries.filter { $0.parentID == currentMenuID }
     }
@@ -110,9 +107,19 @@ final class OMacOSMenuStore: ObservableObject {
     private func loadInventory(at path: String) {
         guard let data = FileManager.default.contents(atPath: path),
               let inventory = try? JSONDecoder().decode(OMacOSQuattroInventory.self, from: data),
-              inventory.schemaVersion == 1 else {
+              inventory.schemaVersion == 1,
+              let projectionURL = Bundle.module.url(
+                  forResource: "macos-menu-projection",
+                  withExtension: "json"
+              ),
+              let projectionData = try? Data(contentsOf: projectionURL),
+              let projection = try? JSONDecoder().decode(OMacOSMenuProjection.self, from: projectionData),
+              projection.schemaVersion == 1 else {
             return
         }
-        entries = inventory.menuEntries
+        entries = projection.apply(to: inventory.menuEntries)
+        if let currentMenuID, !entries.contains(where: { $0.id == currentMenuID }) {
+            self.currentMenuID = nil
+        }
     }
 }

@@ -132,7 +132,6 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
     @Published private(set) var mediaStatus: OMacOSMediaStatus?
     @Published private(set) var stayAwakeEnabled = false
     @Published private(set) var notificationSilencingEnabled = false
-    @Published private(set) var nightLightEnabled = false
     @Published private(set) var speedTestRunning = false
     @Published private(set) var networkSpeedSummary = "Run a test to measure this connection."
     @Published private(set) var diskSpeedSummary = "Run a test against the macOS temporary directory."
@@ -506,7 +505,6 @@ final class OMacOSSystemPanelState: NSObject, ObservableObject {
         let directory = homeDirectory + "/.local/state/omacos/toggles"
         stayAwakeEnabled = FileManager.default.fileExists(atPath: directory + "/stay-awake.enabled")
         notificationSilencingEnabled = FileManager.default.fileExists(atPath: directory + "/notification-silencing.enabled")
-        nightLightEnabled = FileManager.default.fileExists(atPath: directory + "/night-light.enabled")
     }
 
     private func loadKeybindings() {
