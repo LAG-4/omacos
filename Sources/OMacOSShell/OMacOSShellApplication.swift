@@ -61,8 +61,8 @@ final class OMacOSBarWindowCoordinator {
     }
 
     private func makeBarPanel(for screen: NSScreen) -> NSPanel {
-        let panelFrame = OMacOSBarGeometry.localPanelFrame(
-            screenSize: screen.frame.size,
+        let panelFrame = OMacOSBarGeometry.panelFrame(
+            screenFrame: screen.frame,
             position: configuration.position
         )
         let panel = NSPanel(
@@ -78,6 +78,7 @@ final class OMacOSBarWindowCoordinator {
         panel.isOpaque = false
         panel.hasShadow = false
         panel.hidesOnDeactivate = false
+        panel.setFrame(panelFrame, display: false)
         panel.contentView = NSHostingView(
             rootView: OMacOSBarView(
                 barState: barState,
@@ -178,20 +179,24 @@ final class OMacOSPanelCoordinator: NSObject {
 
         activePanel?.close()
         systemPanelState.resetPanelSearch()
-        let panelSize = size(for: panelID)
+        let panelSize = panelID == .menu ? targetScreen.frame.size : size(for: panelID)
         let barConfiguration = OMacOSBarConfiguration.load()
         let panelOrigin: NSPoint
-        switch barConfiguration.position {
-        case .top:
-            panelOrigin = NSPoint(x: targetScreen.frame.midX - panelSize.width / 2, y: targetScreen.frame.maxY - panelSize.height - 44)
-        case .bottom:
-            panelOrigin = NSPoint(x: targetScreen.frame.midX - panelSize.width / 2, y: targetScreen.frame.minY + 44)
-        case .left:
-            panelOrigin = NSPoint(x: targetScreen.frame.minX + 58, y: targetScreen.frame.midY - panelSize.height / 2)
-        case .right:
-            panelOrigin = NSPoint(x: targetScreen.frame.maxX - panelSize.width - 58, y: targetScreen.frame.midY - panelSize.height / 2)
+        if panelID == .menu {
+            panelOrigin = targetScreen.frame.origin
+        } else {
+            switch barConfiguration.position {
+            case .top:
+                panelOrigin = NSPoint(x: targetScreen.frame.midX - panelSize.width / 2, y: targetScreen.frame.maxY - panelSize.height - OMacOSBarGeometry.horizontalBarHeight - 5)
+            case .bottom:
+                panelOrigin = NSPoint(x: targetScreen.frame.midX - panelSize.width / 2, y: targetScreen.frame.minY + OMacOSBarGeometry.horizontalBarHeight + 5)
+            case .left:
+                panelOrigin = NSPoint(x: targetScreen.frame.minX + OMacOSBarGeometry.verticalBarWidth + 5, y: targetScreen.frame.midY - panelSize.height / 2)
+            case .right:
+                panelOrigin = NSPoint(x: targetScreen.frame.maxX - panelSize.width - OMacOSBarGeometry.verticalBarWidth - 5, y: targetScreen.frame.midY - panelSize.height / 2)
+            }
         }
-        let panel = makePanel(panelID, size: panelSize)
+        let panel = makePanel(panelID, size: panelSize, screen: targetScreen)
         panel.setFrameOrigin(panelOrigin)
         if panelID != .osd {
             NSApp.activate(ignoringOtherApps: true)
@@ -214,12 +219,13 @@ final class OMacOSPanelCoordinator: NSObject {
         }
     }
 
-    private func makePanel(_ panelID: OMacOSPanelID, size: NSSize) -> NSPanel {
+    private func makePanel(_ panelID: OMacOSPanelID, size: NSSize, screen: NSScreen) -> NSPanel {
         let panel = NSPanel(
             contentRect: NSRect(origin: .zero, size: size),
             styleMask: [.borderless, .fullSizeContentView],
             backing: .buffered,
-            defer: false
+            defer: false,
+            screen: screen
         )
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
@@ -309,7 +315,7 @@ final class OMacOSPanelCoordinator: NSObject {
 
     private func size(for panelID: OMacOSPanelID) -> NSSize {
         switch panelID {
-        case .menu: NSSize(width: 540, height: 620)
+        case .menu: NSSize(width: 300, height: 603)
         case .keybindings, .clipboard, .emojis, .themes, .agents, .notifications, .packages, .plugins, .devGallery: NSSize(width: 620, height: 620)
         case .defaults: NSSize(width: 540, height: 540)
         case .clock: NSSize(width: 430, height: 520)
@@ -469,6 +475,19 @@ enum OMacOSShellMain {
     @MainActor
     static func main() {
         let arguments = CommandLine.arguments
+        if let fixtureIndex = arguments.firstIndex(of: "--render-visual-fixtures"),
+           arguments.indices.contains(fixtureIndex + 1) {
+            do {
+                let outputDirectory = URL(fileURLWithPath: arguments[fixtureIndex + 1], isDirectory: true)
+                try OMacOSVisualFixtureRenderer.renderAll(to: outputDirectory)
+                print(outputDirectory.path)
+                return
+            } catch {
+                FileHandle.standardError.write(Data("Visual fixture rendering failed: \(error.localizedDescription)\n".utf8))
+                Foundation.exit(1)
+            }
+        }
+
         if arguments.contains("--permission-status") {
             do {
                 let data = try JSONEncoder().encode(OMacOSPermissionStatus.current())

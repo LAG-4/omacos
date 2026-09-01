@@ -1,16 +1,16 @@
 import AppKit
 
-let screenSize = NSSize(width: 1920, height: 1080)
+let screenFrame = NSRect(x: 1920, y: -120, width: 2560, height: 1440)
 let expectedFrames: [OMacOSBarPosition: NSRect] = [
-    .top: NSRect(x: 0, y: 1046, width: 1920, height: 34),
-    .bottom: NSRect(x: 0, y: 0, width: 1920, height: 34),
-    .left: NSRect(x: 0, y: 0, width: 48, height: 1080),
-    .right: NSRect(x: 1872, y: 0, width: 48, height: 1080),
+    .top: NSRect(x: 1920, y: 1294, width: 2560, height: 26),
+    .bottom: NSRect(x: 1920, y: -120, width: 2560, height: 26),
+    .left: NSRect(x: 1920, y: -120, width: 28, height: 1440),
+    .right: NSRect(x: 4452, y: -120, width: 28, height: 1440),
 ]
 
 for position in OMacOSBarPosition.allCases {
-    let actualFrame = OMacOSBarGeometry.localPanelFrame(
-        screenSize: screenSize,
+    let actualFrame = OMacOSBarGeometry.panelFrame(
+        screenFrame: screenFrame,
         position: position
     )
     guard actualFrame == expectedFrames[position] else {

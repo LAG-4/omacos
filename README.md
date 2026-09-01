@@ -160,7 +160,7 @@ The native shell exposes command menu, keybindings, clipboard, emoji, capture, r
 
 The bar has purpose-built horizontal and vertical layouts, can be placed on any screen edge, and can switch between opaque and translucent rendering at runtime. OMacOS updates the AeroSpace, Rift, and yabai reserved edge when its position changes so tiled windows continue to avoid it. Panels open beside the selected edge rather than covering the bar.
 
-Window gaps can be toggled with the original Quattro shortcut, through the command menu, or with `omacos wm gaps toggle`. The setting rewrites each managed profile consistently and preserves the 34-point bar reservation on the selected edge even when all other spacing is zero.
+Window gaps can be toggled with the original Quattro shortcut, through the command menu, or with `omacos wm gaps toggle`. The setting rewrites each managed profile consistently using Quattro's 5-point inner gap, 10-point outer gap, 26-point horizontal bar, and 28-point vertical bar. On top, macOS window managers already tile below the native menu-bar safe area; the other edges reserve the custom bar exactly once.
 
 Legacy Quattro command-group names remain valid where the underlying outcome is portable. For example, `omacos audio`, `omacos battery`, `omacos bluetooth`, `omacos clipboard`, `omacos monitor`, `omacos power`, `omacos snapshot`, `omacos tailscale`, and `omacos wifi` route into the same native panels and service adapters instead of existing only as documentation aliases.
 

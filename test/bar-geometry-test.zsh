@@ -8,6 +8,8 @@ temporary_directory=$(mktemp -d -t omacos-bar-geometry-test.XXXXXX)
 trap 'rm -rf "$temporary_directory"' EXIT
 
 swiftc \
+  -D OMACOS_STANDALONE_TEST \
+  "$project_root/Sources/OMacOSShell/OMacOSShellContract.swift" \
   "$project_root/Sources/OMacOSShell/OMacOSBarConfiguration.swift" \
   "$project_root/Sources/OMacOSShell/OMacOSBarGeometry.swift" \
   "$test_directory/fixtures/bar-geometry/main.swift" \

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "reference": {
+    "repository": "basecamp/omarchy",
+    "branch": "quattro",
+    "commit": "0b3f1b7ead00ac4bcbaae8bac16bab3f7efbe516",
+    "sources": [
+      "config/omarchy/shell.json",
+      "default/themed/shell.toml.tpl",
+      "default/hypr/looknfeel.lua",
+      "shell/Commons/Style.qml",
+      "shell/plugins/bar/Bar.qml",
+      "shell/plugins/menu/Menu.qml"
+    ]
+  },
+  "bar": {
+    "horizontalSize": 26,
+    "verticalSize": 28,
+    "iconSlot": 27,
+    "iconCanvas": 16,
+    "iconFont": 13,
+    "statusSlot": 21,
+    "centerAnchor": "omarchy.clock",
+    "layout": {
+      "left": ["omarchy.menu", "omarchy.workspaces"],
+      "center": ["omarchy.indicators", "omarchy.clock", "omarchy.keyboard-layout", "omarchy.weather", "omarchy.system-update"],
+      "right": ["omarchy.tray", "omarchy.agents", "omarchy.bluetooth", "omarchy.network", "omarchy.audio", "omarchy.monitor", "omarchy.power"]
+    }
+  },
+  "menu": {
+    "width": 300,
+    "specialWidth": 520,
+    "panelPadding": 18,
+    "headerHeight": 34,
+    "rowHeight": 50,
+    "detailRowHeight": 58,
+    "rowPeekFraction": 0.55,
+    "rowSpacing": 3,
+    "contentSpacing": 6,
+    "screenEdgeGap": 5,
+    "cornerRadius": 0,
+    "maximumScreenHeightFraction": 0.7,
+    "scrimOpacity": 0.5,
+    "selectedBackgroundOpacity": 0.08,
+    "selectedBorderOpacity": 0.25
+  },
+  "typography": {
+    "family": "JetBrainsMono Nerd Font",
+    "base": 12,
+    "caption": 10,
+    "bodySmall": 11,
+    "body": 12,
+    "subtitle": 13,
+    "title": 14,
+    "heading": 16,
+    "display": 24,
+    "displayLarge": 28,
+    "iconLarge": 18
+  },
+  "spacing": {
+    "xxs": 2,
+    "xs": 3,
+    "sm": 4,
+    "md": 6,
+    "lg": 8,
+    "xl": 10,
+    "xxl": 12,
+    "xxxl": 14,
+    "huge": 18,
+    "windowInner": 5,
+    "windowOuter": 10
+  },
+  "controls": {
+    "normalFillOpacity": 0.04,
+    "hoverFillOpacity": 0.08,
+    "selectedFillOpacity": 0.18,
+    "pressedFillOpacity": 0.22,
+    "selectionFillOpacity": 0.35,
+    "normalBorderOpacity": 0.4,
+    "hoverBorderOpacity": 0.25
+  },
+  "animation": {
+    "themeColorMilliseconds": 420,
+    "interactionMilliseconds": 140,
+    "selectionColorMilliseconds": 60,
+    "panelIndicatorMilliseconds": 120
+  }
+}

@@ -9,6 +9,7 @@ struct OMacOSBarView: View {
     let togglePanel: (OMacOSPanelID) -> Void
 
     private var colors: OMacOSThemeColors { barState.theme.colors }
+    private let contract = OMacOSShellContract.shared
 
     var body: some View {
         Group {
@@ -18,7 +19,7 @@ struct OMacOSBarView: View {
                 horizontalBar
             }
         }
-        .font(.system(size: 12, weight: .medium))
+        .font(quattroFont(size: contract.typography.body))
         .foregroundStyle(Color(omacosHex: colors.foreground))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
@@ -36,75 +37,43 @@ struct OMacOSBarView: View {
     }
 
     private var horizontalBar: some View {
-        HStack(spacing: 12) {
-            menuButton
+        ZStack {
+            HStack(spacing: 0) {
+                menuButton
+                workspaceButtons
+                Spacer(minLength: 0)
+                horizontalRightModules
+            }
 
-            workspaceButtons
-
-            Text(barState.frontmostApplication)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(Color(omacosHex: colors.lightForeground))
-                .lineLimit(1)
-
-            Spacer(minLength: 12)
-
-            modeIndicators
-
-            if let weather = systemState.weatherStatus {
-                Button { togglePanel(.weather) } label: {
-                    Label("\(weather.temperatureC)°", systemImage: "cloud.sun")
+            HStack(spacing: 0) {
+                modeIndicators
+                clockButton
+                if systemState.weatherStatus != nil {
+                    panelButton(.weather)
                 }
-                .buttonStyle(.plain)
             }
+        }
+        .padding(.horizontal, CGFloat(contract.spacing.sm))
+    }
 
-            if systemState.mediaStatus?.hasTrack == true {
-                Button { systemState.controlMedia("play-pause") } label: {
-                    Image(systemName: systemState.mediaStatus?.isPlaying == true ? "pause.fill" : "play.fill")
-                }
-                .buttonStyle(.plain)
-                .help(systemState.mediaStatus?.title ?? "Now Playing")
-            }
-
-            panelButton(.network)
-            if systemState.tailscaleStatus?.installed == true {
-                panelButton(.tailscale)
-            }
-            panelButton(.audio)
+    private var horizontalRightModules: some View {
+        HStack(spacing: 0) {
             if !agentStore.records.isEmpty {
                 panelButton(.agents)
             }
-
-            if !barState.batteryText.isEmpty {
-                Button {
-                    togglePanel(.power)
-                } label: {
-                    Label(barState.batteryText, systemImage: "battery.75percent")
-                }
-                .buttonStyle(.plain)
-            }
-
-            Button {
-                togglePanel(.clock)
-            } label: {
-                Text(barState.clockText)
-                    .font(.system(size: 12, weight: .semibold, design: .monospaced))
-            }
-            .buttonStyle(.plain)
+            panelButton(.bluetooth)
+            panelButton(.network)
+            panelButton(.audio)
+            panelButton(.display)
+            powerButton
         }
-        .padding(.horizontal, 10)
     }
 
     private var verticalBar: some View {
-        VStack(spacing: 9) {
+        VStack(spacing: 0) {
             menuButton
             verticalWorkspaceButtons
-
-            Text(String(barState.frontmostApplication.prefix(2)).uppercased())
-                .font(.system(size: 10, weight: .bold, design: .rounded))
-                .foregroundStyle(Color(omacosHex: colors.lightForeground))
-                .help(barState.frontmostApplication)
-
-            Spacer(minLength: 8)
+            Spacer(minLength: CGFloat(contract.spacing.lg))
             modeIndicators
 
             if systemState.weatherStatus != nil {
@@ -118,27 +87,15 @@ struct OMacOSBarView: View {
                 .help(systemState.mediaStatus?.title ?? "Now Playing")
             }
             panelButton(.network)
-            if systemState.tailscaleStatus?.installed == true {
-                panelButton(.tailscale)
-            }
             panelButton(.audio)
+            panelButton(.display)
             if !agentStore.records.isEmpty {
                 panelButton(.agents)
             }
-            if !barState.batteryText.isEmpty {
-                Button { togglePanel(.power) } label: {
-                    Image(systemName: "battery.75percent")
-                }
-                .buttonStyle(.plain)
-                .help(barState.batteryText)
-            }
-            Button { togglePanel(.clock) } label: {
-                Image(systemName: "clock")
-            }
-            .buttonStyle(.plain)
-            .help(barState.clockText)
+            powerButton
+            clockButton
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, CGFloat(contract.spacing.sm))
     }
 
     private var borderAlignment: Alignment {
@@ -155,14 +112,19 @@ struct OMacOSBarView: View {
             togglePanel(.menu)
         } label: {
             Text("OM")
-                .font(.system(size: 12, weight: .black, design: .rounded))
-                .foregroundStyle(Color(omacosHex: colors.background))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color(omacosHex: colors.accent))
-                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .font(quattroFont(size: contract.typography.body, weight: .bold))
+                .foregroundStyle(Color(omacosHex: colors.foreground))
+                .frame(
+                    width: configuration.position.isVertical
+                        ? CGFloat(contract.bar.verticalSize)
+                        : CGFloat(contract.bar.iconSlot),
+                    height: configuration.position.isVertical
+                        ? CGFloat(contract.bar.iconSlot)
+                        : CGFloat(contract.bar.horizontalSize)
+                )
         }
         .buttonStyle(.plain)
+        .help("OMacOS menu")
     }
 
     @ViewBuilder private var modeIndicators: some View {
@@ -192,25 +154,16 @@ struct OMacOSBarView: View {
     }
 
     private var workspaceButtons: some View {
-        HStack(spacing: 3) {
+        HStack(spacing: 1) {
             ForEach(barState.visibleWorkspaces, id: \.self) { workspace in
                 Button {
                     barState.focusWorkspace(workspace)
                 } label: {
-                    Text(workspace)
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .frame(width: 22, height: 22)
-                        .foregroundStyle(
-                            workspace == barState.activeWorkspace
-                                ? Color(omacosHex: colors.background)
-                                : Color(omacosHex: colors.darkForeground)
-                        )
-                        .background(
-                            workspace == barState.activeWorkspace
-                                ? Color(omacosHex: colors.accent)
-                                : Color.clear
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                    Text(workspace == barState.activeWorkspace ? "\u{F14FB}" : workspace)
+                        .font(quattroFont(size: contract.typography.body, weight: .medium))
+                        .frame(width: 20, height: CGFloat(contract.bar.horizontalSize))
+                        .foregroundStyle(Color(omacosHex: colors.foreground))
+                        .opacity(workspace == barState.activeWorkspace ? 1 : 0.5)
                 }
                 .buttonStyle(.plain)
             }
@@ -218,25 +171,16 @@ struct OMacOSBarView: View {
     }
 
     private var verticalWorkspaceButtons: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: CGFloat(contract.spacing.xxs)) {
             ForEach(barState.visibleWorkspaces, id: \.self) { workspace in
                 Button {
                     barState.focusWorkspace(workspace)
                 } label: {
-                    Text(workspace)
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .frame(width: 24, height: 20)
-                        .foregroundStyle(
-                            workspace == barState.activeWorkspace
-                                ? Color(omacosHex: colors.background)
-                                : Color(omacosHex: colors.darkForeground)
-                        )
-                        .background(
-                            workspace == barState.activeWorkspace
-                                ? Color(omacosHex: colors.accent)
-                                : Color.clear
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                    Text(workspace == barState.activeWorkspace ? "\u{F14FB}" : workspace)
+                        .font(quattroFont(size: contract.typography.body, weight: .medium))
+                        .frame(width: CGFloat(contract.bar.verticalSize), height: 20)
+                        .foregroundStyle(Color(omacosHex: colors.foreground))
+                        .opacity(workspace == barState.activeWorkspace ? 1 : 0.5)
                 }
                 .buttonStyle(.plain)
             }
@@ -248,8 +192,59 @@ struct OMacOSBarView: View {
             togglePanel(panelID)
         } label: {
             Image(systemName: panelID.systemImage)
-                .frame(width: 16, height: 18)
+                .font(.system(size: CGFloat(contract.bar.iconFont)))
+                .frame(
+                    width: configuration.position.isVertical
+                        ? CGFloat(contract.bar.verticalSize)
+                        : CGFloat(contract.bar.statusSlot),
+                    height: configuration.position.isVertical
+                        ? CGFloat(contract.bar.statusSlot)
+                        : CGFloat(contract.bar.horizontalSize)
+                )
         }
         .buttonStyle(.plain)
+        .help(panelID.title)
+    }
+
+    private var powerButton: some View {
+        Button { togglePanel(.power) } label: {
+            if configuration.position.isVertical {
+                Image(systemName: "battery.75percent")
+                    .font(.system(size: CGFloat(contract.bar.iconFont)))
+                    .frame(width: CGFloat(contract.bar.verticalSize), height: CGFloat(contract.bar.statusSlot))
+            } else {
+                HStack(spacing: CGFloat(contract.spacing.xxs)) {
+                    Image(systemName: "battery.75percent")
+                    if !barState.batteryText.isEmpty {
+                        Text(barState.batteryText)
+                    }
+                }
+                .font(quattroFont(size: contract.typography.bodySmall))
+                .frame(height: CGFloat(contract.bar.horizontalSize))
+            }
+        }
+        .buttonStyle(.plain)
+        .help(barState.batteryText)
+    }
+
+    private var clockButton: some View {
+        Button { togglePanel(.clock) } label: {
+            if configuration.position.isVertical {
+                Image(systemName: "clock")
+                    .font(.system(size: CGFloat(contract.bar.iconFont)))
+                    .frame(width: CGFloat(contract.bar.verticalSize), height: CGFloat(contract.bar.statusSlot))
+            } else {
+                Text(barState.clockText)
+                    .font(quattroFont(size: contract.typography.body, weight: .medium))
+                    .padding(.horizontal, CGFloat(contract.spacing.sm))
+                    .frame(height: CGFloat(contract.bar.horizontalSize))
+            }
+        }
+        .buttonStyle(.plain)
+        .help(barState.clockText)
+    }
+
+    private func quattroFont(size: Int, weight: Font.Weight = .regular) -> Font {
+        .custom(OMacOSShellContract.shared.typography.family, size: CGFloat(size)).weight(weight)
     }
 }

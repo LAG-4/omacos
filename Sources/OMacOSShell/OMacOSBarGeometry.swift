@@ -1,42 +1,42 @@
 import AppKit
 
 enum OMacOSBarGeometry {
-    static let horizontalBarHeight: CGFloat = 34
-    static let verticalBarWidth: CGFloat = 48
+    static let horizontalBarHeight = CGFloat(OMacOSShellContract.shared.bar.horizontalSize)
+    static let verticalBarWidth = CGFloat(OMacOSShellContract.shared.bar.verticalSize)
 
-    /// Returns a screen-local frame for NSWindow initializers that receive an explicit screen.
-    static func localPanelFrame(
-        screenSize: NSSize,
+    /// Returns an AppKit global-screen frame, preserving non-zero and negative display origins.
+    static func panelFrame(
+        screenFrame: NSRect,
         position: OMacOSBarPosition
     ) -> NSRect {
         switch position {
         case .top:
             NSRect(
-                x: 0,
-                y: screenSize.height - horizontalBarHeight,
-                width: screenSize.width,
+                x: screenFrame.minX,
+                y: screenFrame.maxY - horizontalBarHeight,
+                width: screenFrame.width,
                 height: horizontalBarHeight
             )
         case .bottom:
             NSRect(
-                x: 0,
-                y: 0,
-                width: screenSize.width,
+                x: screenFrame.minX,
+                y: screenFrame.minY,
+                width: screenFrame.width,
                 height: horizontalBarHeight
             )
         case .left:
             NSRect(
-                x: 0,
-                y: 0,
+                x: screenFrame.minX,
+                y: screenFrame.minY,
                 width: verticalBarWidth,
-                height: screenSize.height
+                height: screenFrame.height
             )
         case .right:
             NSRect(
-                x: screenSize.width - verticalBarWidth,
-                y: 0,
+                x: screenFrame.maxX - verticalBarWidth,
+                y: screenFrame.minY,
                 width: verticalBarWidth,
-                height: screenSize.height
+                height: screenFrame.height
             )
         }
     }

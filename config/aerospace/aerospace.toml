@@ -22,12 +22,12 @@ persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'scr
 focus-follows-mouse.enabled = false
 key-mapping.preset = 'qwerty'
 
-gaps.inner.horizontal = 8
-gaps.inner.vertical = 8
-gaps.outer.left = 8
-gaps.outer.bottom = 8
-gaps.outer.top = 8
-gaps.outer.right = 8
+gaps.inner.horizontal = 5
+gaps.inner.vertical = 5
+gaps.outer.left = 10
+gaps.outer.bottom = 10
+gaps.outer.top = 10
+gaps.outer.right = 10
 
 [exec]
 inherit-env-vars = true

@@ -67,8 +67,9 @@ export OMACOS_WM_TEST_LOG="$command_log"
 wm="$project_root/scripts/window-manager.zsh"
 "$wm" init
 [[ $("$wm" profile) == "aerospace" ]]
-rg -q '^gaps.outer.top = 8$' "$temporary_home/.config/aerospace/aerospace.toml"
-rg -q '^gaps.outer.bottom = 42$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^gaps.inner.horizontal = 5$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^gaps.outer.top = 10$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^gaps.outer.bottom = 36$' "$temporary_home/.config/aerospace/aerospace.toml"
 [[ $("$wm" workspace-current) == "4" ]]
 "$wm" focus left
 "$wm" workspace-move 7
@@ -109,8 +110,9 @@ rg -Fq 'omacos-shell --window-pseudo' "$command_log"
 
 "$wm" profile rift >/dev/null
 [[ $("$wm" profile) == "rift" ]]
-rg -q '^top = 8.0$' "$temporary_home/.config/rift/config.toml"
-rg -q '^bottom = 42.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^horizontal = 5.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^top = 10.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^bottom = 36.0$' "$temporary_home/.config/rift/config.toml"
 [[ $("$wm" workspace-current) == "3" ]]
 "$wm" toggle-floating
 "$wm" toggle-workspace-layout
@@ -128,8 +130,9 @@ rg -Fq 'rift-cli execute layout join-window right' "$command_log"
 
 "$wm" profile yabai >/dev/null
 [[ $("$wm" profile) == "yabai" ]]
-rg -q '^yabai -m config top_padding 8$' "$temporary_home/.config/yabai/yabairc"
-rg -q '^yabai -m config bottom_padding 42$' "$temporary_home/.config/yabai/yabairc"
+rg -q '^yabai -m config top_padding 10$' "$temporary_home/.config/yabai/yabairc"
+rg -q '^yabai -m config window_gap 5$' "$temporary_home/.config/yabai/yabairc"
+rg -q '^yabai -m config bottom_padding 36$' "$temporary_home/.config/yabai/yabairc"
 [[ $("$wm" workspace-current) == "5" ]]
 "$wm" focus left
 "$wm" move down
@@ -148,22 +151,22 @@ rg -Fq 'yabai -m window --opacity 0.78' "$command_log"
 rg -Fq 'yabai -m window --opacity 1.0' "$command_log"
 
 "$wm" bar-position top
-rg -q '^gaps.outer.top = 8$' "$temporary_home/.config/aerospace/aerospace.toml"
-rg -q '^top = 8.0$' "$temporary_home/.config/rift/config.toml"
-rg -q '^yabai -m config top_padding 8$' "$temporary_home/.config/yabai/yabairc"
-rg -Fq 'yabai -m config bottom_padding 8' "$command_log"
+rg -q '^gaps.outer.top = 10$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^top = 10.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config top_padding 10$' "$temporary_home/.config/yabai/yabairc"
+rg -Fq 'yabai -m config bottom_padding 10' "$command_log"
 
 "$wm" bar-position left
-rg -q '^gaps.outer.left = 56$' "$temporary_home/.config/aerospace/aerospace.toml"
-rg -q '^left = 56.0$' "$temporary_home/.config/rift/config.toml"
-rg -q '^yabai -m config left_padding 56$' "$temporary_home/.config/yabai/yabairc"
-rg -Fq 'yabai -m config left_padding 56' "$command_log"
+rg -q '^gaps.outer.left = 38$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^left = 38.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config left_padding 38$' "$temporary_home/.config/yabai/yabairc"
+rg -Fq 'yabai -m config left_padding 38' "$command_log"
 
 "$wm" bar-position right
-rg -q '^gaps.outer.right = 56$' "$temporary_home/.config/aerospace/aerospace.toml"
-rg -q '^right = 56.0$' "$temporary_home/.config/rift/config.toml"
-rg -q '^yabai -m config right_padding 56$' "$temporary_home/.config/yabai/yabairc"
-rg -Fq 'yabai -m config right_padding 56' "$command_log"
+rg -q '^gaps.outer.right = 38$' "$temporary_home/.config/aerospace/aerospace.toml"
+rg -q '^right = 38.0$' "$temporary_home/.config/rift/config.toml"
+rg -q '^yabai -m config right_padding 38$' "$temporary_home/.config/yabai/yabairc"
+rg -Fq 'yabai -m config right_padding 38' "$command_log"
 
 "$wm" bar-position top
 

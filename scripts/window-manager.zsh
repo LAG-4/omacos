@@ -154,27 +154,31 @@ set_rift_layout_gaps() {
 set_profile_bar_position() {
   local profile=$1
   local position=$2
-  local spacing=8
-  local reserved_gap=42
+  # Frozen Quattro geometry: inner gap 5, outer gap 10, horizontal bar 26,
+  # vertical bar 28. The packaged shell contract is the authoritative source.
+  local spacing=5
+  local outer_spacing=10
+  local reserved_gap=36
   if [[ $position == "left" || $position == "right" ]]; then
-    reserved_gap=56
+    reserved_gap=38
   fi
   if [[ $(configured_window_gaps) == "false" ]]; then
     spacing=0
+    outer_spacing=0
     if [[ $position == "left" || $position == "right" ]]; then
-      reserved_gap=48
+      reserved_gap=28
     else
-      reserved_gap=34
+      reserved_gap=26
     fi
   fi
-  local top_gap=$spacing
-  local bottom_gap=$spacing
-  local left_gap=$spacing
-  local right_gap=$spacing
+  local top_gap=$outer_spacing
+  local bottom_gap=$outer_spacing
+  local left_gap=$outer_spacing
+  local right_gap=$outer_spacing
   case $position in
     # macOS window managers already tile below the native menu-bar safe area.
     # The OMacOS top bar replaces that visible area, so only the normal window gap remains.
-    top) top_gap=$spacing ;;
+    top) top_gap=$outer_spacing ;;
     bottom) bottom_gap=$reserved_gap ;;
     left) left_gap=$reserved_gap ;;
     right) right_gap=$reserved_gap ;;
@@ -223,19 +227,21 @@ apply_bar_position() {
     aerospace) "$aerospace_command" reload-config >/dev/null 2>&1 || true ;;
     rift) : ;;
     yabai)
-      local spacing=8
-      local reserved_gap=42
-      if [[ $position == "left" || $position == "right" ]]; then reserved_gap=56; fi
+      local spacing=5
+      local outer_spacing=10
+      local reserved_gap=36
+      if [[ $position == "left" || $position == "right" ]]; then reserved_gap=38; fi
       if [[ $(configured_window_gaps) == "false" ]]; then
         spacing=0
-        if [[ $position == "left" || $position == "right" ]]; then reserved_gap=48; else reserved_gap=34; fi
+        outer_spacing=0
+        if [[ $position == "left" || $position == "right" ]]; then reserved_gap=28; else reserved_gap=26; fi
       fi
-      local top_gap=$spacing
-      local bottom_gap=$spacing
-      local left_gap=$spacing
-      local right_gap=$spacing
+      local top_gap=$outer_spacing
+      local bottom_gap=$outer_spacing
+      local left_gap=$outer_spacing
+      local right_gap=$outer_spacing
       case $position in
-        top) top_gap=$spacing ;;
+        top) top_gap=$outer_spacing ;;
         bottom) bottom_gap=$reserved_gap ;;
         left) left_gap=$reserved_gap ;;
         right) right_gap=$reserved_gap ;;

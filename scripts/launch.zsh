@@ -19,7 +19,9 @@ open_application() {
 case $action in
   terminal)
     case $(default_value terminal) in
-      ghostty) "$open_binary" -na Ghostty --args --command=/bin/zsh ;;
+      # A plain new app instance is the reliable macOS launch path. Passing a
+      # Linux-style command option caused Super+Enter to fail on current Ghostty.
+      ghostty) "$open_binary" -na Ghostty.app ;;
       terminal) "$open_binary" -na Terminal ;;
       iterm2) "$open_binary" -na iTerm ;;
     esac

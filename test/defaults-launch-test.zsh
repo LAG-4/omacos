@@ -48,8 +48,11 @@ OMACOS_TEST_HOME="$temporary_home" \
   OMACOS_FAKE_OPEN_LOG="$open_log" \
   OMACOS_OPEN_BINARY="$test_directory/fixtures/fake-open.zsh" \
   "$project_root/scripts/launch.zsh" terminal
-rg -Fxq -- "Ghostty" "$open_log"
-rg -Fxq -- "--command=/bin/zsh" "$open_log"
+rg -Fxq -- "Ghostty.app" "$open_log"
+if rg -Fxq -- "--command=/bin/zsh" "$open_log"; then
+  print -u2 "Terminal launch still passes the unsupported command option"
+  exit 1
+fi
 
 set +e
 invalid_output=$(OMACOS_TEST_HOME="$temporary_home" "$project_root/scripts/defaults.zsh" set editor unknown 2>&1)

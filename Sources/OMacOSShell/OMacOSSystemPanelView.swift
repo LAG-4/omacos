@@ -16,23 +16,23 @@ struct OMacOSSystemPanelView: View {
     @FocusState private var searchFieldFocused: Bool
 
     private var colors: OMacOSThemeColors { theme.colors }
+    private let contract = OMacOSShellContract.shared
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: CGFloat(contract.spacing.xxxl)) {
             panelHeader
-            Divider().overlay(Color(omacosHex: colors.selection))
             panelContents
             Spacer(minLength: 0)
         }
+        .font(quattroFont(size: contract.typography.body))
         .foregroundStyle(Color(omacosHex: colors.foreground))
-        .padding(18)
+        .padding(CGFloat(contract.menu.panelPadding))
         .frame(width: panelWidth, height: panelHeight)
-        .background(Color(omacosHex: colors.darkBackground).opacity(0.98))
+        .background(Color(omacosHex: colors.background))
         .overlay {
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(Color(omacosHex: colors.selection), lineWidth: 1)
+            Rectangle()
+                .stroke(Color(omacosHex: colors.accent), lineWidth: 1)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
         .focusSection()
         .onExitCommand(perform: dismissPanel)
         .onAppear {
@@ -61,11 +61,11 @@ struct OMacOSSystemPanelView: View {
     }
 
     private var panelHeader: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: CGFloat(contract.spacing.xl)) {
             Image(systemName: panelID.systemImage)
                 .foregroundStyle(Color(omacosHex: colors.accent))
             Text(panelID.title)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(quattroFont(size: contract.typography.heading, weight: .medium))
             Spacer()
             Button {
                 state.refreshNow()
@@ -81,6 +81,7 @@ struct OMacOSSystemPanelView: View {
             .keyboardShortcut(.cancelAction)
             .foregroundStyle(Color(omacosHex: colors.darkForeground))
         }
+        .frame(height: CGFloat(contract.menu.headerHeight))
     }
 
     @ViewBuilder private var panelContents: some View {
@@ -221,8 +222,8 @@ struct OMacOSSystemPanelView: View {
                             .foregroundStyle(Color(omacosHex: colors.red))
                         }
                         .padding(11)
-                        .background(Color(omacosHex: colors.lighterBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                        .clipShape(Rectangle())
                     }
                 }
             }
@@ -261,8 +262,8 @@ struct OMacOSSystemPanelView: View {
                             .frame(maxWidth: .infinity, minHeight: 58)
                         }
                         .buttonStyle(.plain)
-                        .background(Color(omacosHex: colors.lighterBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                        .clipShape(Rectangle())
                     }
                 }
             }
@@ -295,8 +296,8 @@ struct OMacOSSystemPanelView: View {
             )
             .textFieldStyle(.plain)
             .padding(10)
-            .background(Color(omacosHex: colors.lighterBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+            .clipShape(Rectangle())
 
             HStack {
                 DatePicker(
@@ -336,8 +337,8 @@ struct OMacOSSystemPanelView: View {
                             .foregroundStyle(Color(omacosHex: colors.red))
                         }
                         .padding(10)
-                        .background(Color(omacosHex: colors.lighterBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                        .clipShape(Rectangle())
                     }
                 }
             }
@@ -372,8 +373,8 @@ struct OMacOSSystemPanelView: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .background(Color(omacosHex: colors.lighterBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                        .clipShape(Rectangle())
                     }
                 }
             }
@@ -518,7 +519,7 @@ struct OMacOSSystemPanelView: View {
                 HStack(spacing: 8) {
                     Text(day.date.suffix(5)).font(.system(size: 10, design: .monospaced)).frame(width: 40, alignment: .leading)
                     GeometryReader { geometry in
-                        RoundedRectangle(cornerRadius: 3)
+                        Rectangle()
                             .fill(Color(omacosHex: colors.accent))
                             .frame(width: geometry.size.width * CGFloat(day.messageCount ?? 0) / CGFloat(maximum))
                     }
@@ -581,8 +582,8 @@ struct OMacOSSystemPanelView: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(Color(omacosHex: selected == choice.value ? colors.accent : colors.foreground))
-                    .background(Color(omacosHex: colors.lighterBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                    .clipShape(Rectangle())
                 }
             }
         }
@@ -648,8 +649,8 @@ struct OMacOSSystemPanelView: View {
                         Text("\(day.minimumC)° / \(day.maximumC)°").font(.system(size: 11, design: .monospaced))
                     }
                     .padding(9)
-                    .background(Color(omacosHex: colors.lighterBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                    .clipShape(Rectangle())
                 }
             } else {
                 ContentUnavailableView("Weather unavailable", systemImage: "cloud.sun", description: Text(state.weatherMessage))
@@ -700,8 +701,8 @@ struct OMacOSSystemPanelView: View {
                 Text(dictationController.transcript)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(11)
-                    .background(Color(omacosHex: colors.lighterBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                    .clipShape(Rectangle())
             }
             Button(dictationController.isRecording ? "Stop and Insert" : "Start Dictation") {
                 dictationController.toggle()
@@ -737,8 +738,8 @@ struct OMacOSSystemPanelView: View {
                             Spacer()
                         }
                         .padding(11)
-                        .background(Color(omacosHex: colors.lighterBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                        .clipShape(Rectangle())
                     }
                 }
             }
@@ -786,7 +787,7 @@ struct OMacOSSystemPanelView: View {
                     .frame(width: 210, height: 210)
                     .padding(12)
                     .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(Rectangle())
                 Text(credentials.ssid).font(.title3.bold())
                 Text(state.wifiCredentialMessage)
                     .font(.caption)
@@ -856,8 +857,8 @@ struct OMacOSSystemPanelView: View {
                                 .foregroundStyle(Color(omacosHex: colors.accent))
                             }
                             .padding(9)
-                            .background(Color(omacosHex: colors.lighterBackground))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                            .clipShape(Rectangle())
                         }
                     }
                 }
@@ -937,8 +938,8 @@ struct OMacOSSystemPanelView: View {
                             }
                         }
                         .padding(10)
-                        .background(Color(omacosHex: colors.lighterBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                        .clipShape(Rectangle())
                     }
                 }
             }
@@ -990,8 +991,8 @@ struct OMacOSSystemPanelView: View {
                                 .foregroundStyle(Color(omacosHex: colors.darkForeground))
                         }
                         .padding(11)
-                        .background(Color(omacosHex: colors.lighterBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+                        .clipShape(Rectangle())
                     }
                 }
             }
@@ -1023,7 +1024,7 @@ struct OMacOSSystemPanelView: View {
                         ("Cyan", colors.cyan), ("Text", colors.foreground)
                     ], id: \.0) { name, color in
                         VStack(spacing: 6) {
-                            RoundedRectangle(cornerRadius: 7)
+                            Rectangle()
                                 .fill(Color(omacosHex: color))
                                 .frame(height: 38)
                             Text(name).font(.caption2)
@@ -1095,8 +1096,8 @@ struct OMacOSSystemPanelView: View {
             .buttonStyle(OMacOSPanelButtonStyle(theme: theme))
         }
         .padding(10)
-        .background(Color(omacosHex: colors.lighterBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+        .clipShape(Rectangle())
     }
 
     private func pluginGradeColor(_ grade: String) -> String {
@@ -1229,22 +1230,28 @@ struct OMacOSSystemPanelView: View {
     }
 
     private func statusCard(_ title: String, detail: String, systemImage: String) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: CGFloat(contract.spacing.xxl)) {
             Image(systemName: systemImage)
-                .font(.system(size: 20))
+                .font(.system(size: CGFloat(contract.typography.iconLarge)))
                 .foregroundStyle(Color(omacosHex: colors.accent))
                 .frame(width: 28)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.system(size: 14, weight: .semibold))
+            VStack(alignment: .leading, spacing: CGFloat(contract.spacing.xxs)) {
+                Text(title).font(quattroFont(size: contract.typography.title, weight: .medium))
                 Text(detail)
-                    .font(.caption)
-                    .foregroundStyle(Color(omacosHex: colors.darkForeground))
+                    .font(quattroFont(size: contract.typography.caption))
+                    .foregroundStyle(Color(omacosHex: colors.foreground).opacity(0.52))
             }
             Spacer()
         }
-        .padding(12)
-        .background(Color(omacosHex: colors.lighterBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 9))
+        .padding(CGFloat(contract.spacing.xxl))
+        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+        .overlay {
+            Rectangle()
+                .stroke(
+                    Color(omacosHex: colors.foreground).opacity(contract.controls.normalBorderOpacity),
+                    lineWidth: 1
+                )
+        }
     }
 
     private func panelAction(_ title: String, subtitle: String, systemImage: String, action: @escaping () -> Void) -> some View {
@@ -1267,8 +1274,14 @@ struct OMacOSSystemPanelView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(Color(omacosHex: colors.lighterBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 9))
+        .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+        .overlay {
+            Rectangle()
+                .stroke(
+                    Color(omacosHex: colors.foreground).opacity(contract.controls.normalBorderOpacity),
+                    lineWidth: 1
+                )
+        }
     }
 
     private var panelWidth: CGFloat {
@@ -1300,10 +1313,17 @@ struct OMacOSSystemPanelView: View {
         )
             .textFieldStyle(.plain)
             .focused($searchFieldFocused)
-            .padding(.horizontal, 11)
-            .padding(.vertical, 8)
-            .background(Color(omacosHex: colors.lighterBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .font(quattroFont(size: contract.typography.body))
+            .padding(.horizontal, CGFloat(contract.spacing.xl))
+            .padding(.vertical, CGFloat(contract.spacing.md))
+            .background(Color(omacosHex: colors.foreground).opacity(contract.controls.normalFillOpacity))
+            .overlay {
+                Rectangle()
+                    .stroke(
+                        Color(omacosHex: colors.foreground).opacity(contract.controls.normalBorderOpacity),
+                        lineWidth: 1
+                    )
+            }
     }
 
     private var panelHasSearchField: Bool {
@@ -1362,17 +1382,35 @@ struct OMacOSSystemPanelView: View {
         guard pluginStore.selectedGrade != "all" else { return pluginStore.plugins }
         return pluginStore.plugins.filter { $0.grade == pluginStore.selectedGrade }
     }
+
+    private func quattroFont(size: Int, weight: Font.Weight = .regular) -> Font {
+        .custom(contract.typography.family, size: CGFloat(size)).weight(weight)
+    }
 }
 
 private struct OMacOSPanelButtonStyle: ButtonStyle {
     let theme: OMacOSTheme
 
     func makeBody(configuration: Configuration) -> some View {
+        let contract = OMacOSShellContract.shared
         configuration.label
-            .padding(.horizontal, 12)
-            .padding(.vertical, 7)
+            .font(.custom(contract.typography.family, size: CGFloat(contract.typography.body)))
+            .padding(.horizontal, CGFloat(contract.spacing.xl))
+            .padding(.vertical, CGFloat(contract.spacing.md))
             .foregroundStyle(Color(omacosHex: theme.colors.foreground))
-            .background(Color(omacosHex: configuration.isPressed ? theme.colors.selection : theme.colors.lighterBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 7))
+            .background(
+                Color(omacosHex: theme.colors.foreground)
+                    .opacity(configuration.isPressed
+                        ? contract.controls.pressedFillOpacity
+                        : contract.controls.normalFillOpacity)
+            )
+            .overlay {
+                Rectangle()
+                    .stroke(
+                        Color(omacosHex: theme.colors.foreground)
+                            .opacity(contract.controls.normalBorderOpacity),
+                        lineWidth: 1
+                    )
+            }
     }
 }

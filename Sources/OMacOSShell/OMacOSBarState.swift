@@ -9,8 +9,16 @@ final class OMacOSBarState: NSObject, ObservableObject {
     @Published private(set) var clockText = ""
     @Published private(set) var batteryText = ""
 
-    let visibleWorkspaces = (1...9).map(String.init)
     let theme: OMacOSTheme
+
+    /// Mirrors Quattro: workspaces 1–5 are stable; a focused higher workspace is appended.
+    var visibleWorkspaces: [String] {
+        var workspaces = (1...5).map(String.init)
+        if let activeNumber = Int(activeWorkspace), (6...10).contains(activeNumber) {
+            workspaces.append(activeWorkspace)
+        }
+        return workspaces
+    }
 
     private var refreshTimer: Timer?
     private var workspaceMonitor: OMacOSWorkspaceMonitor?
@@ -19,10 +27,20 @@ final class OMacOSBarState: NSObject, ObservableObject {
     override init() {
         theme = OMacOSTheme.loadCurrentTheme()
         clockFormatter = DateFormatter()
-        clockFormatter.dateFormat = "EEE d MMM  HH:mm"
+        clockFormatter.dateFormat = "EEEE HH:mm"
         super.init()
         workspaceMonitor = OMacOSWorkspaceMonitor { [weak self] workspace in
             self?.updateActiveWorkspace(workspace)
+        }
+    }
+
+    /// Supplies stable values to the off-screen visual renderer without starting system polling.
+    convenience init(visualFixture: Bool) {
+        self.init()
+        if visualFixture {
+            activeWorkspace = "1"
+            clockText = "Monday 19:14"
+            batteryText = "97%"
         }
     }
 

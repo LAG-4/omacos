@@ -15,14 +15,14 @@ hot_reload = true
 mode = "traditional"
 
 [settings.layout.gaps.outer]
-top = 8.0
-left = 8.0
-bottom = 8.0
-right = 8.0
+top = 10.0
+left = 10.0
+bottom = 10.0
+right = 10.0
 
 [settings.layout.gaps.inner]
-horizontal = 8.0
-vertical = 8.0
+horizontal = 5.0
+vertical = 5.0
 
 [settings.ui.menu_bar]
 enabled = false
