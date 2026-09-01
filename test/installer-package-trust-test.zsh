@@ -28,6 +28,10 @@ if [[ ${1:-} == "trust" && ${2:-} == "--json=v1" ]]; then
   exit 0
 fi
 
+if [[ ${1:-} == "list" || ${1:-} == "tap" ]]; then
+  exit 0
+fi
+
 if [[ ${1:-} == "trust" && ${2:-} == "--formula" && ${3:-} == "felixkratz/formulae/borders" ]]; then
   touch "$OMACOS_FAKE_BREW_TRUST_STATE"
   exit 0

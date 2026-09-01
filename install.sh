@@ -118,6 +118,9 @@ selected_channel=${OMACOS_SELECTED_CHANNEL:-stable}
 confirmation_device=${OMACOS_CONFIRMATION_DEVICE:-/dev/tty}
 brew_command=${OMACOS_BREW:-brew}
 test_install_packages=${OMACOS_TEST_INSTALL_PACKAGES:-false}
+state_directory="$omacos_home/.local/state/omacos"
+package_provenance_script="$source_root/scripts/package-provenance.zsh"
+aerospace_lifecycle_script="$source_root/scripts/aerospace-lifecycle.zsh"
 
 install_package_dependencies() {
   local formula="felixkratz/formulae/borders"
@@ -258,6 +261,14 @@ fi
 
 installation_in_progress=true
 
+OMACOS_TEST_MODE="$test_mode" OMACOS_TEST_HOME="$omacos_home" OMACOS_ROOT="$source_root" \
+  "$aerospace_lifecycle_script" capture-before
+
+if ! $test_mode || $test_install_packages; then
+  OMACOS_BREW="$brew_command" OMACOS_TEST_HOME="$omacos_home" \
+    "$package_provenance_script" capture-before
+fi
+
 begin_installer_step "Preparing Homebrew"
 if ! $test_mode; then
   if ! command -v "$brew_command" >/dev/null 2>&1; then
@@ -277,13 +288,22 @@ begin_installer_step "Installing the Homebrew package bundle"
 if ! $test_mode || $test_install_packages; then
   package_count=$(/usr/bin/awk '/^(brew|cask) "/ { count++ } END { print count }' "$source_root/Brewfile")
   print "  Checking $package_count tools and applications. Existing packages will be reused."
-  install_package_dependencies
+  package_install_status=0
+  install_package_dependencies || package_install_status=$?
+  OMACOS_BREW="$brew_command" OMACOS_TEST_HOME="$omacos_home" \
+    "$package_provenance_script" capture-after
+  if (( package_install_status != 0 )); then
+    installation_in_progress=false
+    print -u2 "\nOMacOS installation stopped during step $installer_current_step/$installer_total_steps: $installer_step_label."
+    print -u2 "The command above reported the cause. It is safe to run the same install command again."
+    print -u2 "Homebrew will reuse packages already installed, and OMacOS recorded which packages this attempt introduced."
+    exit $package_install_status
+  fi
 else
   print "  Package installation skipped in test mode."
 fi
 finish_installer_step
 
-state_directory="$omacos_home/.local/state/omacos"
 backup_directory="$state_directory/backups"
 install_directory="$omacos_home/.local/share/omacos/current"
 binary_directory="$omacos_home/.local/bin"

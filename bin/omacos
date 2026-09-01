@@ -274,23 +274,33 @@ run_reminder_command() {
 }
 
 run_uninstall() {
-  local uninstall_option=${1:-}
   local state_directory="$omacos_home/.local/state/omacos"
   local backup_directory="$state_directory/backups"
   local installed_directory="$omacos_home/.local/share/omacos"
   local stay_awake_agent="$omacos_home/Library/LaunchAgents/dev.omacos.stay-awake.plist"
   local assume_yes=false
+  local remove_packages=false
 
-  if [[ $uninstall_option == "--help" || $uninstall_option == "-h" ]]; then
-    print "Usage: omacos uninstall [--yes]"
-    print "Restores backed-up AeroSpace and Karabiner configuration and removes OMacOS-managed files. Homebrew packages are kept."
-    return 0
-  elif [[ $uninstall_option == "--yes" || $uninstall_option == "-y" ]]; then
-    assume_yes=true
-  elif [[ -n $uninstall_option ]]; then
-    print -u2 "Unknown uninstall option: $uninstall_option"
-    return 1
-  fi
+  local uninstall_option
+  for uninstall_option in "$@"; do
+    case $uninstall_option in
+      --help|-h)
+        print "Usage: omacos uninstall [--yes] [--remove-packages]"
+        print "Restores backed-up configuration and removes OMacOS files. Packages are kept unless --remove-packages is given."
+        return 0
+        ;;
+      --yes|-y)
+        assume_yes=true
+        ;;
+      --remove-packages)
+        remove_packages=true
+        ;;
+      *)
+        print -u2 "Unknown uninstall option: $uninstall_option"
+        return 1
+        ;;
+    esac
+  done
 
   print "OMacOS will stop its shell, restore backed-up AeroSpace and Karabiner config, and remove its own files."
   if ! $assume_yes; then
@@ -325,6 +335,11 @@ run_uninstall() {
     rm -f "$omacos_home/.aerospace.toml"
   fi
 
+  if [[ -x $installed_root/scripts/aerospace-lifecycle.zsh ]]; then
+    OMACOS_TEST_MODE="$test_mode" OMACOS_TEST_HOME="$omacos_home" OMACOS_ROOT="$installed_root" \
+      "$installed_root/scripts/aerospace-lifecycle.zsh" restore-before
+  fi
+
   if [[ -f $state_directory/had-karabiner-config && -f $backup_directory/karabiner.json ]]; then
     cp "$backup_directory/karabiner.json" "$omacos_home/.config/karabiner/karabiner.json"
   elif [[ -x $installed_root/scripts/karabiner-profile.zsh ]]; then
@@ -332,6 +347,15 @@ run_uninstall() {
   fi
   rm -f "$omacos_home/.config/karabiner/assets/complex_modifications/omacos-super-key.json"
   rm -f "$omacos_home/.config/ghostty/themes/OMacOS"
+
+  if [[ -x $installed_root/scripts/package-provenance.zsh ]]; then
+    if $remove_packages; then
+      OMACOS_TEST_HOME="$omacos_home" "$installed_root/scripts/package-provenance.zsh" remove-introduced
+    else
+      OMACOS_TEST_HOME="$omacos_home" "$installed_root/scripts/package-provenance.zsh" report-retained
+    fi
+  fi
+
   rm -f "$omacos_home/.local/bin/omacos" "$omacos_home/.local/bin/omacos-shell"
   rm -f "$launch_agent"
   rm -f "$stay_awake_agent"
@@ -339,7 +363,11 @@ run_uninstall() {
   rm -rf "$omacos_home/.config/omacos" "$installed_directory"
   rm -rf "$state_directory"
 
-  print "OMacOS files were removed. Homebrew packages were left installed."
+  if $remove_packages; then
+    print "OMacOS files were removed. Only Homebrew packages recorded as introduced by OMacOS were considered for removal."
+  else
+    print "OMacOS files were removed. Homebrew packages were left installed."
+  fi
 }
 
 case ${1:-help} in
@@ -511,7 +539,7 @@ case ${1:-help} in
     run_shell_command "${2:-}" "${3:-}"
     ;;
   uninstall)
-    run_uninstall "${2:-}"
+    run_uninstall "${@:2}"
     ;;
   help|-h|--help)
     print_usage
