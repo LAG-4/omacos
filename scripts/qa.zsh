@@ -24,5 +24,8 @@ case ${1:-report} in
   checklist)
     print "$project_root/docs/hardware-validation.md"
     ;;
-  *) print -u2 'Usage: omacos qa <report [OUTPUT.json]|checklist>'; exit 1 ;;
+  vm)
+    "$project_root/scripts/macos-vm-test.zsh" "${@:2}"
+    ;;
+  *) print -u2 'Usage: omacos qa <report [OUTPUT.json]|checklist|vm PLAN>'; exit 1 ;;
 esac

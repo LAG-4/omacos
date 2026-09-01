@@ -3,4 +3,4 @@
 .swiftpm/
 *.xcodeproj/
 test/tmp/
-
+.artifacts/
