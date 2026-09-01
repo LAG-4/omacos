@@ -21,6 +21,7 @@ jq -e '
   .schemaVersion == 1
   and .summary.total == 879
   and .summary.pending == 0
+  and (.summary.automatedRoute + .summary.visualFixture + .summary.hardwareRequired + .summary.routeOnly + .summary.classifiedOnly == .summary.total)
   and (.summary.implemented + .summary.limited + .summary.pending + .summary.unavailable + .summary.notApplicable == .summary.total)
   and (.items.manual | length) == 51
   and (.items.plugins | length) == 29
@@ -31,6 +32,8 @@ jq -e '
   and (.items.packages | length) == 208
   and ([.items[][] | .implementationStatus | IN("implemented", "limited", "pending", "unavailable", "not-applicable")] | all)
   and ([.items[][] | .grade | IN("exact", "close-substitute", "native-replacement", "optional-unsafe", "impossible", "not-applicable")] | all)
+  and ([.items[][] | .verificationStatus | IN("automated-route", "visual-fixture", "hardware-required", "route-only", "classified")] | all)
+  and .summary.routeOnly > 0
 ' "$generated_json" >/dev/null
 
 OMACOS_PARITY_LEDGER="$generated_json" "$project_root/scripts/parity.zsh" summary | rg -q '^total=879$'

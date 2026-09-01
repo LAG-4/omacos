@@ -43,7 +43,7 @@ jq --slurpfile keys "$keybindings_path" '
       ]) then
         parity("manual"; $item.id; $item.title; "limited"; "native-replacement"; "omacos menu"; "The outcome uses macOS applications or protected Apple UI and cannot reproduce the Linux implementation one-to-one."; $item.file)
       else
-        parity("manual"; $item.id; $item.title; "implemented"; "close-substitute"; "omacos help / native shell"; "The user-facing workflow has an OMacOS implementation or a documented macOS-native replacement."; $item.file)
+        parity("manual"; $item.id; $item.title; "limited"; "close-substitute"; "docs/quattro-parity.md"; "The chapter is inventoried, but a broad documentation chapter is not proof that every described behavior is implemented or visually verified on macOS."; $item.file)
       end;
 
   def plugin_parity:
@@ -52,8 +52,10 @@ jq --slurpfile keys "$keybindings_path" '
         parity("plugin"; $item.id; $item.name; "implemented"; "native-replacement"; "Apple security UI"; "macOS owns the trusted authentication surface; OMacOS hands off to it."; $item.source)
       elif in_list($item.id; ["omarchy.notifications", "omarchy.audio", "omarchy.bluetooth", "omarchy.monitor", "omarchy.media", "omarchy.nightlight"]) then
         parity("plugin"; $item.id; $item.name; "limited"; "close-substitute"; "native shell panel"; "Public macOS APIs expose the main workflow but not every Linux service or global system capability."; $item.source)
+      elif in_list($item.id; ["omarchy.bar", "omarchy.menu", "omarchy.clipboard", "omarchy.emojis", "omarchy.reminders", "omarchy.osd", "omarchy.agents"]) then
+        parity("plugin"; $item.id; $item.name; "implemented"; "close-substitute"; "native shell panel or service"; "The Quattro-owned outcome has a native implementation and a deterministic render or focused behavior test."; $item.source)
       else
-        parity("plugin"; $item.id; $item.name; "implemented"; "close-substitute"; "native shell panel or service"; "The Quattro-owned outcome is implemented through the native shell or an OMacOS service adapter."; $item.source)
+        parity("plugin"; $item.id; $item.name; "limited"; "close-substitute"; "native shell panel or service"; "A macOS route exists, but physical-device behavior and complete visual parity have not both been verified."; $item.source)
       end;
 
   def cli_parity:
@@ -67,7 +69,7 @@ jq --slurpfile keys "$keybindings_path" '
       elif in_list($item.id; ["ascii", "branch", "file", "hook", "installed", "mise", "pkg", "restart", "screensaver", "version"] ) then
         parity("cli-group"; $item.id; $item.description; "implemented"; "close-substitute"; ("omacos " + $item.id); "The portable command group is exposed through the OMacOS CLI."; "bin/omarchy")
       else
-        parity("cli-group"; $item.id; $item.description; "implemented"; "close-substitute"; ("omacos " + $item.id); "The group outcome is available directly or through the native command menu and service adapters."; "bin/omarchy")
+        parity("cli-group"; $item.id; $item.description; "limited"; "close-substitute"; ("omacos " + $item.id); "A compatibility route exists, but the group has not been proven command-for-command equivalent to the Quattro source group."; "bin/omarchy")
       end;
 
   def binding_title:
@@ -203,6 +205,33 @@ jq --slurpfile keys "$keybindings_path" '
           notApplicable: (map(select(.implementationStatus == "not-applicable")) | length)
         }
     )
+  | .items |= with_entries(
+      .value |= map(
+        . + {
+          verificationStatus: (
+            if .implementationStatus == "not-applicable" or .implementationStatus == "unavailable" then "classified"
+            elif .kind == "package" then "classified"
+            elif .kind == "menu-entry" and .implementationStatus == "implemented" then "automated-route"
+            elif .kind == "binding" and .route == "config/keybindings.json" then "automated-route"
+            elif .kind == "dynamic-binding-family" and .implementationStatus == "implemented" then "automated-route"
+            elif .kind == "plugin" and (.id == "omarchy.bar" or .id == "omarchy.menu") then "visual-fixture"
+            elif .grade == "native-replacement" or .grade == "optional-unsafe" or (.notes | test("permission|hardware|WindowServer|Apple|macOS owns|physical"; "i")) then "hardware-required"
+            else "route-only"
+            end
+          )
+        }
+      )
+    )
+  | .summary += (
+      [.items[][]]
+      | {
+          automatedRoute: (map(select(.verificationStatus == "automated-route")) | length),
+          visualFixture: (map(select(.verificationStatus == "visual-fixture")) | length),
+          hardwareRequired: (map(select(.verificationStatus == "hardware-required")) | length),
+          routeOnly: (map(select(.verificationStatus == "route-only")) | length),
+          classifiedOnly: (map(select(.verificationStatus == "classified")) | length)
+        }
+    )
 ' "$inventory_path" > "$temporary_path"
 
 mv "$temporary_path" "$output_path"
@@ -211,7 +240,7 @@ trap - EXIT
 {
   print '# Quattro parity ledger'
   print
-  print 'Generated from the frozen Omarchy Quattro inventory. `implemented` means the outcome has an executable OMacOS or native macOS route; it does not claim that WindowServer behaves like Hyprland. This ledger remains exhaustive for engineering accountability. The product command menu separately projects this reference into macOS language and hides entries whose outcomes do not apply to a Mac.'
+  print 'Generated from the frozen Omarchy Quattro inventory. `implemented` means an executable OMacOS or native macOS route exists; it is not a claim of one-to-one visual or behavioral verification. `limited` includes macOS substitutes and inventory items whose route has not been proven end to end. The product command menu separately projects the reference into macOS language and hides entries whose outcomes do not apply to a Mac.'
   print
   print '## Summary'
   print
@@ -219,15 +248,13 @@ trap - EXIT
   print '| ---: | ---: | ---: | ---: | ---: | ---: |'
   jq -r '.summary | "| \(.total) | \(.implemented) | \(.limited) | \(.pending) | \(.unavailable) | \(.notApplicable) |"' "$output_path"
   print
-  print '## Remaining portable work'
+  print '## Verification state'
   print
-  if jq -e '.summary.pending == 0' "$output_path" >/dev/null; then
-    print 'None. Every frozen item has an implementation, explicit limited substitute, or not-applicable platform classification.'
-  else
-    print '| Kind | Reference | Outcome | Route |'
-    print '| --- | --- | --- | --- |'
-    jq -r '[.items[][] | select(.implementationStatus == "pending")] | sort_by(.kind, .id)[] | "| \(.kind) | `\(.id)` | \(.title | gsub("\\|"; "\\\\|")) | `\(.route)` |"' "$output_path"
-  fi
+  print '| Automated route | Visual fixture | Hardware required | Route only | Classified only |'
+  print '| ---: | ---: | ---: | ---: | ---: |'
+  jq -r '.summary | "| \(.automatedRoute) | \(.visualFixture) | \(.hardwareRequired) | \(.routeOnly) | \(.classifiedOnly) |"' "$output_path"
+  print
+  print '`route-only` is the remaining engineering and acceptance-test debt. It is intentionally visible even when every source item has been classified.'
   print
   print '## Explicit platform limits'
   print

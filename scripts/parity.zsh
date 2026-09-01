@@ -17,7 +17,11 @@ case ${1:-summary} in
       "limited=\(.summary.limited)",
       "pending=\(.summary.pending)",
       "unavailable=\(.summary.unavailable)",
-      "not-applicable=\(.summary.notApplicable)"
+      "not-applicable=\(.summary.notApplicable)",
+      "automated-route=\(.summary.automatedRoute)",
+      "visual-fixture=\(.summary.visualFixture)",
+      "hardware-required=\(.summary.hardwareRequired)",
+      "route-only=\(.summary.routeOnly)"
     ' "$ledger"
     ;;
   list)

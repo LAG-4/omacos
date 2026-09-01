@@ -55,6 +55,6 @@ jq -n -e --slurpfile inventory "$inventory" --slurpfile projection "$projection"
 ' >/dev/null
 
 rg -Fq 'projection.apply(to: inventory.menuEntries)' "$project_root/Sources/OMacOSShell/OMacOSMenuStore.swift"
-rg -Fq 'TextField("Search OMacOS actions"' "$project_root/Sources/OMacOSShell/OMacOSCommandMenuView.swift"
+rg -Fq 'TextField(store.currentTitle + "…"' "$project_root/Sources/OMacOSShell/OMacOSCommandMenuView.swift"
 
 print "macOS command-menu projection test passed"
